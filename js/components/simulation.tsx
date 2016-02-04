@@ -183,11 +183,16 @@ class Simulation extends React.Component<ISimulationProps, ISimulationState> {
             <p>Runs: {this.props.setup.simulations}</p>
             <p>Avg Gold: {Math.round(10000*this.props.setup.goldSetup/this.props.setup.simulations)/10000}</p>
             <p>Avg Cards: {Math.round(10000*this.props.setup.cardsSetup/this.props.setup.simulations)/10000}</p>
-            <p>Poor Setups : {Math.round(100*this.props.setup.poorSetups/this.props.setup.simulations)}%</p>
-            <p>Great Setups: {Math.round(100*this.props.setup.greatSetups/this.props.setup.simulations)}%</p>
-            <p><strong>Cards Setup :</strong></p>
+
+            <p><span className="tooltip hint--top" data-hint="Percentage of Setups with 2 or less cards set up or only 1 character">
+                Poor Setups:
+              </span> {Math.round(100*this.props.setup.poorSetups/this.props.setup.simulations)}%</p>
+            <p><span className="tooltip hint--top" data-hint="Percentage of Setups with 5 or more cards set up and over 1 character">
+              Great Setups:
+              </span> {Math.round(100*this.props.setup.greatSetups/this.props.setup.simulations)}%</p>
+            <p><strong>Cards Setup:</strong></p>
             {cardsUsed}
-            <p><strong>Gold Used :</strong></p>
+            <p><strong>Gold Used:</strong></p>
             {goldUsed}
           </section>
           <section className="charts">
@@ -214,7 +219,7 @@ class Simulation extends React.Component<ISimulationProps, ISimulationState> {
                   width={500}
                   height={200}
                   fill={'#3182bd'}
-                  title='Characters Flopped'
+                  title='Characters Out After Setup'
                   yAxisLabel='Percent'
                   xAxisLabel='Distinct Characters'
                   />
