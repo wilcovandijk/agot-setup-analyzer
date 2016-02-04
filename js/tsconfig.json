@@ -1,0 +1,37 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "isolatedModules": false,
+        "jsx": "react",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "declaration": false,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "noLib": false,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": true
+    },
+    "filesGlob": [
+        "**/*.ts",
+        "**/*.tsx",
+        "!node_modules/**"
+    ],
+    "files": [
+        "interfaces.d.ts",
+        "libs/jquery.d.ts",
+        "libs/react-d3.d.ts",
+        "stores/deckStore.ts",
+        "stores/setupStore.ts",
+        "app.tsx",
+        "cardItem.tsx",
+        "components/deckImport.tsx",
+        "components/simulation.tsx"
+    ],
+    "exclude": [],
+    "atom": {
+        "rewriteTsconfig": true
+    }
+}
