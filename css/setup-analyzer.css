@@ -237,3 +237,7 @@ input[type="checkbox"] {
 	footer{
 		text-align:center;
 	}
+
+.tooltip {
+  text-decoration: underline;
+}
