@@ -314,9 +314,9 @@ var SetupStore = (function () {
             var card = drawDeck[d];
             return card.type_code == 'character'
                 || card.type_code == 'location'
-                || card.type_code == 'attachment'
-                || card.code == '02034'
-                || card.code == '01035';
+                || (card.type_code == 'attachment'
+                    && card.code != '02034'
+                    && card.code != '01035');
         });
         var possibleSetup = this.setUp({
             currentCost: 0,
