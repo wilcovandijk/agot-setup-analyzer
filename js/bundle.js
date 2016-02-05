@@ -313,7 +313,8 @@ var SetupStore = (function () {
         var filteredDraw = draw.filter(function (d) {
             var card = drawDeck[d];
             return card.type_code == 'character'
-                || card.type_code == 'location'
+                || (card.type_code == 'location'
+                    && card.code != '02006')
                 || (card.type_code == 'attachment'
                     && card.code != '02034'
                     && card.code != '01035');
