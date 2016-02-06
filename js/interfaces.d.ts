@@ -46,6 +46,7 @@ interface ISetupStore {
   greatSetups : number;
   cardCounts : Array<number>;
   goldCounts : Array<number>;
+  avoidCards : Array<number>;
   distinctCharCounts : Array<number>;
   traitStats : { [id: string] : string };
 

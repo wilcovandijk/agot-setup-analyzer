@@ -26,7 +26,7 @@ class SetupStore implements ISetupStore {
   public cardCounts : Array<number>;
 
   public keyCards : Array<string>;
-  public avoidCards : Array<string>;
+  public avoidCards : Array<number>;
 
   public neverSetupCards : Array<string>;
 
@@ -53,6 +53,7 @@ class SetupStore implements ISetupStore {
         }
 
         if (card.enter_play_effect){
+          console.log("avoiding!");
           self.avoidCards.push(pos);
         }
       }

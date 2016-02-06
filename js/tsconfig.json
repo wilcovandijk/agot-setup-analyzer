@@ -28,8 +28,10 @@
         "app.tsx",
         "cardItem.tsx",
         "components/about.tsx",
+        "components/configure.tsx",
         "components/deckImport.tsx",
-        "components/simulation.tsx"
+        "components/simulation.tsx",
+        "components/simulationStats.tsx"
     ],
     "exclude": [],
     "atom": {
