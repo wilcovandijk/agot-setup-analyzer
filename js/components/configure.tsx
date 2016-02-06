@@ -43,12 +43,8 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
 
     var i = 0;
 
-
-    console.log("avoided : ", this.props.setup.avoidCards);
     var avoidedCards = this.props.setup.avoidCards.map((pos) => deck.drawDeck[pos]);
     avoidedCards = avoidedCards.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
-
-    console.log("avoided : ", avoidedCards);
 
     var avoidedItems = avoidedCards.map((card) => {
       i++;
@@ -65,10 +61,11 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     return (
       <section className="content">
         <section className="example">
-          <div>Avoided:</div>
+          <div>Cards avoided during setup if possible:</div>
           <div className="example-container">
             {avoidedItems}
           </div>
+          <p>This section is a work in progress, and will soon be the home of configuration settings...</p>
         </section>
       </section>
     );
