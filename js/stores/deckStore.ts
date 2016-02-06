@@ -53,6 +53,24 @@ class DeckStore implements IDeckStore {
           card.setup_count = 0;
           var limitedRegex = new RegExp('<abbr>Limited<\\/abbr>.*', 'g');
           card.is_limited = limitedRegex.test(card.text);
+
+          var incomeRegex = new RegExp('\\+([0-9]) Income', 'g');
+          var incomeMatches = incomeRegex.exec(card.text);
+
+          card.income = 0;
+          if (incomeMatches){
+            console.log("Income ", incomeMatches[1], card);
+            card.income = +incomeMatches[1];
+          }
+
+          var marshalEffectRegex = new RegExp('(After you marshal ' + card.name + ')|(After ' + card.name + ' enters play)');
+          var marshalMatches = marshalEffectRegex.exec(card.text);
+
+          card.enter_play_effect = marshalEffectRegex.test(card.text);
+          if (card.enter_play_effect){
+            console.log("Marshall Effect", card);
+          }
+
           if (card.is_limited){
             console.log("Limited ", card);
           }

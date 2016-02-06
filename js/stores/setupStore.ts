@@ -25,6 +25,11 @@ class SetupStore implements ISetupStore {
   public greatSetups : number;
   public cardCounts : Array<number>;
 
+  public keyCards : Array<string>;
+  public avoidCards : Array<string>;
+
+  public neverSetupCards : Array<string>;
+
   public distinctCharCounts : Array<number>;
   public goldCounts: Array<number>;
   public traitStats : { [id: string] : string };
@@ -34,10 +39,25 @@ class SetupStore implements ISetupStore {
   constructor(deck : IDeckStore) {
     var self = this;
     this.deck = deck;
+    this.neverSetupCards = ['02006', '02034', '01035'];
 
     this.deck.subscribe(function(){
       self.resetStats();
-      if (self.deck.drawDeck.length >= 8){
+      self.avoidCards = [];
+
+      for(var pos in self.deck.drawDeck){
+        var card = deck.drawDeck[pos];
+
+        if (self.neverSetupCards.filter((c) => c == card.code).length > 0){
+          continue;
+        }
+
+        if (card.enter_play_effect){
+          self.avoidCards.push(pos);
+        }
+      }
+
+      if (self.deck.drawDeck.length >= 7){
         self.performSimulation(5000);
       }
       self.inform();
@@ -81,19 +101,51 @@ class SetupStore implements ISetupStore {
       this.inform();
   }
 
+  protected validateSetup(setup){
+    if (setup.hasAttachment && setup.distinctCharacters == 0){
+      //this is invalid
+      return false;
+    }
+
+    //TODO: determine attachment validity based on traits/faction
+
+    return true;
+  }
+
+  protected scoreSetup(setup){
+    var avoidedCardsUsed = this.avoidCards.filter((c) => setup.cards.filter((s) => s == c).length > 0).length;
+
+    var factors = [
+      setup.distinctCharacters > 1, // must have at least > 1 char
+      (setup.cards.length - avoidedCardsUsed), // cards used that we like to setup
+      setup.cards.length, // cards used overall
+      setup.currentCost + setup.income, // effective gold used at setup
+      setup.limitedUsed, // was a limited card able to be played?
+      setup.distinctCharacters, // how many characters were played
+      setup.strength // how strong were the characters played
+    ];
+
+    var score = 0;
+
+    for (var i = 0; i < factors.length; i++){
+      score += factors[i] * Math.pow(100, (factors.length - i));
+    }
+
+    setup.factors = factors;
+
+    setup.score = score;
+  }
+
   public setUp(setup, remainingCards){
     var drawDeck = this.deck.drawDeck;
     if (remainingCards.length == 0){
-      if (setup.hasAttachment && setup.distinctCharacters == 0){
+      if (!this.validateSetup(setup)){
         //this is invalid
         return [];
       }
 
-      var score = (setup.cards.length * 1000) + (setup.currentCost * 100) + (setup.distinctCharacters * 10) + setup.strength;
-      if (setup.distinctCharacters > 1){
-        score += 10000;
-      }
-      setup.score = score;
+      this.scoreSetup(setup);
+
       return [setup];
     }
 
@@ -126,7 +178,12 @@ class SetupStore implements ISetupStore {
         setup.hasAttachment = true;
       }
 
+      if (card.enter_play_effect){
+        setup.enterPlayEffects += 1;
+      }
+
       setup.currentCost += card.cost;
+      setup.income += card.income;
       setup.cards.push(pos);
 
       return this.setUp(setup, remainingCards).concat(this.setUp(cardNotUsedSetup, remainingCards));
@@ -163,13 +220,14 @@ class SetupStore implements ISetupStore {
       distinctCharacters: 0,
       hasAttachment: false,
       strength: 0,
+      income: 0,
+      enterPlayEffects: 0,
       cards: []
     }, filteredDraw);
 
     var bestSetup = possibleSetup[0];
     possibleSetup.forEach((setup) => {
       if (setup.score > bestSetup.score){
-        //console.log("best", setup);
         bestSetup = setup;
       }
     });

@@ -27,6 +27,7 @@
         "stores/setupStore.ts",
         "app.tsx",
         "cardItem.tsx",
+        "components/about.tsx",
         "components/deckImport.tsx",
         "components/simulation.tsx"
     ],

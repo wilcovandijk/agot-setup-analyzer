@@ -20,6 +20,8 @@ interface ICard {
   is_power : boolean;
   is_limited : boolean;
   setup_count : number;
+  enter_play_effect : boolean;
+  income : number;
 }
 
 interface IDeckStore {
