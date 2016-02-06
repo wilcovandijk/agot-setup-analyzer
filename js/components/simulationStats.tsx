@@ -45,7 +45,7 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
 
 public onPrevious(){
   var index = this.state.shownSetup - 1;
-  index = Math.max(index, this.props.setup.setups.length-1);
+  index = Math.min(index, this.props.setup.setups.length-1);
 
   this.setState({
     shownSetup: index

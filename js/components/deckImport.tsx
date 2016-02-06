@@ -40,7 +40,7 @@ class DeckImport extends React.Component<IDeckImportProps, IDeckImportState> {
   public render() {
     return (
       <section className="import">
-        <a href="#" onClick={ e => this.handleImportDeck(e)}>Load</a>
+        <button onClick={ e => this.handleImportDeck(e)}>Load</button>
 
         <textarea
           ref="deckText"

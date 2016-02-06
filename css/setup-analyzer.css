@@ -65,12 +65,13 @@ input[type="checkbox"] {
 	flex: 4;
 }
 
-.import a{
+button{
 	margin: 5px;
   padding: 10px 15px;
   background: #4479BA;
   color: #FFF;
 	text-decoration: none;
+	cursor: pointer;
 }
 
 .example-container{
