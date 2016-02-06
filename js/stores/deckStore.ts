@@ -59,7 +59,6 @@ class DeckStore implements IDeckStore {
 
           card.income = 0;
           if (incomeMatches){
-            console.log("Income ", incomeMatches[1], card);
             card.income = +incomeMatches[1];
           }
 
@@ -68,12 +67,37 @@ class DeckStore implements IDeckStore {
 
           card.enter_play_effect = marshalEffectRegex.test(card.text);
           if (card.enter_play_effect){
-            console.log("Marshall Effect", card);
           }
 
-          if (card.is_limited){
-            console.log("Limited ", card);
+          card.attachmentRestriction = [];
+          if (card.type_code == 'attachment') {
+            var restrictionRegex = new RegExp('(.*) character only');
+            var restrictionMatches = restrictionRegex.exec(card.text);
+
+            if (restrictionMatches){
+              if (restrictionMatches[1] == '<i>Lord</i> or <i>Lady</i>'
+                  || restrictionMatches[1] == 'Lord or Lady'){
+                card.attachmentRestriction = ['Lord', 'Lady'];
+              } else{
+                var restriction = restrictionMatches[1];
+                restriction = restriction.replace(/\[|\]/g, "");
+                card.attachmentRestriction = [restriction];
+              }
+            }
+          } else if (card.type_code == 'character'){
+            var restrictionRegex = new RegExp('No attachments( except <i>Weapon<\\/i>)');
+            var restrictionMatches = restrictionRegex.exec(card.text);
+
+            if (restrictionMatches){
+
+              if (restrictionMatches[1]){
+                card.attachmentRestriction = ['Weapon'];
+              } else {
+                card.attachmentRestriction = ['NO ATTACHMENTS'];
+              }
+            }
           }
+
           this.displayDeck.push(card);
           for (var i = 0; i < card.count; i++){
             this.drawDeck.push(card);

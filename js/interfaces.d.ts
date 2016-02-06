@@ -22,6 +22,7 @@ interface ICard {
   setup_count : number;
   enter_play_effect : boolean;
   income : number;
+  attachmentRestriction : Array<string>;
 }
 
 interface IDeckStore {
@@ -49,6 +50,7 @@ interface ISetupStore {
   avoidCards : Array<number>;
   distinctCharCounts : Array<number>;
   traitStats : { [id: string] : string };
+  setups : Array<any>;
 
   performSimulation(runs : number);
 

@@ -17,14 +17,18 @@ interface ISimulationStatsProps {
 }
 
 interface ISimulationStatsState {
+  shownSetup : number;
 }
 
 class SimulationStats extends React.Component<ISimulationStatsProps, ISimulationStatsState> {
 
-  public state : ICardItemState;
+  public state : ISimulationStatsState;
 
   constructor(props : ISimulationStatsProps){
     super(props);
+    this.state = {
+      shownSetup : 0
+    }
   }
 
   /**
@@ -38,6 +42,26 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
   //   return false;
   // }
 
+
+public onPrevious(){
+  var index = this.state.shownSetup - 1;
+  index = Math.max(index, this.props.setup.setups.length-1);
+
+  this.setState({
+    shownSetup: index
+  });
+}
+
+public onNext(){
+  var index = this.state.shownSetup + 1;
+  if (index >= this.props.setup.setups.length){
+    index = 0;
+  }
+
+  this.setState({
+    shownSetup: index
+  });
+}
 
   public render() {
     var deck = this.props.setup.deck;
@@ -58,7 +82,7 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
       );
     });
 
-    var exampleItems = this.props.setup.exampleSetup.draw.map((pos) => {
+    var exampleItems = this.props.setup.setups[this.state.shownSetup].draw.map((pos) => {
       i++;
 
       var card = this.props.setup.deck.drawDeck[pos];
@@ -66,7 +90,7 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
       var image = "http://thronesdb.com/" + card.imagesrc;
       var className = "card-container";
 
-      if (this.props.setup.exampleSetup.cards.filter((p) => p == pos).length > 0){
+      if (this.props.setup.setups[this.state.shownSetup].cards.filter((p) => p == pos).length > 0){
         className += " selected";
       }
 
@@ -136,7 +160,7 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
       <section className="content">
         <section className="example">
           <div>{this.props.setup.deck.drawDeck.length} Cards</div>
-          <div>Example:</div>
+          <div>Examples:<button onClick={this.onPrevious.bind(this)}>Previous</button> <button onClick={this.onNext.bind(this)}>Next</button></div>
           <div className="example-container">
             {exampleItems}
           </div>

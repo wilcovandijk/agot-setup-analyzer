@@ -34,7 +34,7 @@ class SetupStore implements ISetupStore {
   public goldCounts: Array<number>;
   public traitStats : { [id: string] : string };
 
-  private setups : Array<any>;
+  public setups : Array<any>;
 
   constructor(deck : IDeckStore) {
     var self = this;
@@ -53,7 +53,6 @@ class SetupStore implements ISetupStore {
         }
 
         if (card.enter_play_effect){
-          console.log("avoiding!");
           self.avoidCards.push(pos);
         }
       }
@@ -96,9 +95,10 @@ class SetupStore implements ISetupStore {
       var setup = null;
       for (var i = 0; i < runs; i++){
         setup = this.runSetup();
+        this.setups.push(setup);
+
       }
       this.exampleSetup = setup;
-      this.setups.push(setup);
       this.inform();
   }
 
@@ -108,9 +108,36 @@ class SetupStore implements ISetupStore {
       return false;
     }
 
+    var attachments = setup.cards.map(c => this.deck.drawDeck[c]).filter(c => c.type_code == 'attachment');
+    var characters = setup.cards.map(c => this.deck.drawDeck[c]).filter(c => c.type_code == 'character');
+
+    var unattachables = attachments.filter((att) => {
+      var regex = att.attachmentRestriction.reduce((prev, curr) => (prev ? prev + "|" : "") + curr, "");
+
+      var traitRegex = new RegExp(regex);
+      var targetCharacters = characters.filter((c) => {
+        if (c.attachmentRestriction){
+          var attachmentRestriction = new RegExp(c.attachmentRestriction.reduce((prev, curr) => (prev ? prev + "|" : "") + curr, ""));
+
+          if (!attachmentRestriction.test(att.traits)){
+            return false;
+          }
+
+        }
+
+         return !att.attachmentRestriction || traitRegex.test(c.traits) || traitRegex.test(c.faction_code);
+       });
+
+      if (targetCharacters == 0){
+        return true;
+      }
+
+      return false;
+    });
+
     //TODO: determine attachment validity based on traits/faction
 
-    return true;
+    return unattachables.length == 0;
   }
 
   protected scoreSetup(setup){
