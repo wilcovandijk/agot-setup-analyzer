@@ -30,7 +30,7 @@ function render() {
 setup.subscribe(render);
 render();
 
-},{"./components/DeckImport":3,"./components/Simulation":4,"./stores/DeckStore":5,"./stores/SetupStore":6}],2:[function(require,module,exports){
+},{"./components/DeckImport":3,"./components/Simulation":4,"./stores/DeckStore":8,"./stores/SetupStore":9}],2:[function(require,module,exports){
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -72,7 +72,7 @@ var DeckImport = (function (_super) {
     };
     DeckImport.prototype.render = function () {
         var _this = this;
-        return (React.createElement("section", {"className": "import"}, React.createElement("a", {"href": "#", "onClick": function (e) { return _this.handleImportDeck(e); }}, "Import"), React.createElement("textarea", {"ref": "deckText", "className": "deck-import", "placeholder": "Copy your decklist here", "autoFocus": true})));
+        return (React.createElement("section", {"className": "import"}, React.createElement("button", {"onClick": function (e) { return _this.handleImportDeck(e); }}, "Load"), React.createElement("textarea", {"ref": "deckText", "className": "deck-import", "placeholder": "Copy your decklist here", "autoFocus": true})));
     };
     return DeckImport;
 })(React.Component);
@@ -84,18 +84,108 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var cardItem_1 = require("../cardItem");
-var react_d3_1 = require('react-d3');
+var about_1 = require("./about");
+var configure_1 = require("./configure");
+var simulationStats_1 = require("./simulationStats");
 var Simulation = (function (_super) {
     __extends(Simulation, _super);
     function Simulation(props) {
         _super.call(this, props);
     }
     Simulation.prototype.render = function () {
-        var _this = this;
         if (this.props.setup.deck.drawDeck.length == 0) {
-            return (React.createElement("section", {"className": "simulation"}, React.createElement("section", {"className": "example"}, React.createElement("section", {"className": "about"}, React.createElement("p", null, "To use this get your deck in text format and paste into the box on the right. Thronesdb's text download option is this format exactly, though I'm sure other editors can provide a similar format"), React.createElement("p", null, "This tool was made to analyze the setup strength of various decks. After importing your deck it will draw random set up hands (right now 5,000 hands), and determine the best(ish) possible setup and gather stats. Right now it's logic is can probably be better. Truth be told I'm not very good at this game, so any improvements that can be offered is welcome. But the rules this currently uses to determine the ", React.createElement("em", null, "best"), " setup from a hand are as followed:"), React.createElement("ol", null, React.createElement("li", null, "The set up must have at least 2 characters (not counting dupes). Any possible set up with 1 or 0 characters will not be used if a set up can be made with 2 or more characters"), React.createElement("li", null, "Total cards used is the next criteria. Any possible set up using more cards then another possible set up will be choose"), React.createElement("li", null, "Assuming number of cards are tied, a set up using more gold will be used in favor of a set up using less gold"), React.createElement("li", null, "Assuming used cards and gold are tied total distinct characters used will be the next criteria. Ex. If one possible set up uses 4 cards, 8 gold, and has 3 characters, it will be choosen over one that uses 4 cards, 8 gold, and uses 2 characters."), React.createElement("li", null, "If all of that is equal, it will use the possible set up with the most strength on characters"), React.createElement("li", null, "If it's still tied, then it'll choose one of the tied possible set ups randomly")), React.createElement("p", null, "This isn't perfect. This logic could probably be improved, but should in general give a good sense of how many cards and gold you can set up on average"), React.createElement("p", null, "There's also some flat out definite problems with this right now, mostly dealing with attachments. It's at least smart enough to not set up negative attachments, but here's a list of things I'd like to improve/fix soon:"), React.createElement("ol", null, React.createElement("li", null, "Attachment restrictions are not followed. If you have a card that can only go on nights watch characters, this will set it up on anyone."), React.createElement("li", null, "Specifying cards you don't want to set up. Maybe you don't ever want to set up Varys. For now if you have cards you don't want to set up, replace them in with events before importing"), React.createElement("li", null, "Mulligans. This doesn't do mulligans, it's just outputting the raw results. I want to add configurable mulligan criteria, and show the final stats after mulligans"), React.createElement("li", null, "More stats. I'm already tracking but was too lazy to output several more stats, such number of unique characters, how often traits show up, icon spread, etc. If I'm still interested and people think it's useful, I'll add these and more!")), React.createElement("p", null, "Finally, some credit/shout outs to ", React.createElement("a", {"href": "http://thronesdb.com/"}, "ThronesDB"), ", where I shameless pulled all card data from and serve images from directly (for now). And to this ", React.createElement("a", {"href": "https://www.youtube.com/watch?v=gwrEnx84qr4"}, "DobblerTalk on set ups"), " where my rules were inspired from"), React.createElement("p", null, "Now maybe your wonder how you could ever pay me back, maybe you ran your deck through here and the same set up it showed you was so awful you want to yell at me. Well you can contact me at ", React.createElement("a", {"href": "mailto:jason@red5dev.com"}, "jason@red5dev.com"), ". As I mentioned I'm pretty new to this game, so I also accept general tips, tricks, decklists and things of that nature.")))));
+            return (React.createElement("section", {"className": "simulation"}, React.createElement("section", {"className": "example"}, React.createElement(about_1.About, null))));
         }
+        return (React.createElement("section", {"className": "simulation"}, React.createElement("div", {"className": "worko-tabs"}, React.createElement("input", {"className": "state", "type": "radio", "title": "tab-one", "name": "tabs-state", "id": "tab-one", "defaultChecked": true}), React.createElement("input", {"className": "state", "type": "radio", "title": "tab-two", "name": "tabs-state", "id": "tab-two"}), React.createElement("input", {"className": "state", "type": "radio", "title": "tab-three", "name": "tabs-state", "id": "tab-three"}), React.createElement("div", {"className": "tabs flex-tabs"}, React.createElement("label", {"htmlFor": "tab-one", "id": "tab-one-label", "className": "tab"}, "Setup Stats"), React.createElement("label", {"htmlFor": "tab-two", "id": "tab-two-label", "className": "tab"}, "Restrictions"), React.createElement("label", {"htmlFor": "tab-three", "id": "tab-three-label", "className": "tab"}, "About"), React.createElement("div", {"id": "tab-one-panel", "className": "panel active"}, React.createElement(simulationStats_1.SimulationStats, {"setup": this.props.setup})), React.createElement("div", {"id": "tab-two-panel", "className": "panel"}, React.createElement(configure_1.Configure, {"setup": this.props.setup})), React.createElement("div", {"id": "tab-three-panel", "className": "panel"}, React.createElement(about_1.About, null))))));
+    };
+    return Simulation;
+})(React.Component);
+exports.Simulation = Simulation;
+
+},{"./about":5,"./configure":6,"./simulationStats":7}],5:[function(require,module,exports){
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var About = (function (_super) {
+    __extends(About, _super);
+    function About(props) {
+        _super.call(this, props);
+    }
+    About.prototype.shouldComponentUpdate = function (nextProps, nextState) {
+        return false;
+    };
+    About.prototype.render = function () {
+        return (React.createElement("section", {"className": "about"}, React.createElement("p", null, "To use this get your deck in text format and paste into the box on the right. Thronesdb's text download option is this format exactly, though I'm sure other editors can provide a similar format"), React.createElement("p", null, "This tool was made to analyze the setup strength of various decks. After importing your deck it will draw random set up hands (right now 5,000 hands), and determine the best(ish) possible setup and gather stats. Right now it's logic is can probably be better. Truth be told I'm not very good at this game, so any improvements that can be offered is welcome. But the rules this currently uses to determine the ", React.createElement("em", null, "best"), " setup from a hand are as followed: ", React.createElement("strong", null, "Recent changes are bolded")), React.createElement("ol", null, React.createElement("li", null, "The set up must have at least 2 characters (not counting dupes). Any possible set up with 1 or 0 characters will not be used if a set up can be made with 2 or more characters"), React.createElement("li", null, "Total cards used is the next criteria. Any possible set up using more cards then another possible set up will be choose. ", React.createElement("strong", null, "Characters with enter play affects will ony be used if there is nothing else to use the gold on")), React.createElement("li", null, "Assuming number of cards are tied, a set up using more gold will be used in favor of a set up using less gold. ", React.createElement("strong", null, "Incoming providing card are considered as \"extra gold\" for this determination")), React.createElement("li", null, React.createElement("strong", null, "If it is still tied, setup hands that use a limited card will be prioritized")), React.createElement("li", null, "Assuming used cards and gold are tied total distinct characters used will be the next criteria. Ex. If one possible set up uses 4 cards, 8 gold, and has 3 characters, it will be choosen over one that uses 4 cards, 8 gold, and uses 2 characters."), React.createElement("li", null, "If all of that is equal, it will use the possible set up with the most strength on characters"), React.createElement("li", null, "If it's still tied, then it'll choose one of the tied possible set ups randomly")), React.createElement("p", null, "Here are recent changes made this this logic:"), React.createElement("ol", null, React.createElement("li", null, "Attachment restrictions are enforced. This will make sure that attachments have a valid target. Characters who can only attach weapons will be enforced, and weapons with faction/trait restrictions will be enforced."), React.createElement("li", null, "Characters with positive enter play effects are not counted as in the card count determination. The effective result of this is that they will only be set up if there is no other option to spend the gold on."), React.createElement("li", null, "Income providing cards are viewed as a benefit. Essentially when determining how much gold a hand is worth, it counts the gold spent plus income bonus of cards. This means if a set up uses the same number of cards and gold spent, but one has an income bonus, it will be used.")), React.createElement("p", null, "This isn't perfect. This logic could probably be improved, but should in general give a good sense of how many cards and gold you can set up on average"), React.createElement("p", null, "There's also some flat out definite problems with this right now, mostly dealing with attachments. It's at least smart enough to not set up negative attachments, but here's a list of things I'd like to improve/fix soon:"), React.createElement("ol", null, React.createElement("li", null, "Specifying cards you don't want to set up. Maybe you don't ever want to set up Varys. For now if you have cards you don't want to set up, replace them in with events before importing. A system that will allow you to define cards you want to avoid setting up if possible (like positive enter play cards), as well as cards you never want to set up. Simiarly I'll add the ability to define &qout;key&qout; cards which are preferred in setup."), React.createElement("li", null, "Mulligans. This doesn't do mulligans, it's just outputting the raw results. I want to add configurable mulligan criteria, and show the final stats after mulligans"), React.createElement("li", null, "More stats. I'm already tracking but was too lazy to output several more stats, such number of unique characters, how often traits show up, icon spread, etc. If I'm still interested and people think it's useful, I'll add these and more!")), React.createElement("p", null, "Finally, some credit/shout outs to ", React.createElement("a", {"href": "http://thronesdb.com/"}, "ThronesDB"), ", where I shameless pulled all card data from and serve images from directly (for now). And to this ", React.createElement("a", {"href": "https://www.youtube.com/watch?v=gwrEnx84qr4"}, "DobblerTalk on set ups"), " where my rules were inspired from"), React.createElement("p", null, "Now maybe your wonder how you could ever pay me back, maybe you ran your deck through here and the same set up it showed you was so awful you want to yell at me. Well you can contact me at ", React.createElement("a", {"href": "mailto:jason@red5dev.com"}, "jason@red5dev.com"), ". As I mentioned I'm pretty new to this game, so I also accept general tips, tricks, decklists and things of that nature.")));
+    };
+    return About;
+})(React.Component);
+exports.About = About;
+
+},{}],6:[function(require,module,exports){
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Configure = (function (_super) {
+    __extends(Configure, _super);
+    function Configure(props) {
+        _super.call(this, props);
+    }
+    Configure.prototype.render = function () {
+        var deck = this.props.setup.deck;
+        var i = 0;
+        var avoidedCards = this.props.setup.avoidCards.map(function (pos) { return deck.drawDeck[pos]; });
+        avoidedCards = avoidedCards.filter(function (item, i, ar) { return ar.indexOf(item) === i; });
+        var avoidedItems = avoidedCards.map(function (card) {
+            i++;
+            var code = card.code + i;
+            var image = "http://thronesdb.com/" + card.imagesrc;
+            var className = "card-container";
+            return (React.createElement("div", {"className": className}, React.createElement("img", {"src": image})));
+        });
+        return (React.createElement("section", {"className": "content"}, React.createElement("section", {"className": "example"}, React.createElement("div", null, "Cards avoided during setup if possible:"), React.createElement("div", {"className": "example-container"}, avoidedItems), React.createElement("p", null, "This section is a work in progress, and will soon be the home of configuration settings..."))));
+    };
+    return Configure;
+})(React.Component);
+exports.Configure = Configure;
+
+},{}],7:[function(require,module,exports){
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var cardItem_1 = require("../cardItem");
+var react_d3_1 = require('react-d3');
+var SimulationStats = (function (_super) {
+    __extends(SimulationStats, _super);
+    function SimulationStats(props) {
+        _super.call(this, props);
+        this.state = {
+            shownSetup: 0
+        };
+    }
+    SimulationStats.prototype.onPrevious = function () {
+        var index = this.state.shownSetup - 1;
+        index = Math.min(index, this.props.setup.setups.length - 1);
+        this.setState({
+            shownSetup: index
+        });
+    };
+    SimulationStats.prototype.onNext = function () {
+        var index = this.state.shownSetup + 1;
+        if (index >= this.props.setup.setups.length) {
+            index = 0;
+        }
+        this.setState({
+            shownSetup: index
+        });
+    };
+    SimulationStats.prototype.render = function () {
+        var _this = this;
         var deck = this.props.setup.deck;
         var i = 0;
         var orderedDeck = deck.displayDeck.sort(function (c1, c2) { return c2.setup_count - c1.setup_count; });
@@ -104,13 +194,13 @@ var Simulation = (function (_super) {
             i++;
             return (React.createElement(cardItem_1.CardItem, {"key": code, "card": card, "simulations": _this.props.setup.simulations}));
         });
-        var exampleItems = this.props.setup.exampleSetup.draw.map(function (pos) {
+        var exampleItems = this.props.setup.setups[this.state.shownSetup].draw.map(function (pos) {
             i++;
             var card = _this.props.setup.deck.drawDeck[pos];
             var code = card.code + i;
             var image = "http://thronesdb.com/" + card.imagesrc;
             var className = "card-container";
-            if (_this.props.setup.exampleSetup.cards.filter(function (p) { return p == pos; }).length > 0) {
+            if (_this.props.setup.setups[_this.state.shownSetup].cards.filter(function (p) { return p == pos; }).length > 0) {
                 className += " selected";
             }
             return (React.createElement("div", {"className": className}, React.createElement("img", {"src": image})));
@@ -159,13 +249,13 @@ var Simulation = (function (_super) {
                 goldUsed.push(React.createElement("p", null, i, " Gold", plural, " : ", Math.round(10000 * this.props.setup.goldCounts[i] / this.props.setup.simulations) / 100, "%"));
             }
         }
-        return (React.createElement("section", {"className": "simulation"}, React.createElement("section", {"className": "example"}, React.createElement("div", null, this.props.setup.deck.drawDeck.length, " Cards"), React.createElement("div", null, "Example:"), React.createElement("div", {"className": "example-container"}, exampleItems)), React.createElement("section", {"className": "stats"}, React.createElement("section", {"className": "info"}, React.createElement("p", null, "Runs: ", this.props.setup.simulations), React.createElement("p", null, "Avg Gold: ", Math.round(10000 * this.props.setup.goldSetup / this.props.setup.simulations) / 10000), React.createElement("p", null, "Avg Cards: ", Math.round(10000 * this.props.setup.cardsSetup / this.props.setup.simulations) / 10000), React.createElement("p", null, React.createElement("span", {"className": "tooltip hint--top", "data-hint": "Percentage of Setups with 2 or less cards set up or only 1 character"}, "Poor Setups:"), " ", Math.round(100 * this.props.setup.poorSetups / this.props.setup.simulations), "%"), React.createElement("p", null, React.createElement("span", {"className": "tooltip hint--top", "data-hint": "Percentage of Setups with 5 or more cards set up and over 1 character"}, "Great Setups:"), " ", Math.round(100 * this.props.setup.greatSetups / this.props.setup.simulations), "%"), React.createElement("p", null, React.createElement("strong", null, "Cards Setup:")), cardsUsed, React.createElement("p", null, React.createElement("strong", null, "Gold Used:")), goldUsed), React.createElement("section", {"className": "charts"}, React.createElement(react_d3_1.BarChart, {"data": cardUsageData, "width": 500, "height": 200, "fill": '#3182bd', "title": 'Cards Used', "yAxisLabel": 'Percent', "xAxisLabel": 'Cards'}), React.createElement(react_d3_1.BarChart, {"data": goldUsageData, "width": 500, "height": 200, "fill": '#3182bd', "title": 'Gold Used', "yAxisLabel": 'Percent', "xAxisLabel": 'Gold Spent'}), React.createElement(react_d3_1.BarChart, {"data": distinctCharData, "width": 500, "height": 200, "fill": '#3182bd', "title": 'Characters Out After Setup', "yAxisLabel": 'Percent', "xAxisLabel": 'Distinct Characters'}))), React.createElement("section", {"className": "deck"}, React.createElement("ul", {"className": "card-list"}, cardItems))));
+        return (React.createElement("section", {"className": "content"}, React.createElement("section", {"className": "example"}, React.createElement("div", null, this.props.setup.deck.drawDeck.length, " Cards"), React.createElement("div", null, "Examples:", React.createElement("button", {"onClick": this.onPrevious.bind(this)}, "Previous"), " ", React.createElement("button", {"onClick": this.onNext.bind(this)}, "Next")), React.createElement("div", {"className": "example-container"}, exampleItems)), React.createElement("section", {"className": "stats"}, React.createElement("section", {"className": "info"}, React.createElement("p", null, "Runs: ", this.props.setup.simulations), React.createElement("p", null, "Avg Gold: ", Math.round(10000 * this.props.setup.goldSetup / this.props.setup.simulations) / 10000), React.createElement("p", null, "Avg Cards: ", Math.round(10000 * this.props.setup.cardsSetup / this.props.setup.simulations) / 10000), React.createElement("p", null, React.createElement("span", {"className": "tooltip hint--top", "data-hint": "Percentage of Setups with 2 or less cards set up or only 1 character"}, "Poor Setups:"), " ", Math.round(100 * this.props.setup.poorSetups / this.props.setup.simulations), "%"), React.createElement("p", null, React.createElement("span", {"className": "tooltip hint--top", "data-hint": "Percentage of Setups with 5 or more cards set up and over 1 character"}, "Great Setups:"), " ", Math.round(100 * this.props.setup.greatSetups / this.props.setup.simulations), "%"), React.createElement("p", null, React.createElement("strong", null, "Cards Setup:")), cardsUsed, React.createElement("p", null, React.createElement("strong", null, "Gold Used:")), goldUsed), React.createElement("section", {"className": "charts"}, React.createElement(react_d3_1.BarChart, {"data": cardUsageData, "width": 500, "height": 200, "fill": '#3182bd', "title": 'Cards Used', "yAxisLabel": 'Percent', "xAxisLabel": 'Cards'}), React.createElement(react_d3_1.BarChart, {"data": goldUsageData, "width": 500, "height": 200, "fill": '#3182bd', "title": 'Gold Used', "yAxisLabel": 'Percent', "xAxisLabel": 'Gold Spent'}), React.createElement(react_d3_1.BarChart, {"data": distinctCharData, "width": 500, "height": 200, "fill": '#3182bd', "title": 'Characters Out After Setup', "yAxisLabel": 'Percent', "xAxisLabel": 'Distinct Characters'}))), React.createElement("section", {"className": "deck"}, React.createElement("ul", {"className": "card-list"}, cardItems))));
     };
-    return Simulation;
+    return SimulationStats;
 })(React.Component);
-exports.Simulation = Simulation;
+exports.SimulationStats = SimulationStats;
 
-},{"../cardItem":2,"react-d3":36}],5:[function(require,module,exports){
+},{"../cardItem":2,"react-d3":67}],8:[function(require,module,exports){
 var DeckStore = (function () {
     function DeckStore() {
         this.drawDeck = [];
@@ -196,8 +286,44 @@ var DeckStore = (function () {
                     card.setup_count = 0;
                     var limitedRegex = new RegExp('<abbr>Limited<\\/abbr>.*', 'g');
                     card.is_limited = limitedRegex.test(card.text);
-                    if (card.is_limited) {
-                        console.log("Limited ", card);
+                    var incomeRegex = new RegExp('\\+([0-9]) Income', 'g');
+                    var incomeMatches = incomeRegex.exec(card.text);
+                    card.income = 0;
+                    if (incomeMatches) {
+                        card.income = +incomeMatches[1];
+                    }
+                    var marshalEffectRegex = new RegExp('(After you marshal ' + card.name + ')|(After ' + card.name + ' enters play)');
+                    var marshalMatches = marshalEffectRegex.exec(card.text);
+                    card.enter_play_effect = marshalEffectRegex.test(card.text);
+                    if (card.enter_play_effect) {
+                    }
+                    card.attachmentRestriction = [];
+                    if (card.type_code == 'attachment') {
+                        var restrictionRegex = new RegExp('(.*) character only');
+                        var restrictionMatches = restrictionRegex.exec(card.text);
+                        if (restrictionMatches) {
+                            if (restrictionMatches[1] == '<i>Lord</i> or <i>Lady</i>'
+                                || restrictionMatches[1] == 'Lord or Lady') {
+                                card.attachmentRestriction = ['Lord', 'Lady'];
+                            }
+                            else {
+                                var restriction = restrictionMatches[1];
+                                restriction = restriction.replace(/\[|\]/g, "");
+                                card.attachmentRestriction = [restriction];
+                            }
+                        }
+                    }
+                    else if (card.type_code == 'character') {
+                        var restrictionRegex = new RegExp('No attachments( except <i>Weapon<\\/i>)');
+                        var restrictionMatches = restrictionRegex.exec(card.text);
+                        if (restrictionMatches) {
+                            if (restrictionMatches[1]) {
+                                card.attachmentRestriction = ['Weapon'];
+                            }
+                            else {
+                                card.attachmentRestriction = ['NO ATTACHMENTS'];
+                            }
+                        }
                     }
                     this.displayDeck.push(card);
                     for (var i = 0; i < card.count; i++) {
@@ -213,14 +339,25 @@ var DeckStore = (function () {
 })();
 exports.DeckStore = DeckStore;
 
-},{}],6:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var SetupStore = (function () {
     function SetupStore(deck) {
         var self = this;
         this.deck = deck;
+        this.neverSetupCards = ['02006', '02034', '01035'];
         this.deck.subscribe(function () {
             self.resetStats();
-            if (self.deck.drawDeck.length >= 8) {
+            self.avoidCards = [];
+            for (var pos in self.deck.drawDeck) {
+                var card = deck.drawDeck[pos];
+                if (self.neverSetupCards.filter(function (c) { return c == card.code; }).length > 0) {
+                    continue;
+                }
+                if (card.enter_play_effect) {
+                    self.avoidCards.push(pos);
+                }
+            }
+            if (self.deck.drawDeck.length >= 7) {
                 self.performSimulation(5000);
             }
             self.inform();
@@ -252,22 +389,62 @@ var SetupStore = (function () {
         var setup = null;
         for (var i = 0; i < runs; i++) {
             setup = this.runSetup();
+            this.setups.push(setup);
         }
         this.exampleSetup = setup;
-        this.setups.push(setup);
         this.inform();
+    };
+    SetupStore.prototype.validateSetup = function (setup) {
+        var _this = this;
+        if (setup.hasAttachment && setup.distinctCharacters == 0) {
+            return false;
+        }
+        var attachments = setup.cards.map(function (c) { return _this.deck.drawDeck[c]; }).filter(function (c) { return c.type_code == 'attachment'; });
+        var characters = setup.cards.map(function (c) { return _this.deck.drawDeck[c]; }).filter(function (c) { return c.type_code == 'character'; });
+        var unattachables = attachments.filter(function (att) {
+            var regex = att.attachmentRestriction.reduce(function (prev, curr) { return (prev ? prev + "|" : "") + curr; }, "");
+            var traitRegex = new RegExp(regex);
+            var targetCharacters = characters.filter(function (c) {
+                if (c.attachmentRestriction) {
+                    var attachmentRestriction = new RegExp(c.attachmentRestriction.reduce(function (prev, curr) { return (prev ? prev + "|" : "") + curr; }, ""));
+                    if (!attachmentRestriction.test(att.traits)) {
+                        return false;
+                    }
+                }
+                return !att.attachmentRestriction || traitRegex.test(c.traits) || traitRegex.test(c.faction_code);
+            });
+            if (targetCharacters == 0) {
+                return true;
+            }
+            return false;
+        });
+        return unattachables.length == 0;
+    };
+    SetupStore.prototype.scoreSetup = function (setup) {
+        var avoidedCardsUsed = this.avoidCards.filter(function (c) { return setup.cards.filter(function (s) { return s == c; }).length > 0; }).length;
+        var factors = [
+            setup.distinctCharacters > 1,
+            (setup.cards.length - avoidedCardsUsed),
+            setup.cards.length,
+            setup.currentCost + setup.income,
+            setup.limitedUsed,
+            setup.distinctCharacters,
+            setup.strength
+        ];
+        var score = 0;
+        for (var i = 0; i < factors.length; i++) {
+            score += factors[i] * Math.pow(100, (factors.length - i));
+        }
+        setup.factors = factors;
+        setup.score = score;
     };
     SetupStore.prototype.setUp = function (setup, remainingCards) {
         var drawDeck = this.deck.drawDeck;
         if (remainingCards.length == 0) {
-            if (setup.hasAttachment && setup.distinctCharacters == 0) {
+            if (!this.validateSetup(setup)) {
                 return [];
             }
-            var score = (setup.cards.length * 1000) + (setup.currentCost * 100) + (setup.distinctCharacters * 10) + setup.strength;
-            if (setup.distinctCharacters > 1) {
-                score += 10000;
-            }
-            setup.score = score;
+            this.scoreSetup(setup);
             return [setup];
         }
         var pos = remainingCards[0];
@@ -292,7 +469,11 @@ var SetupStore = (function () {
             if (card.type_code == 'attachment') {
                 setup.hasAttachment = true;
             }
+            if (card.enter_play_effect) {
+                setup.enterPlayEffects += 1;
+            }
             setup.currentCost += card.cost;
+            setup.income += card.income;
             setup.cards.push(pos);
             return this.setUp(setup, remainingCards).concat(this.setUp(cardNotUsedSetup, remainingCards));
         }
@@ -325,6 +506,8 @@ var SetupStore = (function () {
             distinctCharacters: 0,
             hasAttachment: false,
             strength: 0,
+            income: 0,
+            enterPlayEffects: 0,
             cards: []
         }, filteredDraw);
         var bestSetup = possibleSetup[0];
@@ -361,2536 +544,7 @@ var SetupStore = (function () {
 })();
 exports.SetupStore = SetupStore;
 
-},{}],7:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-
-module.exports = React.createClass({
-
-  displayName: 'Area',
-
-  propTypes: {
-    path: React.PropTypes.string,
-    fill: React.PropTypes.string
-  },
-
-  getDefaultProps:function() {
-    return {
-      fill: '#3182bd'
-    };
-  },
-
-  render:function() {
-
-    return (
-      React.createElement("path", {
-        className: "rd3-areachart-area", 
-        d: this.props.path, 
-        fill: this.props.fill, 
-        onMouseOver: this.props.handleMouseOver, 
-        onMouseLeave: this.props.handleMouseLeave}
-      )
-    );
-  }
-
-});
-
-},{"react":218}],8:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-var DataSeries = require('./DataSeries');
-var $__0=      require('../common'),Chart=$__0.Chart,XAxis=$__0.XAxis,YAxis=$__0.YAxis;
-var $__1=     require('../mixins'),CartesianChartPropsMixin=$__1.CartesianChartPropsMixin,ViewBoxMixin=$__1.ViewBoxMixin;
-
-module.exports = React.createClass({
-
-  mixins: [ CartesianChartPropsMixin, ViewBoxMixin ],
-
-  displayName: 'AreaChart',
-
-  propTypes: {
-    margins:           React.PropTypes.object,
-    interpolate:       React.PropTypes.bool,
-    interpolationType: React.PropTypes.string,
-    hoverAnimation:    React.PropTypes.bool,
- },
-
-  getDefaultProps:function() {
-    return {
-      margins: {top: 10, right: 20, bottom: 40, left: 45},
-      yAxisTickCount: 4,
-      interpolate: false,
-      interpolationType: null,
-      className: 'rd3-areachart',
-      hoverAnimation: true
-    };
-  },
-
-  render:function() {
-
-    var props = this.props;
-
-    var data = props.data;
-
-    var interpolationType = props.interpolationType || (props.interpolate ? 'cardinal' : 'linear');
-
-    // Calculate inner chart dimensions
-    var innerWidth, innerHeight;
-    innerWidth = this.getOuterDimensions().width - props.margins.left - props.margins.right;
-    innerHeight = this.getOuterDimensions().height - props.margins.top - props.margins.bottom;
-
-    if (!Array.isArray(data)) {
-      data = [data];
-    }
-
-    var yScale = d3.scale.linear()
-      .range([innerHeight, 0]);
-
-    var xValues = [];
-    var yValues = [];
-    var seriesNames = [];
-    var yMaxValues = [];
-    data.forEach( function(series)  {
-      var upper = 0;
-      seriesNames.push(series.name);
-      series.values.forEach(function(val, idx)  {
-        upper = Math.max(upper, props.yAccessor(val));
-        xValues.push(props.xAccessor(val));
-        yValues.push(props.yAccessor(val));
-      });
-      yMaxValues.push(upper);
-    });
-
-    var xScale;
-    if (xValues.length > 0 && Object.prototype.toString.call(xValues[0]) === '[object Date]' && props.xAxisTickInterval) {
-      xScale = d3.time.scale()
-        .range([0, innerWidth]);
-    } else {
-      xScale = d3.scale.linear()
-        .range([0, innerWidth]);
-    }
-
-    xScale.domain(d3.extent(xValues));
-    yScale.domain([0, d3.sum(yMaxValues)]);
-
-    props.colors.domain(seriesNames);
-
-    var stack = d3.layout.stack()
-      .x(props.xAccessor)
-      .y(props.yAccessor)
-      .values(function(d) { return d.values; });
-
-    var layers = stack(data);
-
-    var trans = ("translate(" +  props.margins.left + "," +  props.margins.top + ")");
-
-    var dataSeries = layers.map( function(d, idx)  {
-      return (
-          React.createElement(DataSeries, {
-            key: idx, 
-            seriesName: d.name, 
-            fill: props.colors(props.colorAccessor(d, idx)), 
-            index: idx, 
-            xScale: xScale, 
-            yScale: yScale, 
-            data: d.values, 
-            xAccessor: props.xAccessor, 
-            yAccessor: props.yAccessor, 
-            interpolationType: interpolationType, 
-            hoverAnimation: props.hoverAnimation}
-          )
-        );
-      });
-
-    return (
-      React.createElement(Chart, {
-        viewBox: this.getViewBox(), 
-        legend: props.legend, 
-        data: data, 
-        margins: props.margins, 
-        colors: props.colors, 
-        colorAccessor: props.colorAccessor, 
-        width: props.width, 
-        height: props.height, 
-        title: props.title
-      }, 
-        React.createElement("g", {transform: trans, className: props.className}, 
-          React.createElement(XAxis, {
-            xAxisClassName: "rd3-areachart-xaxis", 
-            xScale: xScale, 
-            xAxisTickValues: props.xAxisTickValues, 
-            xAxisTickInterval: props.xAxisTickInterval, 
-            xAxisTickCount: props.xAxisTickCount, 
-            xAxisLabel: props.xAxisLabel, 
-            xAxisLabelOffset: props.xAxisLabelOffset, 
-            tickFormatting: props.xAxisFormatter, 
-            xOrient: props.xOrient, 
-            yOrient: props.yOrient, 
-            margins: props.margins, 
-            width: innerWidth, 
-            height: innerHeight, 
-            gridVertical: props.gridVertical, 
-            gridVerticalStroke: props.gridVerticalStroke, 
-            gridVerticalStrokeWidth: props.gridVerticalStrokeWidth, 
-            gridVerticalStrokeDash: props.gridVerticalStrokeDash}
-          ), 
-          React.createElement(YAxis, {
-            yAxisClassName: "rd3-areachart-yaxis", 
-            yScale: yScale, 
-            yAxisTickValues: props.yAxisTickValues, 
-            yAxisTickInterval: props.yAxisTickInterval, 
-            yAxisTickCount: props.yAxisTickCount, 
-            yAxisLabel: props.yAxisLabel, 
-            yAxisLabelOffset: props.yAxisLabelOffset, 
-            tickFormatting: props.yAxisFormatter, 
-            xOrient: props.xOrient, 
-            yOrient: props.yOrient, 
-            margins: props.margins, 
-            width: innerWidth, 
-            height: props.height, 
-            gridHorizontal: props.gridHorizontal, 
-            gridHorizontalStroke: props.gridHorizontalStroke, 
-            gridHorizontalStrokeWidth: props.gridHorizontalStrokeWidth, 
-            gridHorizontalStrokeDash: props.gridHorizontalStrokeDash}
-          ), 
-          dataSeries
-        )
-      )
-    );
-  }
-
-});
-
-},{"../common":35,"../mixins":45,"./DataSeries":10,"d3":46,"react":218}],9:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-var shade = require('../utils').shade;
-var Area = require('./Area');
-
-module.exports = React.createClass({
-
-  displayName: 'AreaContainer',
-
-  propTypes: {
-    fill: React.PropTypes.string, 
-  },
-
-  getDefaultProps:function() {
-    return {
-      fill: '#3182bd'
-    };
-  },
-
-  getInitialState:function() {
-    return { 
-      fill: this.props.fill
-    };
-  },
-
-  render:function() {
-
-    var props = this.props;
-
-    // animation controller
-    var handleMouseOver, handleMouseLeave;
-    if(props.hoverAnimation) {
-      handleMouseOver = this._animateArea;
-      handleMouseLeave = this._restoreArea;
-    } else {
-      handleMouseOver = handleMouseLeave = null;
-    }
-
-    return (
-      React.createElement(Area, React.__spread({
-          handleMouseOver: handleMouseOver, 
-          handleMouseLeave: handleMouseLeave}, 
-          props, 
-          {fill: this.state.fill})
-      )
-    );
-  },
-
-  _animateArea:function() {
-    this.setState({ 
-      fill: shade(this.props.fill, 0.02)
-    });
-  },
-
-  _restoreArea:function() {
-    this.setState({ 
-      fill: this.props.fill
-    });
-  },
-
-});
-
-},{"../utils":62,"./Area":7,"d3":46,"react":218}],10:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-var AreaContainer = require('./AreaContainer');
-
-module.exports = React.createClass({
-
-  displayName: 'DataSeries',
-
-  propTypes: {
-    fill:              React.PropTypes.string,
-    interpolationType: React.PropTypes.string
-  },
-
-  getDefaultProps:function() {
-    return {
-      interpolationType: 'linear'
-    };
-  },
-
-  render:function() {
-
-    var props = this.props;
-
-    var area = d3.svg.area()
-      .x(function(d) { return props.xScale(props.xAccessor(d)); })
-      .y0(function(d) { return props.yScale(d.y0); })
-      .y1(function(d) { return props.yScale(d.y0 + props.yAccessor(d)); })
-      .interpolate(props.interpolationType);
-
-    var path = area(props.data);
-
-    return (
-      React.createElement(AreaContainer, {
-        fill: props.fill, 
-        hoverAnimation: props.hoverAnimation, 
-        path: path}
-      )
-    );
-  }
-
-});
-
-},{"./AreaContainer":9,"d3":46,"react":218}],11:[function(require,module,exports){
-
-exports.AreaChart = require('./AreaChart');
-
-},{"./AreaChart":8}],12:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-
-module.exports = React.createClass({displayName: "exports",
-
-  propTypes: {
-    fill: React.PropTypes.string,
-    width: React.PropTypes.number,
-    height: React.PropTypes.number,
-    x: React.PropTypes.number,
-    y: React.PropTypes.number,
-    className: React.PropTypes.string
-  },
-
-  getDefaultProps:function() {
-    return {
-      offset: 0,
-      className: 'rd3-barchart-bar'
-    };
-  },
-
-  render:function() {
-    return (
-      React.createElement("rect", React.__spread({
-        className: "rd3-barchart-bar"}, 
-        this.props, 
-        {fill: this.props.fill, 
-        onMouseOver: this.props.handleMouseOver, 
-        onMouseLeave: this.props.handleMouseLeave})
-      )
-    );
-  }
-});
-
-},{"react":218}],13:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-var DataSeries = require('./DataSeries');
-var utils = require('../utils');
-
-var $__0=      require('../common'),Chart=$__0.Chart,XAxis=$__0.XAxis,YAxis=$__0.YAxis;
-var $__1=     require('../mixins'),CartesianChartPropsMixin=$__1.CartesianChartPropsMixin,ViewBoxMixin=$__1.ViewBoxMixin;
-
-module.exports = React.createClass({
-
-  mixins: [ CartesianChartPropsMixin, ViewBoxMixin ],
-
-  displayName: 'BarChart',
-
-  propTypes: {
-    chartClassName:         React.PropTypes.string,
-    data:                   React.PropTypes.array.isRequired,
-    hoverAnimation:         React.PropTypes.bool,
-    height:                 React.PropTypes.number,
-    margins:                React.PropTypes.object,
-    rangeRoundBandsPadding: React.PropTypes.number,
-    // https://github.com/mbostock/d3/wiki/Stack-Layout#offset
-    stackOffset:            React.PropTypes.oneOf(['silhouette', 'expand', 'wigget', 'zero']),
-    valuesAccessor:         React.PropTypes.func,
-    title:                  React.PropTypes.string,
-    width:                  React.PropTypes.number,
-    xAxisClassName:         React.PropTypes.string,
-    yAxisClassName:         React.PropTypes.string,
-    yAxisTickCount:         React.PropTypes.number,
-  },
-
-  getDefaultProps:function() {
-    return {
-      chartClassName:         'rd3-barchart',
-      hoverAnimation:         true,
-      margins:                {top: 10, right: 20, bottom: 40, left: 45},
-      rangeRoundBandsPadding: 0.25,
-      stackOffset:            'zero',
-      valuesAccessor:         function(d)  {return d.values;},
-      xAxisClassName:         'rd3-barchart-xaxis',
-      yAxisClassName:         'rd3-barchart-yaxis',
-      yAxisTickCount:         4,
-    };
-  },
-
-  _getStackedValuesMaxY:function(_data) {
-    // in stacked bar chart, the maximum height we need for 
-    // yScale domain is the sum of y0 + y
-    var $__0=    this.props,valuesAccessor=$__0.valuesAccessor;
-    return d3.max(_data, function(d) {
-      return d3.max(valuesAccessor(d), function(d) {
-        // where y0, y is generated by d3.layout.stack()
-        return d.y0 + d.y;
-      });
-    });
-  },
-
-  _getLabels:function(firstSeries) {
-    // we only need first series to get all the labels
-    var $__0=     this.props,valuesAccessor=$__0.valuesAccessor,xAccessor=$__0.xAccessor;
-    return valuesAccessor(firstSeries).map(xAccessor);
-  },
-
-  _stack:function() {
-    var $__0=       this.props,stackOffset=$__0.stackOffset,xAccessor=$__0.xAccessor,yAccessor=$__0.yAccessor,valuesAccessor=$__0.valuesAccessor;
-    return d3.layout.stack()
-                    .offset(stackOffset)
-                    .x(xAccessor)
-                    .y(yAccessor)
-                    .values(valuesAccessor);
-  },
-
-  render:function() {
-
-    var props = this.props;
-
-    var _data = this._stack()(props.data);
-
-    var margins = props.margins;
-
-    var innerHeight = props.height - ( margins.top + margins.bottom );
-    var innerWidth = props.width - ( margins.left + margins.right );
-
-    var xScale = d3.scale.ordinal()
-      .domain(this._getLabels(_data[0]))
-      .rangeRoundBands([0, innerWidth], props.rangeRoundBandsPadding);
-
-    var yScale = d3.scale.linear()
-      .range([innerHeight, 0])
-      .domain([0, this._getStackedValuesMaxY(_data)]);
-
-    var trans = ("translate(" +  margins.left + "," +  margins.top + ")");
-
-    return (
-      React.createElement(Chart, {
-        viewBox: props.viewBox, 
-        legend: props.legend, 
-        data: props.data, 
-        margins: props.margins, 
-        colors: props.colors, 
-        colorAccessor: props.colorAccessor, 
-        width: props.width, 
-        height: props.height, 
-        title: props.title
-      }, 
-        React.createElement("g", {transform: trans, className: props.chartClassName}, 
-          React.createElement(YAxis, {
-            yAxisClassName: props.yAxisClassName, 
-            yAxisTickValues: props.yAxisTickValues, 
-            yAxisLabel: props.yAxisLabel, 
-            yAxisLabelOffset: props.yAxisLabelOffset, 
-            yScale: yScale, 
-            margins: margins, 
-            yAxisTickCount: props.yAxisTickCount, 
-            tickFormatting: props.yAxisFormatter, 
-            width: innerWidth, 
-            height: innerHeight, 
-            xOrient: props.xOrient, 
-            yOrient: props.yOrient, 
-            gridHorizontal: props.gridHorizontal, 
-            gridHorizontalStroke: props.gridHorizontalStroke, 
-            gridHorizontalStrokeWidth: props.gridHorizontalStrokeWidth, 
-            gridHorizontalStrokeDash: props.gridHorizontalStrokeDash}
-          ), 
-          React.createElement(XAxis, {
-            xAxisClassName: props.xAxisClassName, 
-            xAxisTickValues: props.xAxisTickValues, 
-            xAxisLabel: props.xAxisLabel, 
-            xAxisLabelOffset: props.xAxisLabelOffset, 
-            xScale: xScale, 
-            margins: margins, 
-            tickFormatting: props.xAxisFormatter, 
-            width: innerWidth, 
-            height: innerHeight, 
-            xOrient: props.xOrient, 
-            yOrient: props.yOrient, 
-            gridVertical: props.gridVertical, 
-            gridVerticalStroke: props.gridVerticalStroke, 
-            gridVerticalStrokeWidth: props.gridVerticalStrokeWidth, 
-            gridVerticalStrokeDash: props.gridVerticalStrokeDash}
-          ), 
-          React.createElement(DataSeries, {
-            yScale: yScale, 
-            xScale: xScale, 
-            margins: margins, 
-            _data: _data, 
-            width: innerWidth, 
-            height: innerHeight, 
-            colors: props.colors, 
-            colorAccessor: props.colorAccessor, 
-            hoverAnimation: props.hoverAnimation, 
-            valuesAccessor: props.valuesAccessor}
-            )
-        )
-      )
-    );
-  }
-
-});
-
-},{"../common":35,"../mixins":45,"../utils":62,"./DataSeries":15,"d3":46,"react":218}],14:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var Bar = require('./Bar');
-var shade = require('../utils').shade;
-
-module.exports = React.createClass({displayName: "exports",
-
-  propTypes: {
-    fill: React.PropTypes.string,
-  },
-
-  getDefaultProps:function() {
-    return {
-      fill: '#3182BD'
-    };
-  },
-
-  getInitialState:function() {
-    return {
-      // fill is named as fill instead of initialFill to avoid
-      // confusion when passing down props from top parent
-      fill: this.props.fill
-    };
-  },
-
-  render:function() {
-
-    var props = this.props;
-
-    return (
-      React.createElement(Bar, React.__spread({}, 
-        props, 
-        {fill: this.state.fill, 
-        handleMouseOver: props.hoverAnimation ? this._animateBar : null, 
-        handleMouseLeave: props.hoverAnimation ? this._restoreBar : null})
-      )
-    );
-  },
-
-  _animateBar:function() {
-    this.setState({ 
-      fill: shade(this.props.fill, 0.2)
-    });
-  },
-
-  _restoreBar:function() {
-    this.setState({ 
-      fill: this.props.fill
-    });
-  },
-});
-
-},{"../utils":62,"./Bar":12,"react":218}],15:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-var BarContainer = require('./BarContainer');
-
-module.exports = React.createClass({
-
-  displayName: 'DataSeries',
-
-  propTypes: {
-    _data:          React.PropTypes.array,
-    colors:         React.PropTypes.func,
-    colorAccessor:  React.PropTypes.func,
-    height:         React.PropTypes.number,
-    width:          React.PropTypes.number,
-    valuesAccessor: React.PropTypes.func,
-  },
-
-  render:function() {
-    return (
-      React.createElement("g", null, this._renderBarSeries())
-    );
-  },
-
-  _renderBarSeries:function() {
-    var $__0=     this.props,_data=$__0._data,valuesAccessor=$__0.valuesAccessor;
-    return _data.map(function(layer, seriesIdx)  {
-      return valuesAccessor(layer)
-             .map(function(segment)  {return this._renderBarContainer(segment, seriesIdx);}.bind(this))
-    }.bind(this));
-  },
-
-  _renderBarContainer:function(segment, seriesIdx) {
-    var $__0=         this.props,colors=$__0.colors,colorAccessor=$__0.colorAccessor,height=$__0.height,hoverAnimation=$__0.hoverAnimation,xScale=$__0.xScale,yScale=$__0.yScale;
-    return (
-      React.createElement(BarContainer, {
-        height: height - yScale(segment.y), 
-        width: xScale.rangeBand(), 
-        x: xScale(segment.x), 
-        y: yScale( segment.y0 + segment.y), 
-        fill: colors(colorAccessor(segment, seriesIdx)), 
-        hoverAnimation: hoverAnimation}
-      )
-    )
-  }
-
-});
-
-},{"./BarContainer":14,"d3":46,"react":218}],16:[function(require,module,exports){
-
-exports.BarChart = require('./BarChart');
-
-},{"./BarChart":13}],17:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-
-module.exports = React.createClass({
-
-  displayName: 'Candle',
-
-  propTypes: {
-    className:      React.PropTypes.string,
-    shapeRendering: React.PropTypes.string,
-    stroke:         React.PropTypes.string,
-    strokeWidth:    React.PropTypes.number,
-  },
-
-  getDefaultProps:function() {
-    return {
-      className:      'rd3-candlestick-candle',
-      shapeRendering: 'crispEdges',
-      stroke:         '#000',
-      strokeWidth:    1,
-    };
-  },
-
-  render:function() {
-    var props = this.props;
-
-    return (
-      React.createElement("rect", {
-        className: props.className, 
-        fill: props.candleFill, 
-        x: props.candle_x, 
-        y: props.candle_y, 
-        stroke: props.stroke, 
-        strokeWidth: props.strokeWidth, 
-        style: { shapeRendering: props.shapeRendering}, 
-        width: props.candleWidth, 
-        height: props.candleHeight, 
-        onMouseOver: props.handleMouseOver, 
-        onMouseLeave: props.handleMouseLeave}
-      )
-    );
-  }
-
-});
-
-},{"react":218}],18:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-var utils = require('../utils');
-var DataSeries = require('./DataSeries');
-var $__0=      require('../common'),Chart=$__0.Chart,XAxis=$__0.XAxis,YAxis=$__0.YAxis;
-
-module.exports = React.createClass({
-
-  displayName: 'CandleStickChart',
-
-  propTypes: {
-    data:              React.PropTypes.oneOfType([
-                         React.PropTypes.array,
-                         React.PropTypes.object
-                       ]),
-    fillUp:            React.PropTypes.func,
-    fillUpAccessor:    React.PropTypes.func,
-    fillDown:          React.PropTypes.func,
-    fillDownAccessor:  React.PropTypes.func,
-    height:            React.PropTypes.number,
-    hoverAnimation:    React.PropTypes.bool,
-    title:             React.PropTypes.string,
-    xAccessor:         React.PropTypes.func,
-    xAxisFormatter:    React.PropTypes.func,
-    xAxisTickInterval: React.PropTypes.object,
-    xAxisTickValues:   React.PropTypes.array,
-    yAccessor:         React.PropTypes.func,
-    yAxisFormatter:    React.PropTypes.func,
-    yAxisTickCount:    React.PropTypes.number,
-    yAxisTickValues:   React.PropTypes.array,
-    width:             React.PropTypes.number,
-  },
-
-  getDefaultProps:function() {
-    return {
-      className:        'rd3-candlestick',
-      xAxisClassName:   'rd3-candlestick-xaxis',
-      yAxisClassName:   'rd3-candlestick-yaxis',
-      data:             [],
-      fillUp:           function(value)  {return '#ffffff';},
-      fillUpAccessor:   function(d, idx)  {return idx;},
-      fillDown:         d3.scale.category20c(),
-      fillDownAccessor: function(d, idx)  {return idx;},
-      height:           200,
-      hoverAnimation:   true,
-      margins:          {top: 10, right: 20, bottom: 30, left: 45},
-      legendOffset:     120,
-      title:            '',
-      xAccessor:        function(d)  {return d.x;},
-      yAccessor:        function(d)  {return { open: d.open, high: d.high, low: d.low, close: d.close };},
-      width:            400,
-    };
-  },
-
-  render:function() {
-
-    var props = this.props;
-
-    // Calculate inner chart dimensions
-    var innerWidth, innerHeight;
-    innerWidth = props.width - props.margins.left - props.margins.right;
-    innerHeight = props.height - props.margins.top - props.margins.bottom;
-
-    if (!Array.isArray(props.data)) {
-      props.data = [props.data];
-    }
-    var flattenedData = utils.flattenData(props.data, props.xAccessor, props.yAccessor);
-
-    var allValues = flattenedData.allValues,
-        xValues = flattenedData.xValues,
-        yValues = flattenedData.yValues;
-    var scales = utils.calculateScales(innerWidth, innerHeight, xValues, yValues);
-
-    var trans = ("translate(" + ( props.yAxisOffset < 0 ? props.margins.left + Math.abs(props.yAxisOffset) : props.margins.left) + "," +  props.margins.top + ")");
-
-    var dataSeries = props.data.map( function(series, idx)  {
-      return (
-          React.createElement(DataSeries, {
-            key: idx, 
-            seriesName: series.name, 
-            index: idx, 
-            xScale: scales.xScale, 
-            yScale: scales.yScale, 
-            data: series.values, 
-            fillUp: props.fillUp(props.fillUpAccessor(series, idx)), 
-            fillDown: props.fillDown(props.fillDownAccessor(series, idx)), 
-            xAccessor: props.xAccessor, 
-            yAccessor: props.yAccessor, 
-            hoverAnimation: props.hoverAnimation}
-          )
-        );
-      });
-
-    return (
-      React.createElement(Chart, {
-        viewBox: props.viewBox, 
-        width: props.width, 
-        height: props.height, 
-        margins: props.margins, 
-        title: props.title
-      }, 
-        React.createElement("g", {transform: trans, className: props.className}, 
-          React.createElement(XAxis, {
-            xAxisClassName: props.xAxisClassName, 
-            xScale: scales.xScale, 
-            xAxisTickValues: props.xAxisTickValues, 
-            xAxisTickInterval: props.xAxisTickInterval, 
-            xAxisOffset: props.xAxisOffset, 
-            tickFormatting: props.xAxisFormatter, 
-            xAxisLabel: props.xAxisLabel, 
-            xAxisLabelOffset: props.xAxisLabelOffset, 
-            xOrient: props.xOrient, 
-            yOrient: props.yOrient, 
-            margins: props.margins, 
-            width: innerWidth, 
-            height: innerHeight, 
-            gridVertical: props.gridVertical, 
-            gridVerticalStroke: props.gridVerticalStroke, 
-            gridVerticalStrokeWidth: props.gridVerticalStrokeWidth, 
-            gridVerticalStrokeDash: props.gridVerticalStrokeDash}
-          ), 
-          React.createElement(YAxis, {
-            yAxisClassName: props.yAxisClassName, 
-            yScale: scales.yScale, 
-            yAxisTickValues: props.yAxisTickValues, 
-            yAxisOffset: props.yAxisOffset, 
-            yAxisTickCount: props.yAxisTickCount, 
-            tickFormatting: props.yAxisFormatter, 
-            yAxisLabel: props.yAxisLabel, 
-            yAxisLabelOffset: props.yAxisLabelOffset, 
-            xOrient: props.xOrient, 
-            yOrient: props.yOrient, 
-            margins: props.margins, 
-            width: innerWidth, 
-            height: props.height, 
-            gridHorizontal: props.gridHorizontal, 
-            gridHorizontalStroke: props.gridHorizontalStroke, 
-            gridHorizontalStrokeWidth: props.gridHorizontalStrokeWidth, 
-            gridHorizontalStrokeDash: props.gridHorizontalStrokeDash}
-          ), 
-          dataSeries
-        )
-      )
-    );
-  }
-
-});
-
-},{"../common":35,"../utils":62,"./DataSeries":20,"d3":46,"react":218}],19:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-var utils = require('../utils');
-var Candle = require('./Candle');
-var Wick = require('./Wick');
-
-module.exports = React.createClass({
-
-  displayName: 'CandleStickContainer',
-
-  propTypes: {
-    candle_x:       React.PropTypes.number,
-    candle_y:       React.PropTypes.number,
-    className:      React.PropTypes.string,
-    candleFill:     React.PropTypes.string,
-    candleHeight:   React.PropTypes.number,
-    candleWidth:    React.PropTypes.number,
-    wick_x1:        React.PropTypes.number,
-    wick_x2:        React.PropTypes.number,
-    wick_y1:        React.PropTypes.number,
-    wick_y2:        React.PropTypes.number,
-  },
-
-  getDefaultProps:function() {
-    return {
-      className: 'rd3-candlestick-container'
-    };
-  },
-
-  getInitialState:function() {
-    // state for animation usage
-    return {
-      candleWidth: this.props.candleWidth,
-      candleFill: this.props.candleFill
-    };
-  },
-
-  render:function() {
-
-    var props = this.props;
-    var state = this.state;
-
-    // animation controller
-    var handleMouseOver, handleMouseLeave;
-    if(props.hoverAnimation) {
-      handleMouseOver = this._animateCandle;
-      handleMouseLeave = this._restoreCandle;
-    } else {
-      handleMouseOver = handleMouseLeave = null;
-    }
-
-    return (
-      React.createElement("g", {className: props.className}, 
-       React.createElement(Wick, {
-         wick_x1: props.wick_x1, 
-         wick_x2: props.wick_x2, 
-         wick_y1: props.wick_y1, 
-         wick_y2: props.wick_y2}
-       ), 
-       React.createElement(Candle, {
-         candleFill: state.candleFill, 
-         candleWidth: state.candleWidth, 
-         candle_x: props.candle_x - ((state.candleWidth - props.candleWidth) / 2), 
-         candle_y: props.candle_y, 
-         candleHeight: props.candleHeight, 
-         handleMouseOver: handleMouseOver, 
-         handleMouseLeave: handleMouseLeave}
-       )
-      )
-    );
-  },
-
-  _animateCandle:function() {
-    this.setState({ 
-      candleWidth: this.props.candleWidth * 1.5,
-      candleFill: utils.shade(this.props.candleFill, -0.2)
-    });
-  },
-
-  _restoreCandle:function() {
-    this.setState({ 
-      candleWidth: this.props.candleWidth,
-      candleFill: this.props.candleFill
-    });
-  },
-
-});
-
-},{"../utils":62,"./Candle":17,"./Wick":21,"d3":46,"react":218}],20:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-var utils = require('../utils');
-var CandlestickContainer = require('./CandlestickContainer');
-
-
-module.exports = React.createClass({
-
-  displayName: 'DataSeries',
-
-  propTypes: {
-    fillUp:   React.PropTypes.string.isRequired,
-    fillDown: React.PropTypes.string.isRequired
-  },
-
-  render:function() {
-
-    var props = this.props;
-
-    var xRange = props.xScale.range(),
-        width = Math.abs(xRange[0] - xRange[1]),
-        candleWidth = (width / (props.data.length + 2)) * 0.5;
-
-    var dataSeriesArray = props.data.map( function(d, idx) {
-      // Candles
-      var ohlc = props.yAccessor(d),
-        candle_x = props.xScale(props.xAccessor(d)) - 0.5 * candleWidth,
-        candle_y = props.yScale(Math.max(ohlc.open, ohlc.close)),
-        candleHeight = Math.abs(props.yScale(ohlc.open) - props.yScale(ohlc.close)),
-        wick_y2 = props.yScale(ohlc.low),
-        ohlcClass = (ohlc.open <= ohlc.close) ? 'up' : 'down',
-        className = ( ohlcClass + " rd3-candlestick-rect"),
-        candleFill = (ohlc.open <= ohlc.close) ? props.fillUp : props.fillDown;
-
-      //Wicks
-      var wick_x1 = props.xScale(props.xAccessor(d)),
-        wick_y1 = props.yScale(ohlc.high),
-        wick_x2 = wick_x1;
-
-      return (
-        React.createElement(CandlestickContainer, {
-          key: idx, 
-          candleFill: candleFill, 
-          candleHeight: candleHeight, 
-          candleWidth: candleWidth, 
-          candle_x: candle_x, 
-          candle_y: candle_y, 
-          wick_x1: wick_x1, 
-          wick_x2: wick_x2, 
-          wick_y1: wick_y1, 
-          wick_y2: wick_y2, 
-          hoverAnimation: props.hoverAnimation}
-        )
-      );
-    }, this);
-
-    return (
-      React.createElement("g", null, 
-        dataSeriesArray
-      )
-    );
-  }
-
-});
-
-},{"../utils":62,"./CandlestickContainer":19,"d3":46,"react":218}],21:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-
-
-module.exports = React.createClass({
-
-  displayName: 'Wick',
-
-  propTypes: {
-    className:      React.PropTypes.string,
-    shapeRendering: React.PropTypes.string,
-    stroke:         React.PropTypes.string,
-    strokeWidth:    React.PropTypes.number,
-  },
-
-  getDefaultProps:function() {
-    return {
-      className:      'rd3-candlestick-wick',
-      stroke:         '#000',
-      strokeWidth:    1,
-      shapeRendering: 'crispEdges',
-    };
-  },
-
-  render:function() {
-    var props = this.props;
-    return React.createElement("line", {
-            stroke: props.stroke, 
-            strokeWidth: props.strokeWidth, 
-            style: { shapeRendering: props.shapeRendering}, 
-            className: props.className, 
-            x1: props.wick_x1, 
-            y1: props.wick_y1, 
-            x2: props.wick_x2, 
-            y2: props.wick_y2}
-          );
-  }
-
-});
-
-},{"react":218}],22:[function(require,module,exports){
-
-exports.CandlestickChart = require('./CandlestickChart');
-
-},{"./CandlestickChart":18}],23:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-
-module.exports = React.createClass({
-
-  displayName: 'Legend',
-
-  propTypes: {
-    className:     React.PropTypes.string,
-    colors:        React.PropTypes.func,
-    colorAccessor: React.PropTypes.func,
-    data:          React.PropTypes.array.isRequired,
-    itemClassName: React.PropTypes.string,
-    margins:       React.PropTypes.object,
-    text:          React.PropTypes.string,
-    width:         React.PropTypes.number.isRequired
-  },
-
-  getDefaultProps: function() {
-    return {
-      className:    'rd3-legend',
-      colors:        d3.scale.category20c(),
-      colorAccessor: function(d, idx)  {return idx;},
-      itemClassName: 'rd3-legend-item',
-      text:          '#000'
-    };
-  },
-
-  render: function() {
-
-    var props = this.props;
-
-    var textStyle = {
-      'color': 'black',
-      'fontSize': '50%',
-      'verticalAlign': 'top'
-    };
-
-    var legendItems = [];
-
-    props.data.forEach( function(series, idx)  {
-      var itemStyle = {
-        'color': props.colors(props.colorAccessor(series, idx)),
-        'lineHeight': '60%',
-        'fontSize': '200%'
-      };
-
-      legendItems.push(
-        React.createElement("li", {
-          key: idx, 
-          className: props.itemClassName, 
-          style: itemStyle
-        }, 
-          React.createElement("span", {
-            style: textStyle
-          }, 
-            series.name
-          )
-        )
-      );
-
-    });
-
-    var topMargin = props.margins.top;
-
-    var legendBlockStyle = {
-      'wordWrap': 'break-word',
-      'width': props.width,
-      'paddingLeft': '0',
-      'marginBottom': '0',
-      'marginTop': topMargin,
-      'listStylePosition': 'inside'
-    };
-
-    return (
-      React.createElement("ul", {
-        className: props.className, 
-        style: legendBlockStyle
-      }, 
-        legendItems
-      )
-    );
-  }
-
-});
-
-},{"d3":46,"react":218}],24:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-
-var Polygon = React.createClass({displayName: "Polygon",
-
-  _animateCircle: function() {
-    this.props.structure.cursor('voronoi').cursor(this.props.id).update(function(){return 'active';});
-    // this.props.pubsub.emit('animate', this.props.id);
-  },
-
-  _restoreCircle: function() {
-    this.props.structure.cursor('voronoi').cursor(this.props.id).update(function(){return 'inactive';});
-    // this.props.pubsub.emit('restore', this.props.id);
-  },
-
-  _drawPath: function(d) {
-    if(d === undefined) {
-      return; 
-    }  
-    return 'M' + d.join(',') + 'Z';
-  },
-
-  render: function() {
-    return React.createElement("path", {
-      onMouseOver: this._animateCircle, 
-      onMouseOut: this._restoreCircle, 
-      fill: "white", 
-      opacity: "0", 
-      d: this._drawPath(this.props.vnode)});
-  }
-
-});
-
-
-module.exports = React.createClass({
-
-  displayName: 'Voronoi',
-
-  render: function() {
-    var xScale = this.props.xScale;
-    var yScale = this.props.yScale;
-
-    var voronoi = d3.geom.voronoi()
-      .x(function(d){ return xScale(d.coord.x); })
-      .y(function(d){ return yScale(d.coord.y); })
-      .clipExtent([[0, 0], [ this.props.width , this.props.height]]);
-
-    var regions = voronoi(this.props.data).map(function(vnode, idx) {
-      return React.createElement(Polygon, {structure: this.props.structure, key: idx, id: vnode.point.id, vnode: vnode});
-    }.bind(this));
-
-    return (
-      React.createElement("g", null, 
-        regions
-      )
-    );
-  }
-
-});
-
-},{"d3":46,"react":218}],25:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-
-module.exports = React.createClass({
-
-  displayName: 'AxisLine',
-
-  propTypes: {
-    scale: React.PropTypes.func.isRequired,
-    innerTickSize: React.PropTypes.number,
-    outerTickSize: React.PropTypes.number,
-    tickPadding: React.PropTypes.number,
-    tickArguments: React.PropTypes.array,
-    fill: React.PropTypes.string,
-    stroke: React.PropTypes.string
-  },
-
-  getDefaultProps:function() {
-    return {
-      innerTickSize: 6,
-      outerTickSize: 6,
-      tickPadding: 3,
-      fill: 'none',
-      tickArguments: [10],
-      tickValues: null,
-      tickFormat: null 
-    };
-  },
-
-
-  _d3_scaleExtent:function(domain) {
-    var start = domain[0], stop = domain[domain.length - 1];
-    return start < stop ? [start, stop] : [stop, start];
-  },
-
-  _d3_scaleRange:function(scale) {
-    return scale.rangeExtent ? scale.rangeExtent() : this._d3_scaleExtent(scale.range());
-  },
-
-  render:function() {
-
-    var props = this.props;
-    var sign = props.orient === "top" || props.orient === "left" ? -1 : 1;
-
-    var range = this._d3_scaleRange(props.scale);
-
-    var d;
-
-    if (props.orient === "bottom" || props.orient === "top") {
-      d = "M" + range[0] + "," + sign * props.outerTickSize + "V0H" + range[1] + "V" + sign * props.outerTickSize;
-    } else {
-      d = "M" + sign * props.outerTickSize + "," + range[0] + "H0V" + range[1] + "H" + sign * props.outerTickSize;
-    }
-
-
-    return (
-      React.createElement("path", {
-        className: "domain", 
-        d: d, 
-        style: {'shapeRendering':'crispEdges'}, 
-        fill: props.fill, 
-        stroke: props.stroke, 
-        strokeWidth: props.strokeWidth
-      }
-      )
-    );
-  }
-});
-
-},{"d3":46,"react":218}],26:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-
-module.exports = React.createClass({
-
-  displayName: 'AxisTick',
-
-  propTypes: {
-    scale: React.PropTypes.func.isRequired,
-    orient: React.PropTypes.oneOf(['top','bottom','left','right']).isRequired,
-    orient2nd: React.PropTypes.oneOf(['top','bottom','left','right']),
-    height: React.PropTypes.number.isRequired,
-    width: React.PropTypes.number.isRequired,
-    tickArguments : React.PropTypes.array,
-    tickValues: React.PropTypes.array,
-    innerTickSize: React.PropTypes.number,
-    outerTickSize: React.PropTypes.number,
-    tickPadding: React.PropTypes.number,
-    tickFormat: React.PropTypes.func,
-    tickStroke: React.PropTypes.string,
-    gridHorizontal: React.PropTypes.bool,
-    gridVertical: React.PropTypes.bool,
-    gridHorizontalStroke: React.PropTypes.string,
-    gridVerticalStroke: React.PropTypes.string,
-    gridHorizontalStrokeWidth: React.PropTypes.number,
-    gridVerticalStrokeWidth: React.PropTypes.number,
-    gridHorizontalStrokeDash: React.PropTypes.string,
-    gridVerticalStrokeDash: React.PropTypes.string
-  },
-  getDefaultProps:function() {
-    return {
-      innerTickSize: 6,
-      outerTickSize: 6,
-      tickStroke: '#000',
-      tickPadding: 3,
-      tickArguments: [10],
-      tickValues: null,
-      gridHorizontal: false,
-      gridVertical: false,
-      gridHorizontalStroke: '#D8D7D7',
-      gridVerticalStroke: '#D8D7D7',
-      gridHorizontalStrokeWidth: 1,
-      gridVerticalStrokeWidth: 1,
-      gridHorizontalStrokeDash: '5, 5',
-      gridVerticalStrokeDash: '5, 5'
-    };
-  },
-
-  render:function() {
-    var props = this.props;
-
-    var tr,
-        ticks,
-        scale,
-        adjustedScale,
-        textAnchor,
-        tickFormat,
-        y0, y1, y2, dy, x0, x1, x2, dx;
-
-    var gridStrokeWidth,
-        gridStroke,
-        gridStrokeDashArray,
-        x2grid,
-        y2grid;
-    var gridOn = false;
-
-    var sign = props.orient === 'top' || props.orient === 'right' ? -1 : 1;
-    var tickSpacing = Math.max(props.innerTickSize, 0) + props.tickPadding;
-
-    scale = props.scale;
-
-    if (props.tickValues) {
-      ticks = props.tickValues;
-    } else if (scale.ticks) {
-      ticks = scale.ticks.apply(scale, props.tickArguments);
-    } else {
-      ticks = scale.domain();
-    }
-
-    if (props.tickFormatting) {
-        tickFormat = props.tickFormatting;
-    } else if (scale.tickFormat) {
-        tickFormat = scale.tickFormat.apply(scale, props.tickArguments);
-    } else {
-        tickFormat = function(d) {return d;};
-    }
-
-    adjustedScale = scale.rangeBand ? function(d)  { return scale(d) + scale.rangeBand() / 2; } : scale;
-
-    // Still working on this
-    // Ticks and lines are not fully aligned
-    // in some orientations
-    switch (props.orient) {
-      case 'top':
-        tr = function(tick)  {return ("translate(" + adjustedScale(tick) + ",0)");};
-        textAnchor = "middle";
-        y2 = props.innerTickSize * sign;
-        y1 = tickSpacing * sign;
-        dy =  sign < 0 ? "0em" : ".71em";
-        x2grid = 0;
-        y2grid = -props.height;
-        break;
-      case 'bottom':
-        tr = function(tick)  {return ("translate(" + adjustedScale(tick) + ",0)");};
-        textAnchor = "middle";
-        y2 = props.innerTickSize * sign;
-        y1 = tickSpacing * sign;
-        dy =  sign < 0 ? "0em" : ".71em";
-        x2grid = 0;
-        y2grid = -props.height;
-        break;
-      case 'left':
-        tr = function(tick)  {return ("translate(0," + adjustedScale(tick) + ")");};
-        textAnchor = "end";
-        x2 = props.innerTickSize * -sign;
-        x1 = tickSpacing * -sign;
-        dy = ".32em";
-        x2grid = props.width;
-        y2grid = 0;
-        break;
-      case 'right':
-        tr = function(tick)  {return ("translate(0," + adjustedScale(tick) + ")");};
-        textAnchor = "start";
-        x2 = props.innerTickSize * -sign;
-        x1 = tickSpacing * -sign;
-        dy = ".32em";
-        x2grid = -props.width;
-        y2grid = 0;
-        break;
-    }
-
-    if (props.gridHorizontal) {
-      gridOn = true;
-      gridStrokeWidth = props.gridHorizontalStrokeWidth;
-      gridStroke = props.gridHorizontalStroke;
-      gridStrokeDashArray = props.gridHorizontalStrokeDash;
-    }
-    else if (props.gridVertical) {
-      gridOn = true;
-      gridStrokeWidth = props.gridVerticalStrokeWidth;
-      gridStroke = props.gridVerticalStroke;
-      gridStrokeDashArray = props.gridVerticalStrokeDash;
-    }
-
-    // return grid line if grid is enabled and grid line is not on at same position as other axis.
-    var gridLine = function(pos) {
-      if (gridOn
-        && !(props.orient2nd == 'left' && pos == 0)
-        && !(props.orient2nd == 'right' && pos == props.width)
-        && !((props.orient == 'left' || props.orient == 'right') && pos == props.height)
-      ) {
-        return (
-          React.createElement("line", {style: {
-            strokeWidth: gridStrokeWidth,
-            shapeRendering: 'crispEdges',
-            stroke: gridStroke,
-            strokeDasharray: gridStrokeDashArray
-            }, x2: x2grid, y2: y2grid})
-        )
-      }
-    }
-
-    return (
-    React.createElement("g", null, 
-      ticks.map( function(tick, idx)  {
-        return (
-          React.createElement("g", {key: idx, className: "tick", transform: tr(tick)}, 
-            gridLine(adjustedScale(tick)), 
-            React.createElement("line", {style: {shapeRendering:'crispEdges',opacity:'1',stroke:props.tickStroke}, x2: x2, y2: y2}
-            ), 
-            React.createElement("text", {
-              strokeWidth: "0.01", 
-              dy: dy, x: x1, y: y1, 
-              style: {stroke:props.tickTextStroke, fill:props.tickTextStroke}, 
-              textAnchor: textAnchor
-            }, 
-              tickFormat(tick)
-            )
-          )
-        );
-        })
-      
-    )
-    );
-  }
-
-});
-
-},{"d3":46,"react":218}],27:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-
-
-module.exports = React.createClass({
-
-  displayName: 'Label',
-
-  propTypes: {
-    height:              React.PropTypes.number,
-    horizontalTransform: React.PropTypes.string,
-    label:               React.PropTypes.string.isRequired,
-    width:               React.PropTypes.number,
-    strokeWidth:         React.PropTypes.number,
-    textAnchor:          React.PropTypes.string,
-    verticalTransform:   React.PropTypes.string
-  },
-
-  getDefaultProps:function() {
-    return {
-      horizontalTransform: 'rotate(270)',
-      strokeWidth:         0.01,
-      textAnchor:          'middle',
-      verticalTransform:   'rotate(0)'
-    };
-  },
-
-  render:function() {
-
-    var props = this.props;
-
-    if (props.label) {
-      switch (props.orient) {
-        case 'top':
-          return (
-            React.createElement("text", {
-              strokeWidth: props.strokeWidth.toString(), 
-              textAnchor: props.textAnchor, 
-              transform: props.verticalTransform, 
-              x: props.width / 2, 
-              y: props.offset
-            }, 
-              props.label
-            )
-          );
-        case 'bottom':
-          return (
-            React.createElement("text", {
-              strokeWidth: props.strokeWidth.toString(), 
-              textAnchor: props.textAnchor, 
-              transform: props.verticalTransform, 
-              x: props.width / 2, 
-              y: props.offset
-            }, 
-              props.label
-            )
-          );
-        case 'left':
-          return (
-            React.createElement("text", {
-              strokeWidth: props.strokeWidth.toString(), 
-              textAnchor: props.textAnchor, 
-              transform: props.horizontalTransform, 
-              y: -props.offset, 
-              x: -props.height / 2
-            }, 
-              props.label
-            )
-          );
-        case 'right':
-          return (
-            React.createElement("text", {
-              strokeWidth: props.strokeWidth.toString(), 
-              textAnchor: props.textAnchor, 
-              transform: props.horizontalTransform, 
-              y: props.offset, 
-              x: -props.height / 2
-            }, 
-              props.label
-            )
-          );
-      }
-    }
-    return React.createElement("text", null);
-  }
-
-});
-
-},{"react":218}],28:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-var AxisTicks = require('./AxisTicks');
-var AxisLine = require('./AxisLine');
-var Label = require('./Label');
-
-module.exports = React.createClass({
-
-  displayName: 'XAxis',
-
-  propTypes: {
-    fill:            React.PropTypes.string,
-    height:          React.PropTypes.number.isRequired,
-    width:           React.PropTypes.number.isRequired,
-    stroke:          React.PropTypes.string,
-    strokeWidth:     React.PropTypes.string,
-    tickStroke:      React.PropTypes.string,
-    xAxisClassName:  React.PropTypes.string,
-    xAxisLabel:      React.PropTypes.string,
-    xAxisTickValues: React.PropTypes.array,
-    xAxisOffset:     React.PropTypes.number,
-    xScale:          React.PropTypes.func.isRequired,
-    xOrient:         React.PropTypes.oneOf(['top', 'bottom']),
-    yOrient:         React.PropTypes.oneOf(['left', 'right']),
-    gridVertical:  React.PropTypes.bool,
-    gridVerticalStroke: React.PropTypes.string,
-    gridVerticalStrokeWidth: React.PropTypes.number,
-    gridVerticalStrokeDash: React.PropTypes.string
-  },
-
-  getDefaultProps:function() {
-    return {
-      fill:            'none',
-      stroke:          'none',
-      strokeWidth:     '1',
-      tickStroke:      '#000',
-      xAxisClassName:  'rd3-x-axis',
-      xAxisLabel:      '',
-      xAxisLabelOffset: 10,
-      xAxisOffset:      0,
-      xOrient:         'bottom',
-      yOrient:         'left'
-    };
-  },
-
-  render:function() {
-    var props = this.props;
-
-    var t = ("translate(0 ," + (props.xAxisOffset + props.height) + ")");
-
-    var tickArguments;
-    if (typeof props.xAxisTickCount !== 'undefined') {
-      tickArguments = [props.xAxisTickCount];
-    }
-
-    if (typeof props.xAxisTickInterval !== 'undefined') {
-      tickArguments = [d3.time[props.xAxisTickInterval.unit], props.xAxisTickInterval.interval];
-    }
-
-    return (
-      React.createElement("g", {
-        className: props.xAxisClassName, 
-        transform: t
-      }, 
-        React.createElement(AxisTicks, {
-          tickValues: props.xAxisTickValues, 
-          tickFormatting: props.tickFormatting, 
-          tickArguments: tickArguments, 
-          tickStroke: props.tickStroke, 
-          tickTextStroke: props.tickTextStroke, 
-          innerTickSize: props.tickSize, 
-          scale: props.xScale, 
-          orient: props.xOrient, 
-          orient2nd: props.yOrient, 
-          height: props.height, 
-          width: props.width, 
-          gridVertical: props.gridVertical, 
-          gridVerticalStroke: props.gridVerticalStroke, 
-          gridVerticalStrokeWidth: props.gridVerticalStrokeWidth, 
-          gridVerticalStrokeDash: props.gridVerticalStrokeDash}
-        ), 
-        React.createElement(AxisLine, React.__spread({
-          scale: props.xScale, 
-          stroke: props.stroke, 
-          orient: props.xOrient, 
-          outerTickSize: props.tickSize}, 
-          props)
-        ), 
-        React.createElement(Label, {
-          label: props.xAxisLabel, 
-          offset: props.xAxisLabelOffset, 
-          orient: props.xOrient, 
-          margins: props.margins, 
-          width: props.width}
-          )
-      )
-    );
-  }
-
-});
-
-},{"./AxisLine":25,"./AxisTicks":26,"./Label":27,"d3":46,"react":218}],29:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-var AxisTicks = require('./AxisTicks');
-var AxisLine = require('./AxisLine');
-var Label = require('./Label');
-
-module.exports = React.createClass({
-
-  displayName: 'YAxis',
-
-  propTypes: {
-    fill:            React.PropTypes.string,
-    stroke:          React.PropTypes.string,
-    strokeWidth:     React.PropTypes.string,
-    tickStroke:      React.PropTypes.string,
-    width:           React.PropTypes.number.isRequired,
-    height:          React.PropTypes.number.isRequired,
-    yAxisClassName:  React.PropTypes.string,
-    yAxisLabel:      React.PropTypes.string,
-    yAxisOffset:     React.PropTypes.number,
-    yAxisTickValues: React.PropTypes.array,
-    xOrient:         React.PropTypes.oneOf(['top', 'bottom']),
-    yOrient:         React.PropTypes.oneOf(['left', 'right']),
-    yScale:          React.PropTypes.func.isRequired,
-    gridVertical: React.PropTypes.bool,
-    gridVerticalStroke: React.PropTypes.string,
-    gridVerticalStrokeWidth: React.PropTypes.number,
-    gridVerticalStrokeDash: React.PropTypes.string
-  },
-
-  getDefaultProps:function() {
-    return {
-      fill:           'none',
-      stroke:         '#000',
-      strokeWidth:    '1',
-      tickStroke:     '#000',
-      yAxisClassName: 'rd3-y-axis',
-      yAxisLabel:     '',
-      yAxisOffset:    0,
-      xOrient:        'bottom',
-      yOrient:        'left'
-    };
-  },
-
-  render:function() {
-
-    var props = this.props;
-
-    var t;
-    if (props.yOrient === 'right') {
-       t = ("translate(" + (props.yAxisOffset + props.width) + ", 0)");
-    } else {
-       t = ("translate(" + props.yAxisOffset + ", 0)");
-    }
-
-    var tickArguments;
-    if (props.yAxisTickCount) {
-      tickArguments = [props.yAxisTickCount];
-    }
-
-    if (props.yAxisTickInterval) {
-      tickArguments = [d3.time[props.yAxisTickInterval.unit], props.yAxisTickInterval.interval];
-    }
-
-    return (
-      React.createElement("g", {
-        className: props.yAxisClassName, 
-        transform: t
-      }, 
-        React.createElement(AxisTicks, {
-          innerTickSize: props.tickSize, 
-          orient: props.yOrient, 
-          orient2nd: props.xOrient, 
-          tickArguments: tickArguments, 
-          tickFormatting: props.tickFormatting, 
-          tickStroke: props.tickStroke, 
-          tickTextStroke: props.tickTextStroke, 
-          tickValues: props.yAxisTickValues, 
-          scale: props.yScale, 
-          height: props.height, 
-          width: props.width, 
-          gridHorizontal: props.gridHorizontal, 
-          gridHorizontalStroke: props.gridHorizontalStroke, 
-          gridHorizontalStrokeWidth: props.gridHorizontalStrokeWidth, 
-          gridHorizontalStrokeDash: props.gridHorizontalStrokeDash}
-        ), 
-        React.createElement(AxisLine, React.__spread({
-          orient: props.yOrient, 
-          outerTickSize: props.tickSize, 
-          scale: props.yScale, 
-          stroke: props.stroke}, 
-          props)
-        ), 
-        React.createElement(Label, {
-          height: props.height, 
-          label: props.yAxisLabel, 
-          margins: props.margins, 
-          offset: props.yAxisLabelOffset, 
-          orient: props.yOrient}
-        )
-      )
-    );
-  }
-
-});
-
-},{"./AxisLine":25,"./AxisTicks":26,"./Label":27,"d3":46,"react":218}],30:[function(require,module,exports){
-
-exports.XAxis = require('./XAxis');
-exports.YAxis = require('./YAxis');
-
-},{"./XAxis":28,"./YAxis":29}],31:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var mixins = require('../../mixins');
-
-module.exports = React.createClass({
-
-  displayName: 'BasicChart',
-
-  propTypes: {
-    children:       React.PropTypes.node,
-    className:      React.PropTypes.string,
-    height:         React.PropTypes.node,
-    svgClassName:   React.PropTypes.string,
-    title:          React.PropTypes.node,
-    titleClassName: React.PropTypes.string,
-    width:          React.PropTypes.node
-  },
-
-  getDefaultProps:function() {
-    return {
-      className:      'rd3-basic-chart',
-      svgClassName:   'rd3-chart',
-      titleClassName: 'rd3-chart-title'
-    };
-  },
-
-  _renderTitle:function() {
-    var props = this.props;
-
-    if (props.title != '' && props.title != null) {
-      return (
-        React.createElement("h4", {
-          className: props.titleClassName
-        }, 
-          props.title
-        )
-      );
-    } else {
-      return null;
-    }
-  },
-
-  _renderChart: function() {
-    var props = this.props;
-
-    return (
-      React.createElement("svg", {
-        className: props.svgClassName, 
-        height: props.height, 
-        viewBox: props.viewBox, 
-        width: props.width
-      }, 
-        props.children
-      )
-    );
-  },
-
-  render: function() {
-    var props = this.props;
-
-    return (
-      React.createElement("div", {
-        className: props.className
-      }, 
-        this._renderTitle(), 
-        this._renderChart()
-      )
-    );
-  }
-});
-
-},{"../../mixins":45,"react":218}],32:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var LegendChart = require('./LegendChart');
-var BasicChart = require('./BasicChart');
-
-module.exports = React.createClass({
-
-  displayName: 'Chart',
-
-  propTypes: {
-    legend:         React.PropTypes.bool,
-    svgClassName:   React.PropTypes.string,
-    titleClassName: React.PropTypes.string
-  },
-
-  getDefaultProps: function() {
-    return {
-      legend:         false,
-      svgClassName:   'rd3-chart',
-      titleClassName: 'rd3-chart-title'
-    };
-  },
-
-  render: function() {
-    var props = this.props;
-
-    if (props.legend) {
-      return (
-        React.createElement(LegendChart, React.__spread({
-          svgClassName: props.svgClassName, 
-          titleClassName: props.titleClassName}, 
-          this.props)
-        )
-      );
-    }
-    return (
-      React.createElement(BasicChart, React.__spread({
-        svgClassName: props.svgClassName, 
-        titleClassName: props.titleClassName}, 
-        this.props)
-      )
-    );
-  }
-
-});
-
-},{"./BasicChart":31,"./LegendChart":33,"react":218}],33:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var Legend = require('../Legend');
-var d3 = require('d3');
-
-module.exports = React.createClass({
-
-  displayName: 'LegendChart',
-
-  propTypes: {
-    children:       React.PropTypes.node,
-    createClass:    React.PropTypes.string,
-    colors:         React.PropTypes.func,
-    colorAccessor:  React.PropTypes.func,
-    data:           React.PropTypes.array,
-    height:         React.PropTypes.node,
-    legend:         React.PropTypes.bool,
-    legendPosition: React.PropTypes.string,
-    margins:        React.PropTypes.object,
-    sideOffset:     React.PropTypes.number,
-    svgClassName:   React.PropTypes.string,
-    title:          React.PropTypes.node,
-    titleClassName: React.PropTypes.string,
-    viewBox:        React.PropTypes.string,
-    width:          React.PropTypes.node
-  },
-
-  getDefaultProps:function() {
-    return {
-      className:      'rd3-legend-chart',
-      colors:         d3.scale.category20c(),
-      colorAccessor:  function(d, idx)  {return idx;},
-      data:           [],
-      legend:         false,
-      legendPosition: 'right',
-      sideOffset:     90,
-      svgClassName:   'rd3-chart',
-      titleClassName: 'rd3-chart-title'
-    };
-  },
-
-  _renderLegend:function() {
-    var props = this.props;
-
-    if (props.legend) {
-      return (
-        React.createElement(Legend, {
-          colors: props.colors, 
-          colorAccessor: props.colorAccessor, 
-          data: props.data, 
-          legendPosition: props.legendPosition, 
-          margins: props.margins, 
-          width: props.sideOffset}
-        )
-      );
-    }
-  },
-
-  _renderTitle:function() {
-    var props = this.props;
-
-    if (props.title != '' && props.title != null) {
-      return (
-        React.createElement("h4", {
-          className: props.titleClassName
-        }, 
-          props.title
-        )
-      );
-    }
-    return null;
-  },
-
-  _renderChart: function() {
-    var props = this.props;
-
-    return (
-      React.createElement("svg", {
-        className: props.svgClassName, 
-        height: "100%", 
-        viewBox: props.viewBox, 
-        width: "100%"
-      }, 
-        props.children
-      )
-    );
-  },
-
-  render:function() {
-    var props = this.props;
-
-    return (
-      React.createElement("div", {
-        className: props.className, 
-        style: {'width': props.width, 'height': props.height}
-      }, 
-        this._renderTitle(), 
-        React.createElement("div", {style: { display: 'table', width: '100%', height: '100%'}}, 
-          React.createElement("div", {style: { display: 'table-cell'}}, 
-            this._renderChart()
-          ), 
-          React.createElement("div", {style: { display: 'table-cell', width: props.sideOffset, 'verticalAlign': 'top'}}, 
-            this._renderLegend()
-          )
-        )
-      )
-    );
-  }
-});
-
-},{"../Legend":23,"d3":46,"react":218}],34:[function(require,module,exports){
-
-exports.BasicChart = require('./BasicChart');
-exports.Chart = require('./Chart');
-exports.LegendChart = require('./LegendChart');
-
-},{"./BasicChart":31,"./Chart":32,"./LegendChart":33}],35:[function(require,module,exports){
-
-exports.XAxis = require('./axes').XAxis;
-exports.YAxis = require('./axes').YAxis;
-exports.Chart = require('./charts').Chart;
-exports.LegendChart = require('./charts').LegendChart;
-exports.Legend = require('./Legend');
-exports.Voronoi = require('./Voronoi');
-
-},{"./Legend":23,"./Voronoi":24,"./axes":30,"./charts":34}],36:[function(require,module,exports){
-exports.BarChart = require('./barchart').BarChart;
-exports.LineChart = require('./linechart').LineChart;
-exports.PieChart = require('./piechart').PieChart;
-exports.AreaChart = require('./areachart').AreaChart;
-exports.Treemap = require('./treemap').Treemap;
-exports.ScatterChart = require('./scatterchart').ScatterChart;
-exports.CandlestickChart = require('./candlestick').CandlestickChart;
-
-
-},{"./areachart":11,"./barchart":16,"./candlestick":22,"./linechart":42,"./piechart":51,"./scatterchart":56,"./treemap":61}],37:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-var VoronoiCircleContainer = require('./VoronoiCircleContainer');
-var Line = require('./Line');
-
-module.exports = React.createClass({
-
-  displayName: 'DataSeries',
-
-  propTypes: {
-    color: React.PropTypes.func,
-    colorAccessor: React.PropTypes.func,
-    data: React.PropTypes.array,
-    interpolationType: React.PropTypes.string,
-    xAccessor: React.PropTypes.func,
-    yAccessor: React.PropTypes.func,
-  },
-
-  getDefaultProps:function() {
-    return {
-      data: [],
-      xAccessor: function(d)  {return d.x;},
-      yAccessor: function(d)  {return d.y;},
-      interpolationType: 'linear'
-    };
-  },
-  
-  _isDate:function(d, accessor) {
-      return Object.prototype.toString.call(accessor(d)) === '[object Date]';
-  },
-
-  render:function() {
-    var props = this.props;
-    var xScale = props.xScale;
-    var yScale = props.yScale;
-    var xAccessor = props.xAccessor,
-        yAccessor = props.yAccessor;
-    
-    var interpolatePath = d3.svg.line()
-        .y( function(d)  {return props.yScale(yAccessor(d));} )
-        .interpolate(props.interpolationType);
-
-        if (this._isDate(props.data[0].values[0], xAccessor)) {
-          interpolatePath.x(function(d) {
-            return props.xScale(props.xAccessor(d).getTime());
-          });
-        } else {
-          interpolatePath.x(function(d) {
-            return props.xScale(props.xAccessor(d));
-          });
-        }
-
-    var lines = props.data.map(function(series, idx)  {
-      return (
-        React.createElement(Line, {
-          path: interpolatePath(series.values), 
-          stroke: props.colors(props.colorAccessor(series, idx)), 
-          strokeWidth: series.strokeWidth, 
-          strokeDashArray: series.strokeDashArray, 
-          seriesName: series.name, 
-          key: idx}
-        )
-      );
-    });
-
-    var voronoi = d3.geom.voronoi()
-      .x(function(d){ return xScale(d.coord.x); })
-      .y(function(d){ return yScale(d.coord.y); })
-      .clipExtent([[0, 0], [ props.width , props.height]]);
-
-    var cx, cy, circleFill;
-    var regions = voronoi(props.value).map(function(vnode, idx) {
-      var point = vnode.point.coord;
-      if (Object.prototype.toString.call(xAccessor(point)) === '[object Date]') {
-        cx = props.xScale(xAccessor(point).getTime());
-      } else {
-        cx = props.xScale(xAccessor(point));
-      }
-      if (Object.prototype.toString.call(yAccessor(point)) === '[object Date]') {
-        cy = props.yScale(yAccessor(point).getTime());
-      } else {
-        cy = props.yScale(yAccessor(point));
-      }
-      circleFill = props.colors(props.colorAccessor(vnode, vnode.point.seriesIndex));
-      
-      return (
-          React.createElement(VoronoiCircleContainer, {
-              key: idx, 
-              circleFill: circleFill, 
-              vnode: vnode, 
-              cx: cx, cy: cy, 
-              circleRadius: props.circleRadius}
-          )
-      );
-    }.bind(this));
-
-    return (
-      React.createElement("g", null, 
-        React.createElement("g", null, regions), 
-        React.createElement("g", null, lines)
-      )
-    );
-  }
-
-});
-
-},{"./Line":38,"./VoronoiCircleContainer":41,"d3":46,"react":218}],38:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-
-
-module.exports = React.createClass({
-
-  displayName: 'Line',
-
-  propTypes: {
-    fill: React.PropTypes.string,
-    path: React.PropTypes.string,
-    stroke: React.PropTypes.string,
-    strokeWidth: React.PropTypes.number,
-    strokeDashArray: React.PropTypes.string,
-  },
-
-  getDefaultProps:function() {
-    return {
-      stroke: '#3182bd',
-      fill: 'none',
-      strokeWidth: 1,
-      className: 'rd3-linechart-path'
-    };
-  },
-
-  render:function() {
-    var props = this.props;
-    return (
-      React.createElement("path", {
-        d: props.path, 
-        stroke: props.stroke, 
-        strokeWidth: props.strokeWidth, 
-        strokeDasharray: props.strokeDashArray, 
-        fill: props.fill, 
-        className: props.className}
-      )
-    );
-  }
-
-});
-
-},{"react":218}],39:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-var $__0=      require('../common'),Chart=$__0.Chart,XAxis=$__0.XAxis,YAxis=$__0.YAxis;
-var DataSeries = require('./DataSeries');
-var utils = require('../utils');
-var $__1=     require('../mixins'),CartesianChartPropsMixin=$__1.CartesianChartPropsMixin,ViewBoxMixin=$__1.ViewBoxMixin;
-
-module.exports = React.createClass({
-
-  mixins: [ CartesianChartPropsMixin, ViewBoxMixin ],
-
-  displayName: 'LineChart',
-
-  propTypes: {
-    circleRadius:   React.PropTypes.number,
-    hoverAnimation: React.PropTypes.bool,
-    margins:        React.PropTypes.object,
- },
-
-  getDefaultProps:function() {
-    return {
-      circleRadius:    3,
-      className: 'rd3-linechart',
-      hoverAnimation: true,
-      margins:        {top: 10, right: 20, bottom: 50, left: 45},
-      xAxisClassName: 'rd3-linechart-xaxis',
-      yAxisClassName: 'rd3-linechart-yaxis',
-    };
-  },
-
-  _calculateScales: utils.calculateScales,
-
-  render:function() {
-
-    var props = this.props;
-
-    if (this.props.data && this.props.data.length < 1) {
-      return null;
-    }
-
-    // Calculate inner chart dimensions
-    var innerWidth, innerHeight;
-
-    innerWidth = this.getOuterDimensions().width - props.margins.left - props.margins.right;
-    innerHeight = this.getOuterDimensions().height - props.margins.top - props.margins.bottom;
-
-    if (!Array.isArray(props.data)) {
-      props.data = [props.data];
-    }
-
-    // Returns an object of flattened allValues, xValues, and yValues
-    var flattenedData = utils.flattenData(props.data, props.xAccessor, props.yAccessor);
-
-    var allValues = flattenedData.allValues,
-        xValues = flattenedData.xValues,
-        yValues = flattenedData.yValues;
-    var scales = this._calculateScales(innerWidth, innerHeight, xValues, yValues);
-    var trans = "translate(" + (props.yAxisOffset < 0 ? props.margins.left + Math.abs(props.yAxisOffset) : props.margins.left) + "," + props.margins.top + ")";
-
-    return (
-      React.createElement(Chart, {
-        viewBox: this.getViewBox(), 
-        legend: props.legend, 
-        data: props.data, 
-        margins: props.margins, 
-        colors: props.colors, 
-        colorAccessor: props.colorAccessor, 
-        width: props.width, 
-        height: props.height, 
-        title: props.title}, 
-        React.createElement("g", {transform: trans, className: props.className}, 
-          React.createElement(XAxis, {
-            xAxisClassName: props.xAxisClassName, 
-            strokeWidth: props.xAxisStrokeWidth, 
-            xAxisTickValues: props.xAxisTickValues, 
-            xAxisTickInterval: props.xAxisTickInterval, 
-            xAxisOffset: props.xAxisOffset, 
-            xScale: scales.xScale, 
-            xAxisLabel: props.xAxisLabel, 
-            xAxisLabelOffset: props.xAxisLabelOffset, 
-            tickFormatting: props.xAxisFormatter, 
-            xOrient: props.xOrient, 
-            yOrient: props.yOrient, 
-            data: props.data, 
-            margins: props.margins, 
-            width: innerWidth, 
-            height: innerHeight, 
-            stroke: props.axesColor, 
-            gridVertical: props.gridVertical, 
-            gridVerticalStroke: props.gridVerticalStroke, 
-            gridVerticalStrokeWidth: props.gridVerticalStrokeWidth, 
-            gridVerticalStrokeDash: props.gridVerticalStrokeDash}
-          ), 
-          React.createElement(YAxis, {
-            yAxisClassName: props.yAxisClassName, 
-            strokeWidth: props.yAxisStrokeWidth, 
-            yScale: scales.yScale, 
-            yAxisTickValues: props.yAxisTickValues, 
-            yAxisTickCount: props.yAxisTickCount, 
-            yAxisOffset: props.yAxisOffset, 
-            yAxisLabel: props.yAxisLabel, 
-            yAxisLabelOffset: props.yAxisLabelOffset, 
-            tickFormatting: props.yAxisFormatter, 
-            xOrient: props.xOrient, 
-            yOrient: props.yOrient, 
-            margins: props.margins, 
-            width: innerWidth, 
-            height: innerHeight, 
-            stroke: props.axesColor, 
-            gridHorizontal: props.gridHorizontal, 
-            gridHorizontalStroke: props.gridHorizontalStroke, 
-            gridHorizontalStrokeWidth: props.gridHorizontalStrokeWidth, 
-            gridHorizontalStrokeDash: props.gridHorizontalStrokeDash}
-          ), 
-          React.createElement(DataSeries, {
-            xScale: scales.xScale, 
-            yScale: scales.yScale, 
-            xAccessor: props.xAccessor, 
-            yAccessor: props.yAccessor, 
-            hoverAnimation: props.hoverAnimation, 
-            circleRadius: props.circleRadius, 
-            data: props.data, 
-            value: allValues, 
-            interpolationType: props.interpolationType, 
-            colors: props.colors, 
-            colorAccessor: props.colorAccessor, 
-            width: innerWidth, 
-            height: innerHeight}
-            )
-        )
-      )
-    );
-  }
-
-});
-
-},{"../common":35,"../mixins":45,"../utils":62,"./DataSeries":37,"d3":46,"react":218}],40:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-
-module.exports = React.createClass({
-
-  displayName: 'VoronoiCircle',
-
-  getDefaultProps:function() {
-    return { 
-      circleRadius: 3,
-      circleFill: '#1f77b4',
-    };
-  },
-
-  render:function() {
-    return (
-      React.createElement("g", null, 
-        React.createElement("path", {
-          onMouseOver: this.props.handleMouseOver, 
-          onMouseLeave: this.props.handleMouseLeave, 
-          fill: "transparent", 
-          d: this.props.voronoiPath}
-        ), 
-        React.createElement("circle", {
-          onMouseOver: this.props.handleMouseOver, 
-          onMouseLeave: this.props.handleMouseLeave, 
-          cx: this.props.cx, 
-          cy: this.props.cy, 
-          r: this.props.circleRadius, 
-          fill: this.props.circleFill, 
-          className: "rd3-linechart-circle"}
-        )
-      )
-    );
-  },
-});
-
-},{"d3":46,"react":218}],41:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-var shade = require('../utils').shade;
-var VoronoiCircle = require('./VoronoiCircle');
-
-module.exports = React.createClass({
-
-  displayName: 'VornoiCircleContainer',
-
-  getDefaultProps:function() {
-    return { 
-      circleRadius: 3,
-      circleFill: '#1f77b4',
-      hoverAnimation: true
-    };
-  },
-
-  getInitialState:function() {
-    return { 
-      circleRadius: this.props.circleRadius,
-      circleFill: this.props.circleFill
-    };
-  },
-
-  render:function() {
-
-    var props = this.props;
-
-    // animation controller
-    var handleMouseOver, handleMouseLeave;
-    if(props.hoverAnimation) {
-      handleMouseOver = this._animateCircle;
-      handleMouseLeave = this._restoreCircle;
-    } else {
-      handleMouseOver = handleMouseLeave = null;
-    }
-
-    return (
-      React.createElement("g", null, 
-        React.createElement(VoronoiCircle, {
-            handleMouseOver: handleMouseOver, 
-            handleMouseLeave: handleMouseLeave, 
-            voronoiPath: this._drawPath(props.vnode), 
-            cx: props.cx, 
-            cy: props.cy, 
-            circleRadius: this.state.circleRadius, 
-            circleFill: this.state.circleFill}
-        )
-      )
-    );
-  },
-
-  _animateCircle:function() {
-    this.setState({ 
-      circleRadius: this.props.circleRadius * ( 5 / 4 ),
-      circleFill: shade(this.props.circleFill, 0.2)
-    });
-  },
-
-  _restoreCircle:function() {
-    this.setState({ 
-      circleRadius: this.props.circleRadius,
-      circleFill: this.props.circleFill
-    });
-  },
-
-  _drawPath: function(d) {
-    if(d === undefined) {
-      return; 
-    }  
-    return 'M' + d.join(',') + 'Z';
-  },
-});
-
-},{"../utils":62,"./VoronoiCircle":40,"d3":46,"react":218}],42:[function(require,module,exports){
-
-exports.LineChart = require('./LineChart');
-
-},{"./LineChart":39}],43:[function(require,module,exports){
-'use strict';
-
-var React = require('react');
-var d3 = require('d3');
-
-module.exports =  {
-
-  propTypes: {
-    axesColor:         React.PropTypes.string,
-    colors:            React.PropTypes.func,
-    colorAccessor:     React.PropTypes.func,
-    data:              React.PropTypes.array.isRequired,
-    height:            React.PropTypes.number,
-    legend:            React.PropTypes.bool,
-    legendOffset:      React.PropTypes.number,
-    title:             React.PropTypes.string,
-    width:             React.PropTypes.number,
-    xAccessor:         React.PropTypes.func,
-    xAxisFormatter:    React.PropTypes.func,
-    xAxisLabel:        React.PropTypes.string,
-    xAxisLabelOffset:  React.PropTypes.number,
-    xAxisTickCount:    React.PropTypes.number,
-    xAxisTickInterval: React.PropTypes.object,
-    xAxisTickValues:   React.PropTypes.array,
-    xOrient:           React.PropTypes.oneOf(['top', 'bottom']),
-    yAccessor:         React.PropTypes.func,
-    yAxisFormatter:    React.PropTypes.func,
-    yAxisLabel:        React.PropTypes.string,
-    yAxisLabelOffset:  React.PropTypes.number,
-    yAxisTickCount:    React.PropTypes.number,
-    yAxisTickInterval: React.PropTypes.object,
-    yAxisTickValues:   React.PropTypes.array,
-    yOrient:           React.PropTypes.oneOf(['left', 'right'])
-  },
-
-  getDefaultProps: function() {
-    return {
-      axesColor:        '#000',
-      colors:           d3.scale.category20c(),
-      colorAccessor:    function(d, idx)  {return idx;},
-      height:           200,
-      legend:           false,
-      legendOffset:     120,
-      title:            '',
-      width:            400,
-      xAccessor:        function(d)  {return d.x;},
-      // xAxisFormatter: no predefined value right now
-      xAxisLabel:       '',
-      xAxisLabelOffset: 38,
-      // xAxisTickCount: no predefined value right now
-      // xAxisTickInterval: no predefined value right now
-      // xAxisTickValues: no predefined value right now
-      xOrient:          'bottom',
-      yAccessor:        function(d)  {return d.y;},
-      // yAxisFormatter: no predefined value right now
-      yAxisLabel:       '',
-      yAxisLabelOffset: 35,
-      // yAxisTickCount: no predefined value right now
-      // yAxisTickInterval: no predefined value right now
-      // yAxisTickValues: no predefined value right now
-      yOrient:          'left'
-    };
-  }
-};
-
-},{"d3":46,"react":218}],44:[function(require,module,exports){
-
-'use strict';
-
-var React = require('react');
-
-module.exports =  {
-
-  propTypes: {
-    viewBox:           React.PropTypes.string,
-    viewBoxObject:     React.PropTypes.object
-  },
-
-  getViewBox:function() {
-    if (this.props.viewBoxObject) {
-      var v = this.props.viewBoxObject;
-      return [v.x, v.y, v.width, v.height].join(' ');
-    } else if (this.props.viewBox) {
-      return this.props.viewBox;
-    } 
-  },
-
-  getOuterDimensions:function() {
-    if (this.props.viewBoxObject) {
-      return {
-        width: this.props.viewBoxObject.width,
-        height: this.props.viewBoxObject.height
-      };
-    } else {
-      return {
-        width: this.props.width,
-        height: this.props.height
-      };
-    }
-  }
-
-};
-
-},{"react":218}],45:[function(require,module,exports){
-
-exports.CartesianChartPropsMixin = require('./CartesianChartPropsMixin');
-exports.ViewBoxMixin = require('./ViewBoxMixin');
-
-},{"./CartesianChartPropsMixin":43,"./ViewBoxMixin":44}],46:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 !function() {
   var d3 = {
     version: "3.5.14"
@@ -12444,7 +10098,3803 @@ exports.ViewBoxMixin = require('./ViewBoxMixin');
   });
   if (typeof define === "function" && define.amd) this.d3 = d3, define(d3); else if (typeof module === "object" && module.exports) module.exports = d3; else this.d3 = d3;
 }();
-},{}],47:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
+(function (process){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @providesModule EventListener
+ * @typechecks
+ */
+
+'use strict';
+
+var emptyFunction = require('./emptyFunction');
+
+/**
+ * Upstream version of event listener. Does not take into account specific
+ * nature of platform.
+ */
+var EventListener = {
+  /**
+   * Listen to DOM events during the bubble phase.
+   *
+   * @param {DOMEventTarget} target DOM element to register listener on.
+   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
+   * @param {function} callback Callback function.
+   * @return {object} Object with a `remove` method.
+   */
+  listen: function (target, eventType, callback) {
+    if (target.addEventListener) {
+      target.addEventListener(eventType, callback, false);
+      return {
+        remove: function () {
+          target.removeEventListener(eventType, callback, false);
+        }
+      };
+    } else if (target.attachEvent) {
+      target.attachEvent('on' + eventType, callback);
+      return {
+        remove: function () {
+          target.detachEvent('on' + eventType, callback);
+        }
+      };
+    }
+  },
+
+  /**
+   * Listen to DOM events during the capture phase.
+   *
+   * @param {DOMEventTarget} target DOM element to register listener on.
+   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
+   * @param {function} callback Callback function.
+   * @return {object} Object with a `remove` method.
+   */
+  capture: function (target, eventType, callback) {
+    if (target.addEventListener) {
+      target.addEventListener(eventType, callback, true);
+      return {
+        remove: function () {
+          target.removeEventListener(eventType, callback, true);
+        }
+      };
+    } else {
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Attempted to listen to events during the capture phase on a ' + 'browser that does not support the capture phase. Your application ' + 'will not receive some events.');
+      }
+      return {
+        remove: emptyFunction
+      };
+    }
+  },
+
+  registerDefault: function () {}
+};
+
+module.exports = EventListener;
+}).call(this,require('_process'))
+},{"./emptyFunction":18,"_process":222}],12:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule ExecutionEnvironment
+ */
+
+'use strict';
+
+var canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
+
+/**
+ * Simple, lightweight module assisting with the detection and context of
+ * Worker. Helps avoid circular dependencies and allows code to reason about
+ * whether or not they are in a Worker, even if they never include the main
+ * `ReactWorker` dependency.
+ */
+var ExecutionEnvironment = {
+
+  canUseDOM: canUseDOM,
+
+  canUseWorkers: typeof Worker !== 'undefined',
+
+  canUseEventListeners: canUseDOM && !!(window.addEventListener || window.attachEvent),
+
+  canUseViewport: canUseDOM && !!window.screen,
+
+  isInWorker: !canUseDOM // For now, this is true - might change in the future.
+
+};
+
+module.exports = ExecutionEnvironment;
+},{}],13:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule camelize
+ * @typechecks
+ */
+
+"use strict";
+
+var _hyphenPattern = /-(.)/g;
+
+/**
+ * Camelcases a hyphenated string, for example:
+ *
+ *   > camelize('background-color')
+ *   < "backgroundColor"
+ *
+ * @param {string} string
+ * @return {string}
+ */
+function camelize(string) {
+  return string.replace(_hyphenPattern, function (_, character) {
+    return character.toUpperCase();
+  });
+}
+
+module.exports = camelize;
+},{}],14:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule camelizeStyleName
+ * @typechecks
+ */
+
+'use strict';
+
+var camelize = require('./camelize');
+
+var msPattern = /^-ms-/;
+
+/**
+ * Camelcases a hyphenated CSS property name, for example:
+ *
+ *   > camelizeStyleName('background-color')
+ *   < "backgroundColor"
+ *   > camelizeStyleName('-moz-transition')
+ *   < "MozTransition"
+ *   > camelizeStyleName('-ms-transition')
+ *   < "msTransition"
+ *
+ * As Andi Smith suggests
+ * (http://www.andismith.com/blog/2012/02/modernizr-prefixed/), an `-ms` prefix
+ * is converted to lowercase `ms`.
+ *
+ * @param {string} string
+ * @return {string}
+ */
+function camelizeStyleName(string) {
+  return camelize(string.replace(msPattern, 'ms-'));
+}
+
+module.exports = camelizeStyleName;
+},{"./camelize":13}],15:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule containsNode
+ * @typechecks
+ */
+
+'use strict';
+
+var isTextNode = require('./isTextNode');
+
+/*eslint-disable no-bitwise */
+
+/**
+ * Checks if a given DOM node contains or is another DOM node.
+ *
+ * @param {?DOMNode} outerNode Outer DOM node.
+ * @param {?DOMNode} innerNode Inner DOM node.
+ * @return {boolean} True if `outerNode` contains or is `innerNode`.
+ */
+function containsNode(_x, _x2) {
+  var _again = true;
+
+  _function: while (_again) {
+    var outerNode = _x,
+        innerNode = _x2;
+    _again = false;
+
+    if (!outerNode || !innerNode) {
+      return false;
+    } else if (outerNode === innerNode) {
+      return true;
+    } else if (isTextNode(outerNode)) {
+      return false;
+    } else if (isTextNode(innerNode)) {
+      _x = outerNode;
+      _x2 = innerNode.parentNode;
+      _again = true;
+      continue _function;
+    } else if (outerNode.contains) {
+      return outerNode.contains(innerNode);
+    } else if (outerNode.compareDocumentPosition) {
+      return !!(outerNode.compareDocumentPosition(innerNode) & 16);
+    } else {
+      return false;
+    }
+  }
+}
+
+module.exports = containsNode;
+},{"./isTextNode":28}],16:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule createArrayFromMixed
+ * @typechecks
+ */
+
+'use strict';
+
+var toArray = require('./toArray');
+
+/**
+ * Perform a heuristic test to determine if an object is "array-like".
+ *
+ *   A monk asked Joshu, a Zen master, "Has a dog Buddha nature?"
+ *   Joshu replied: "Mu."
+ *
+ * This function determines if its argument has "array nature": it returns
+ * true if the argument is an actual array, an `arguments' object, or an
+ * HTMLCollection (e.g. node.childNodes or node.getElementsByTagName()).
+ *
+ * It will return false for other array-like objects like Filelist.
+ *
+ * @param {*} obj
+ * @return {boolean}
+ */
+function hasArrayNature(obj) {
+  return(
+    // not null/false
+    !!obj && (
+    // arrays are objects, NodeLists are functions in Safari
+    typeof obj == 'object' || typeof obj == 'function') &&
+    // quacks like an array
+    'length' in obj &&
+    // not window
+    !('setInterval' in obj) &&
+    // no DOM node should be considered an array-like
+    // a 'select' element has 'length' and 'item' properties on IE8
+    typeof obj.nodeType != 'number' && (
+    // a real array
+    Array.isArray(obj) ||
+    // arguments
+    'callee' in obj ||
+    // HTMLCollection/NodeList
+    'item' in obj)
+  );
+}
+
+/**
+ * Ensure that the argument is an array by wrapping it in an array if it is not.
+ * Creates a copy of the argument if it is already an array.
+ *
+ * This is mostly useful idiomatically:
+ *
+ *   var createArrayFromMixed = require('createArrayFromMixed');
+ *
+ *   function takesOneOrMoreThings(things) {
+ *     things = createArrayFromMixed(things);
+ *     ...
+ *   }
+ *
+ * This allows you to treat `things' as an array, but accept scalars in the API.
+ *
+ * If you need to convert an array-like object, like `arguments`, into an array
+ * use toArray instead.
+ *
+ * @param {*} obj
+ * @return {array}
+ */
+function createArrayFromMixed(obj) {
+  if (!hasArrayNature(obj)) {
+    return [obj];
+  } else if (Array.isArray(obj)) {
+    return obj.slice();
+  } else {
+    return toArray(obj);
+  }
+}
+
+module.exports = createArrayFromMixed;
+},{"./toArray":36}],17:[function(require,module,exports){
+(function (process){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule createNodesFromMarkup
+ * @typechecks
+ */
+
+/*eslint-disable fb-www/unsafe-html*/
+
+'use strict';
+
+var ExecutionEnvironment = require('./ExecutionEnvironment');
+
+var createArrayFromMixed = require('./createArrayFromMixed');
+var getMarkupWrap = require('./getMarkupWrap');
+var invariant = require('./invariant');
+
+/**
+ * Dummy container used to render all markup.
+ */
+var dummyNode = ExecutionEnvironment.canUseDOM ? document.createElement('div') : null;
+
+/**
+ * Pattern used by `getNodeName`.
+ */
+var nodeNamePattern = /^\s*<(\w+)/;
+
+/**
+ * Extracts the `nodeName` of the first element in a string of markup.
+ *
+ * @param {string} markup String of markup.
+ * @return {?string} Node name of the supplied markup.
+ */
+function getNodeName(markup) {
+  var nodeNameMatch = markup.match(nodeNamePattern);
+  return nodeNameMatch && nodeNameMatch[1].toLowerCase();
+}
+
+/**
+ * Creates an array containing the nodes rendered from the supplied markup. The
+ * optionally supplied `handleScript` function will be invoked once for each
+ * <script> element that is rendered. If no `handleScript` function is supplied,
+ * an exception is thrown if any <script> elements are rendered.
+ *
+ * @param {string} markup A string of valid HTML markup.
+ * @param {?function} handleScript Invoked once for each rendered <script>.
+ * @return {array<DOMElement|DOMTextNode>} An array of rendered nodes.
+ */
+function createNodesFromMarkup(markup, handleScript) {
+  var node = dummyNode;
+  !!!dummyNode ? process.env.NODE_ENV !== 'production' ? invariant(false, 'createNodesFromMarkup dummy not initialized') : invariant(false) : undefined;
+  var nodeName = getNodeName(markup);
+
+  var wrap = nodeName && getMarkupWrap(nodeName);
+  if (wrap) {
+    node.innerHTML = wrap[1] + markup + wrap[2];
+
+    var wrapDepth = wrap[0];
+    while (wrapDepth--) {
+      node = node.lastChild;
+    }
+  } else {
+    node.innerHTML = markup;
+  }
+
+  var scripts = node.getElementsByTagName('script');
+  if (scripts.length) {
+    !handleScript ? process.env.NODE_ENV !== 'production' ? invariant(false, 'createNodesFromMarkup(...): Unexpected <script> element rendered.') : invariant(false) : undefined;
+    createArrayFromMixed(scripts).forEach(handleScript);
+  }
+
+  var nodes = createArrayFromMixed(node.childNodes);
+  while (node.lastChild) {
+    node.removeChild(node.lastChild);
+  }
+  return nodes;
+}
+
+module.exports = createNodesFromMarkup;
+}).call(this,require('_process'))
+},{"./ExecutionEnvironment":12,"./createArrayFromMixed":16,"./getMarkupWrap":22,"./invariant":26,"_process":222}],18:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule emptyFunction
+ */
+
+"use strict";
+
+function makeEmptyFunction(arg) {
+  return function () {
+    return arg;
+  };
+}
+
+/**
+ * This function accepts and discards inputs; it has no side effects. This is
+ * primarily useful idiomatically for overridable function endpoints which
+ * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
+ */
+function emptyFunction() {}
+
+emptyFunction.thatReturns = makeEmptyFunction;
+emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
+emptyFunction.thatReturnsTrue = makeEmptyFunction(true);
+emptyFunction.thatReturnsNull = makeEmptyFunction(null);
+emptyFunction.thatReturnsThis = function () {
+  return this;
+};
+emptyFunction.thatReturnsArgument = function (arg) {
+  return arg;
+};
+
+module.exports = emptyFunction;
+},{}],19:[function(require,module,exports){
+(function (process){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule emptyObject
+ */
+
+'use strict';
+
+var emptyObject = {};
+
+if (process.env.NODE_ENV !== 'production') {
+  Object.freeze(emptyObject);
+}
+
+module.exports = emptyObject;
+}).call(this,require('_process'))
+},{"_process":222}],20:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule focusNode
+ */
+
+'use strict';
+
+/**
+ * @param {DOMElement} node input/textarea to focus
+ */
+function focusNode(node) {
+  // IE8 can throw "Can't move focus to the control because it is invisible,
+  // not enabled, or of a type that does not accept the focus." for all kinds of
+  // reasons that are too expensive and fragile to test.
+  try {
+    node.focus();
+  } catch (e) {}
+}
+
+module.exports = focusNode;
+},{}],21:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule getActiveElement
+ * @typechecks
+ */
+
+/* eslint-disable fb-www/typeof-undefined */
+
+/**
+ * Same as document.activeElement but wraps in a try-catch block. In IE it is
+ * not safe to call document.activeElement if there is nothing focused.
+ *
+ * The activeElement will be null only if the document or document body is not
+ * yet defined.
+ */
+'use strict';
+
+function getActiveElement() /*?DOMElement*/{
+  if (typeof document === 'undefined') {
+    return null;
+  }
+  try {
+    return document.activeElement || document.body;
+  } catch (e) {
+    return document.body;
+  }
+}
+
+module.exports = getActiveElement;
+},{}],22:[function(require,module,exports){
+(function (process){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule getMarkupWrap
+ */
+
+/*eslint-disable fb-www/unsafe-html */
+
+'use strict';
+
+var ExecutionEnvironment = require('./ExecutionEnvironment');
+
+var invariant = require('./invariant');
+
+/**
+ * Dummy container used to detect which wraps are necessary.
+ */
+var dummyNode = ExecutionEnvironment.canUseDOM ? document.createElement('div') : null;
+
+/**
+ * Some browsers cannot use `innerHTML` to render certain elements standalone,
+ * so we wrap them, render the wrapped nodes, then extract the desired node.
+ *
+ * In IE8, certain elements cannot render alone, so wrap all elements ('*').
+ */
+
+var shouldWrap = {};
+
+var selectWrap = [1, '<select multiple="true">', '</select>'];
+var tableWrap = [1, '<table>', '</table>'];
+var trWrap = [3, '<table><tbody><tr>', '</tr></tbody></table>'];
+
+var svgWrap = [1, '<svg xmlns="http://www.w3.org/2000/svg">', '</svg>'];
+
+var markupWrap = {
+  '*': [1, '?<div>', '</div>'],
+
+  'area': [1, '<map>', '</map>'],
+  'col': [2, '<table><tbody></tbody><colgroup>', '</colgroup></table>'],
+  'legend': [1, '<fieldset>', '</fieldset>'],
+  'param': [1, '<object>', '</object>'],
+  'tr': [2, '<table><tbody>', '</tbody></table>'],
+
+  'optgroup': selectWrap,
+  'option': selectWrap,
+
+  'caption': tableWrap,
+  'colgroup': tableWrap,
+  'tbody': tableWrap,
+  'tfoot': tableWrap,
+  'thead': tableWrap,
+
+  'td': trWrap,
+  'th': trWrap
+};
+
+// Initialize the SVG elements since we know they'll always need to be wrapped
+// consistently. If they are created inside a <div> they will be initialized in
+// the wrong namespace (and will not display).
+var svgElements = ['circle', 'clipPath', 'defs', 'ellipse', 'g', 'image', 'line', 'linearGradient', 'mask', 'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect', 'stop', 'text', 'tspan'];
+svgElements.forEach(function (nodeName) {
+  markupWrap[nodeName] = svgWrap;
+  shouldWrap[nodeName] = true;
+});
+
+/**
+ * Gets the markup wrap configuration for the supplied `nodeName`.
+ *
+ * NOTE: This lazily detects which wraps are necessary for the current browser.
+ *
+ * @param {string} nodeName Lowercase `nodeName`.
+ * @return {?array} Markup wrap configuration, if applicable.
+ */
+function getMarkupWrap(nodeName) {
+  !!!dummyNode ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Markup wrapping node not initialized') : invariant(false) : undefined;
+  if (!markupWrap.hasOwnProperty(nodeName)) {
+    nodeName = '*';
+  }
+  if (!shouldWrap.hasOwnProperty(nodeName)) {
+    if (nodeName === '*') {
+      dummyNode.innerHTML = '<link />';
+    } else {
+      dummyNode.innerHTML = '<' + nodeName + '></' + nodeName + '>';
+    }
+    shouldWrap[nodeName] = !dummyNode.firstChild;
+  }
+  return shouldWrap[nodeName] ? markupWrap[nodeName] : null;
+}
+
+module.exports = getMarkupWrap;
+}).call(this,require('_process'))
+},{"./ExecutionEnvironment":12,"./invariant":26,"_process":222}],23:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule getUnboundedScrollPosition
+ * @typechecks
+ */
+
+'use strict';
+
+/**
+ * Gets the scroll position of the supplied element or window.
+ *
+ * The return values are unbounded, unlike `getScrollPosition`. This means they
+ * may be negative or exceed the element boundaries (which is possible using
+ * inertial scrolling).
+ *
+ * @param {DOMWindow|DOMElement} scrollable
+ * @return {object} Map with `x` and `y` keys.
+ */
+function getUnboundedScrollPosition(scrollable) {
+  if (scrollable === window) {
+    return {
+      x: window.pageXOffset || document.documentElement.scrollLeft,
+      y: window.pageYOffset || document.documentElement.scrollTop
+    };
+  }
+  return {
+    x: scrollable.scrollLeft,
+    y: scrollable.scrollTop
+  };
+}
+
+module.exports = getUnboundedScrollPosition;
+},{}],24:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule hyphenate
+ * @typechecks
+ */
+
+'use strict';
+
+var _uppercasePattern = /([A-Z])/g;
+
+/**
+ * Hyphenates a camelcased string, for example:
+ *
+ *   > hyphenate('backgroundColor')
+ *   < "background-color"
+ *
+ * For CSS style names, use `hyphenateStyleName` instead which works properly
+ * with all vendor prefixes, including `ms`.
+ *
+ * @param {string} string
+ * @return {string}
+ */
+function hyphenate(string) {
+  return string.replace(_uppercasePattern, '-$1').toLowerCase();
+}
+
+module.exports = hyphenate;
+},{}],25:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule hyphenateStyleName
+ * @typechecks
+ */
+
+'use strict';
+
+var hyphenate = require('./hyphenate');
+
+var msPattern = /^ms-/;
+
+/**
+ * Hyphenates a camelcased CSS property name, for example:
+ *
+ *   > hyphenateStyleName('backgroundColor')
+ *   < "background-color"
+ *   > hyphenateStyleName('MozTransition')
+ *   < "-moz-transition"
+ *   > hyphenateStyleName('msTransition')
+ *   < "-ms-transition"
+ *
+ * As Modernizr suggests (http://modernizr.com/docs/#prefixed), an `ms` prefix
+ * is converted to `-ms-`.
+ *
+ * @param {string} string
+ * @return {string}
+ */
+function hyphenateStyleName(string) {
+  return hyphenate(string).replace(msPattern, '-ms-');
+}
+
+module.exports = hyphenateStyleName;
+},{"./hyphenate":24}],26:[function(require,module,exports){
+(function (process){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule invariant
+ */
+
+'use strict';
+
+/**
+ * Use invariant() to assert state which your program assumes to be true.
+ *
+ * Provide sprintf-style format (only %s is supported) and arguments
+ * to provide information about what broke and what you were
+ * expecting.
+ *
+ * The invariant message will be stripped in production, but the invariant
+ * will remain to ensure logic does not differ in production.
+ */
+
+function invariant(condition, format, a, b, c, d, e, f) {
+  if (process.env.NODE_ENV !== 'production') {
+    if (format === undefined) {
+      throw new Error('invariant requires an error message argument');
+    }
+  }
+
+  if (!condition) {
+    var error;
+    if (format === undefined) {
+      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+    } else {
+      var args = [a, b, c, d, e, f];
+      var argIndex = 0;
+      error = new Error(format.replace(/%s/g, function () {
+        return args[argIndex++];
+      }));
+      error.name = 'Invariant Violation';
+    }
+
+    error.framesToPop = 1; // we don't care about invariant's own frame
+    throw error;
+  }
+}
+
+module.exports = invariant;
+}).call(this,require('_process'))
+},{"_process":222}],27:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule isNode
+ * @typechecks
+ */
+
+/**
+ * @param {*} object The object to check.
+ * @return {boolean} Whether or not the object is a DOM node.
+ */
+'use strict';
+
+function isNode(object) {
+  return !!(object && (typeof Node === 'function' ? object instanceof Node : typeof object === 'object' && typeof object.nodeType === 'number' && typeof object.nodeName === 'string'));
+}
+
+module.exports = isNode;
+},{}],28:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule isTextNode
+ * @typechecks
+ */
+
+'use strict';
+
+var isNode = require('./isNode');
+
+/**
+ * @param {*} object The object to check.
+ * @return {boolean} Whether or not the object is a DOM text node.
+ */
+function isTextNode(object) {
+  return isNode(object) && object.nodeType == 3;
+}
+
+module.exports = isTextNode;
+},{"./isNode":27}],29:[function(require,module,exports){
+(function (process){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule keyMirror
+ * @typechecks static-only
+ */
+
+'use strict';
+
+var invariant = require('./invariant');
+
+/**
+ * Constructs an enumeration with keys equal to their value.
+ *
+ * For example:
+ *
+ *   var COLORS = keyMirror({blue: null, red: null});
+ *   var myColor = COLORS.blue;
+ *   var isColorValid = !!COLORS[myColor];
+ *
+ * The last line could not be performed if the values of the generated enum were
+ * not equal to their keys.
+ *
+ *   Input:  {key1: val1, key2: val2}
+ *   Output: {key1: key1, key2: key2}
+ *
+ * @param {object} obj
+ * @return {object}
+ */
+var keyMirror = function (obj) {
+  var ret = {};
+  var key;
+  !(obj instanceof Object && !Array.isArray(obj)) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'keyMirror(...): Argument must be an object.') : invariant(false) : undefined;
+  for (key in obj) {
+    if (!obj.hasOwnProperty(key)) {
+      continue;
+    }
+    ret[key] = key;
+  }
+  return ret;
+};
+
+module.exports = keyMirror;
+}).call(this,require('_process'))
+},{"./invariant":26,"_process":222}],30:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule keyOf
+ */
+
+/**
+ * Allows extraction of a minified key. Let's the build system minify keys
+ * without losing the ability to dynamically use key strings as values
+ * themselves. Pass in an object with a single key/val pair and it will return
+ * you the string key of that single record. Suppose you want to grab the
+ * value for a key 'className' inside of an object. Key/val minification may
+ * have aliased that key to be 'xa12'. keyOf({className: null}) will return
+ * 'xa12' in that case. Resolve keys you want to use once at startup time, then
+ * reuse those resolutions.
+ */
+"use strict";
+
+var keyOf = function (oneKeyObj) {
+  var key;
+  for (key in oneKeyObj) {
+    if (!oneKeyObj.hasOwnProperty(key)) {
+      continue;
+    }
+    return key;
+  }
+  return null;
+};
+
+module.exports = keyOf;
+},{}],31:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule mapObject
+ */
+
+'use strict';
+
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+/**
+ * Executes the provided `callback` once for each enumerable own property in the
+ * object and constructs a new object from the results. The `callback` is
+ * invoked with three arguments:
+ *
+ *  - the property value
+ *  - the property name
+ *  - the object being traversed
+ *
+ * Properties that are added after the call to `mapObject` will not be visited
+ * by `callback`. If the values of existing properties are changed, the value
+ * passed to `callback` will be the value at the time `mapObject` visits them.
+ * Properties that are deleted before being visited are not visited.
+ *
+ * @grep function objectMap()
+ * @grep function objMap()
+ *
+ * @param {?object} object
+ * @param {function} callback
+ * @param {*} context
+ * @return {?object}
+ */
+function mapObject(object, callback, context) {
+  if (!object) {
+    return null;
+  }
+  var result = {};
+  for (var name in object) {
+    if (hasOwnProperty.call(object, name)) {
+      result[name] = callback.call(context, object[name], name, object);
+    }
+  }
+  return result;
+}
+
+module.exports = mapObject;
+},{}],32:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule memoizeStringOnly
+ * @typechecks static-only
+ */
+
+'use strict';
+
+/**
+ * Memoizes the return value of a function that accepts one string argument.
+ *
+ * @param {function} callback
+ * @return {function}
+ */
+function memoizeStringOnly(callback) {
+  var cache = {};
+  return function (string) {
+    if (!cache.hasOwnProperty(string)) {
+      cache[string] = callback.call(this, string);
+    }
+    return cache[string];
+  };
+}
+
+module.exports = memoizeStringOnly;
+},{}],33:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule performance
+ * @typechecks
+ */
+
+'use strict';
+
+var ExecutionEnvironment = require('./ExecutionEnvironment');
+
+var performance;
+
+if (ExecutionEnvironment.canUseDOM) {
+  performance = window.performance || window.msPerformance || window.webkitPerformance;
+}
+
+module.exports = performance || {};
+},{"./ExecutionEnvironment":12}],34:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule performanceNow
+ * @typechecks
+ */
+
+'use strict';
+
+var performance = require('./performance');
+
+var performanceNow;
+
+/**
+ * Detect if we can use `window.performance.now()` and gracefully fallback to
+ * `Date.now()` if it doesn't exist. We need to support Firefox < 15 for now
+ * because of Facebook's testing infrastructure.
+ */
+if (performance.now) {
+  performanceNow = function () {
+    return performance.now();
+  };
+} else {
+  performanceNow = function () {
+    return Date.now();
+  };
+}
+
+module.exports = performanceNow;
+},{"./performance":33}],35:[function(require,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule shallowEqual
+ * @typechecks
+ * 
+ */
+
+'use strict';
+
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+/**
+ * Performs equality by iterating through keys on an object and returning false
+ * when any key has values which are not strictly equal between the arguments.
+ * Returns true when the values of all keys are strictly equal.
+ */
+function shallowEqual(objA, objB) {
+  if (objA === objB) {
+    return true;
+  }
+
+  if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {
+    return false;
+  }
+
+  var keysA = Object.keys(objA);
+  var keysB = Object.keys(objB);
+
+  if (keysA.length !== keysB.length) {
+    return false;
+  }
+
+  // Test for A's keys different from B.
+  var bHasOwnProperty = hasOwnProperty.bind(objB);
+  for (var i = 0; i < keysA.length; i++) {
+    if (!bHasOwnProperty(keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+module.exports = shallowEqual;
+},{}],36:[function(require,module,exports){
+(function (process){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule toArray
+ * @typechecks
+ */
+
+'use strict';
+
+var invariant = require('./invariant');
+
+/**
+ * Convert array-like objects to arrays.
+ *
+ * This API assumes the caller knows the contents of the data type. For less
+ * well defined inputs use createArrayFromMixed.
+ *
+ * @param {object|function|filelist} obj
+ * @return {array}
+ */
+function toArray(obj) {
+  var length = obj.length;
+
+  // Some browse builtin objects can report typeof 'function' (e.g. NodeList in
+  // old versions of Safari).
+  !(!Array.isArray(obj) && (typeof obj === 'object' || typeof obj === 'function')) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'toArray: Array-like object expected') : invariant(false) : undefined;
+
+  !(typeof length === 'number') ? process.env.NODE_ENV !== 'production' ? invariant(false, 'toArray: Object needs a length property') : invariant(false) : undefined;
+
+  !(length === 0 || length - 1 in obj) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'toArray: Object should have keys for indices') : invariant(false) : undefined;
+
+  // Old IE doesn't give collections access to hasOwnProperty. Assume inputs
+  // without method will throw during the slice call and skip straight to the
+  // fallback.
+  if (obj.hasOwnProperty) {
+    try {
+      return Array.prototype.slice.call(obj);
+    } catch (e) {
+      // IE < 9 does not support Array#slice on collections objects
+    }
+  }
+
+  // Fall back to copying key by key. This assumes all keys have a value,
+  // so will not preserve sparsely populated inputs.
+  var ret = Array(length);
+  for (var ii = 0; ii < length; ii++) {
+    ret[ii] = obj[ii];
+  }
+  return ret;
+}
+
+module.exports = toArray;
+}).call(this,require('_process'))
+},{"./invariant":26,"_process":222}],37:[function(require,module,exports){
+(function (process){
+/**
+ * Copyright 2014-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule warning
+ */
+
+'use strict';
+
+var emptyFunction = require('./emptyFunction');
+
+/**
+ * Similar to invariant but only logs a warning if the condition is not met.
+ * This can be used to log issues in development environments in critical
+ * paths. Removing the logging code for production environments will keep the
+ * same logic and follow the same code paths.
+ */
+
+var warning = emptyFunction;
+
+if (process.env.NODE_ENV !== 'production') {
+  warning = function (condition, format) {
+    for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+      args[_key - 2] = arguments[_key];
+    }
+
+    if (format === undefined) {
+      throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+    }
+
+    if (format.indexOf('Failed Composite propType: ') === 0) {
+      return; // Ignore CompositeComponent proptype check.
+    }
+
+    if (!condition) {
+      var argIndex = 0;
+      var message = 'Warning: ' + format.replace(/%s/g, function () {
+        return args[argIndex++];
+      });
+      if (typeof console !== 'undefined') {
+        console.error(message);
+      }
+      try {
+        // --- Welcome to debugging React ---
+        // This error was thrown as a convenience so that you can use this stack
+        // to find the callsite that caused this warning to fire.
+        throw new Error(message);
+      } catch (x) {}
+    }
+  };
+}
+
+module.exports = warning;
+}).call(this,require('_process'))
+},{"./emptyFunction":18,"_process":222}],38:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+
+module.exports = React.createClass({
+
+  displayName: 'Area',
+
+  propTypes: {
+    path: React.PropTypes.string,
+    fill: React.PropTypes.string
+  },
+
+  getDefaultProps:function() {
+    return {
+      fill: '#3182bd'
+    };
+  },
+
+  render:function() {
+
+    return (
+      React.createElement("path", {
+        className: "rd3-areachart-area", 
+        d: this.props.path, 
+        fill: this.props.fill, 
+        onMouseOver: this.props.handleMouseOver, 
+        onMouseLeave: this.props.handleMouseLeave}
+      )
+    );
+  }
+
+});
+
+},{"react":221}],39:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+var DataSeries = require('./DataSeries');
+var $__0=      require('../common'),Chart=$__0.Chart,XAxis=$__0.XAxis,YAxis=$__0.YAxis;
+var $__1=     require('../mixins'),CartesianChartPropsMixin=$__1.CartesianChartPropsMixin,ViewBoxMixin=$__1.ViewBoxMixin;
+
+module.exports = React.createClass({
+
+  mixins: [ CartesianChartPropsMixin, ViewBoxMixin ],
+
+  displayName: 'AreaChart',
+
+  propTypes: {
+    margins:           React.PropTypes.object,
+    interpolate:       React.PropTypes.bool,
+    interpolationType: React.PropTypes.string,
+    hoverAnimation:    React.PropTypes.bool,
+ },
+
+  getDefaultProps:function() {
+    return {
+      margins: {top: 10, right: 20, bottom: 40, left: 45},
+      yAxisTickCount: 4,
+      interpolate: false,
+      interpolationType: null,
+      className: 'rd3-areachart',
+      hoverAnimation: true
+    };
+  },
+
+  render:function() {
+
+    var props = this.props;
+
+    var data = props.data;
+
+    var interpolationType = props.interpolationType || (props.interpolate ? 'cardinal' : 'linear');
+
+    // Calculate inner chart dimensions
+    var innerWidth, innerHeight;
+    innerWidth = this.getOuterDimensions().width - props.margins.left - props.margins.right;
+    innerHeight = this.getOuterDimensions().height - props.margins.top - props.margins.bottom;
+
+    if (!Array.isArray(data)) {
+      data = [data];
+    }
+
+    var yScale = d3.scale.linear()
+      .range([innerHeight, 0]);
+
+    var xValues = [];
+    var yValues = [];
+    var seriesNames = [];
+    var yMaxValues = [];
+    data.forEach( function(series)  {
+      var upper = 0;
+      seriesNames.push(series.name);
+      series.values.forEach(function(val, idx)  {
+        upper = Math.max(upper, props.yAccessor(val));
+        xValues.push(props.xAccessor(val));
+        yValues.push(props.yAccessor(val));
+      });
+      yMaxValues.push(upper);
+    });
+
+    var xScale;
+    if (xValues.length > 0 && Object.prototype.toString.call(xValues[0]) === '[object Date]' && props.xAxisTickInterval) {
+      xScale = d3.time.scale()
+        .range([0, innerWidth]);
+    } else {
+      xScale = d3.scale.linear()
+        .range([0, innerWidth]);
+    }
+
+    xScale.domain(d3.extent(xValues));
+    yScale.domain([0, d3.sum(yMaxValues)]);
+
+    props.colors.domain(seriesNames);
+
+    var stack = d3.layout.stack()
+      .x(props.xAccessor)
+      .y(props.yAccessor)
+      .values(function(d) { return d.values; });
+
+    var layers = stack(data);
+
+    var trans = ("translate(" +  props.margins.left + "," +  props.margins.top + ")");
+
+    var dataSeries = layers.map( function(d, idx)  {
+      return (
+          React.createElement(DataSeries, {
+            key: idx, 
+            seriesName: d.name, 
+            fill: props.colors(props.colorAccessor(d, idx)), 
+            index: idx, 
+            xScale: xScale, 
+            yScale: yScale, 
+            data: d.values, 
+            xAccessor: props.xAccessor, 
+            yAccessor: props.yAccessor, 
+            interpolationType: interpolationType, 
+            hoverAnimation: props.hoverAnimation}
+          )
+        );
+      });
+
+    return (
+      React.createElement(Chart, {
+        viewBox: this.getViewBox(), 
+        legend: props.legend, 
+        data: data, 
+        margins: props.margins, 
+        colors: props.colors, 
+        colorAccessor: props.colorAccessor, 
+        width: props.width, 
+        height: props.height, 
+        title: props.title
+      }, 
+        React.createElement("g", {transform: trans, className: props.className}, 
+          React.createElement(XAxis, {
+            xAxisClassName: "rd3-areachart-xaxis", 
+            xScale: xScale, 
+            xAxisTickValues: props.xAxisTickValues, 
+            xAxisTickInterval: props.xAxisTickInterval, 
+            xAxisTickCount: props.xAxisTickCount, 
+            xAxisLabel: props.xAxisLabel, 
+            xAxisLabelOffset: props.xAxisLabelOffset, 
+            tickFormatting: props.xAxisFormatter, 
+            xOrient: props.xOrient, 
+            yOrient: props.yOrient, 
+            margins: props.margins, 
+            width: innerWidth, 
+            height: innerHeight, 
+            gridVertical: props.gridVertical, 
+            gridVerticalStroke: props.gridVerticalStroke, 
+            gridVerticalStrokeWidth: props.gridVerticalStrokeWidth, 
+            gridVerticalStrokeDash: props.gridVerticalStrokeDash}
+          ), 
+          React.createElement(YAxis, {
+            yAxisClassName: "rd3-areachart-yaxis", 
+            yScale: yScale, 
+            yAxisTickValues: props.yAxisTickValues, 
+            yAxisTickInterval: props.yAxisTickInterval, 
+            yAxisTickCount: props.yAxisTickCount, 
+            yAxisLabel: props.yAxisLabel, 
+            yAxisLabelOffset: props.yAxisLabelOffset, 
+            tickFormatting: props.yAxisFormatter, 
+            xOrient: props.xOrient, 
+            yOrient: props.yOrient, 
+            margins: props.margins, 
+            width: innerWidth, 
+            height: props.height, 
+            gridHorizontal: props.gridHorizontal, 
+            gridHorizontalStroke: props.gridHorizontalStroke, 
+            gridHorizontalStrokeWidth: props.gridHorizontalStrokeWidth, 
+            gridHorizontalStrokeDash: props.gridHorizontalStrokeDash}
+          ), 
+          dataSeries
+        )
+      )
+    );
+  }
+
+});
+
+},{"../common":66,"../mixins":76,"./DataSeries":41,"d3":10,"react":221}],40:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+var shade = require('../utils').shade;
+var Area = require('./Area');
+
+module.exports = React.createClass({
+
+  displayName: 'AreaContainer',
+
+  propTypes: {
+    fill: React.PropTypes.string, 
+  },
+
+  getDefaultProps:function() {
+    return {
+      fill: '#3182bd'
+    };
+  },
+
+  getInitialState:function() {
+    return { 
+      fill: this.props.fill
+    };
+  },
+
+  render:function() {
+
+    var props = this.props;
+
+    // animation controller
+    var handleMouseOver, handleMouseLeave;
+    if(props.hoverAnimation) {
+      handleMouseOver = this._animateArea;
+      handleMouseLeave = this._restoreArea;
+    } else {
+      handleMouseOver = handleMouseLeave = null;
+    }
+
+    return (
+      React.createElement(Area, React.__spread({
+          handleMouseOver: handleMouseOver, 
+          handleMouseLeave: handleMouseLeave}, 
+          props, 
+          {fill: this.state.fill})
+      )
+    );
+  },
+
+  _animateArea:function() {
+    this.setState({ 
+      fill: shade(this.props.fill, 0.02)
+    });
+  },
+
+  _restoreArea:function() {
+    this.setState({ 
+      fill: this.props.fill
+    });
+  },
+
+});
+
+},{"../utils":92,"./Area":38,"d3":10,"react":221}],41:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+var AreaContainer = require('./AreaContainer');
+
+module.exports = React.createClass({
+
+  displayName: 'DataSeries',
+
+  propTypes: {
+    fill:              React.PropTypes.string,
+    interpolationType: React.PropTypes.string
+  },
+
+  getDefaultProps:function() {
+    return {
+      interpolationType: 'linear'
+    };
+  },
+
+  render:function() {
+
+    var props = this.props;
+
+    var area = d3.svg.area()
+      .x(function(d) { return props.xScale(props.xAccessor(d)); })
+      .y0(function(d) { return props.yScale(d.y0); })
+      .y1(function(d) { return props.yScale(d.y0 + props.yAccessor(d)); })
+      .interpolate(props.interpolationType);
+
+    var path = area(props.data);
+
+    return (
+      React.createElement(AreaContainer, {
+        fill: props.fill, 
+        hoverAnimation: props.hoverAnimation, 
+        path: path}
+      )
+    );
+  }
+
+});
+
+},{"./AreaContainer":40,"d3":10,"react":221}],42:[function(require,module,exports){
+
+exports.AreaChart = require('./AreaChart');
+
+},{"./AreaChart":39}],43:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+
+module.exports = React.createClass({displayName: "exports",
+
+  propTypes: {
+    fill: React.PropTypes.string,
+    width: React.PropTypes.number,
+    height: React.PropTypes.number,
+    x: React.PropTypes.number,
+    y: React.PropTypes.number,
+    className: React.PropTypes.string
+  },
+
+  getDefaultProps:function() {
+    return {
+      offset: 0,
+      className: 'rd3-barchart-bar'
+    };
+  },
+
+  render:function() {
+    return (
+      React.createElement("rect", React.__spread({
+        className: "rd3-barchart-bar"}, 
+        this.props, 
+        {fill: this.props.fill, 
+        onMouseOver: this.props.handleMouseOver, 
+        onMouseLeave: this.props.handleMouseLeave})
+      )
+    );
+  }
+});
+
+},{"react":221}],44:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+var DataSeries = require('./DataSeries');
+var utils = require('../utils');
+
+var $__0=      require('../common'),Chart=$__0.Chart,XAxis=$__0.XAxis,YAxis=$__0.YAxis;
+var $__1=     require('../mixins'),CartesianChartPropsMixin=$__1.CartesianChartPropsMixin,ViewBoxMixin=$__1.ViewBoxMixin;
+
+module.exports = React.createClass({
+
+  mixins: [ CartesianChartPropsMixin, ViewBoxMixin ],
+
+  displayName: 'BarChart',
+
+  propTypes: {
+    chartClassName:         React.PropTypes.string,
+    data:                   React.PropTypes.array.isRequired,
+    hoverAnimation:         React.PropTypes.bool,
+    height:                 React.PropTypes.number,
+    margins:                React.PropTypes.object,
+    rangeRoundBandsPadding: React.PropTypes.number,
+    // https://github.com/mbostock/d3/wiki/Stack-Layout#offset
+    stackOffset:            React.PropTypes.oneOf(['silhouette', 'expand', 'wigget', 'zero']),
+    valuesAccessor:         React.PropTypes.func,
+    title:                  React.PropTypes.string,
+    width:                  React.PropTypes.number,
+    xAxisClassName:         React.PropTypes.string,
+    yAxisClassName:         React.PropTypes.string,
+    yAxisTickCount:         React.PropTypes.number,
+  },
+
+  getDefaultProps:function() {
+    return {
+      chartClassName:         'rd3-barchart',
+      hoverAnimation:         true,
+      margins:                {top: 10, right: 20, bottom: 40, left: 45},
+      rangeRoundBandsPadding: 0.25,
+      stackOffset:            'zero',
+      valuesAccessor:         function(d)  {return d.values;},
+      xAxisClassName:         'rd3-barchart-xaxis',
+      yAxisClassName:         'rd3-barchart-yaxis',
+      yAxisTickCount:         4,
+    };
+  },
+
+  _getStackedValuesMaxY:function(_data) {
+    // in stacked bar chart, the maximum height we need for 
+    // yScale domain is the sum of y0 + y
+    var $__0=    this.props,valuesAccessor=$__0.valuesAccessor;
+    return d3.max(_data, function(d) {
+      return d3.max(valuesAccessor(d), function(d) {
+        // where y0, y is generated by d3.layout.stack()
+        return d.y0 + d.y;
+      });
+    });
+  },
+
+  _getLabels:function(firstSeries) {
+    // we only need first series to get all the labels
+    var $__0=     this.props,valuesAccessor=$__0.valuesAccessor,xAccessor=$__0.xAccessor;
+    return valuesAccessor(firstSeries).map(xAccessor);
+  },
+
+  _stack:function() {
+    var $__0=       this.props,stackOffset=$__0.stackOffset,xAccessor=$__0.xAccessor,yAccessor=$__0.yAccessor,valuesAccessor=$__0.valuesAccessor;
+    return d3.layout.stack()
+                    .offset(stackOffset)
+                    .x(xAccessor)
+                    .y(yAccessor)
+                    .values(valuesAccessor);
+  },
+
+  render:function() {
+
+    var props = this.props;
+
+    var _data = this._stack()(props.data);
+
+    var margins = props.margins;
+
+    var innerHeight = props.height - ( margins.top + margins.bottom );
+    var innerWidth = props.width - ( margins.left + margins.right );
+
+    var xScale = d3.scale.ordinal()
+      .domain(this._getLabels(_data[0]))
+      .rangeRoundBands([0, innerWidth], props.rangeRoundBandsPadding);
+
+    var yScale = d3.scale.linear()
+      .range([innerHeight, 0])
+      .domain([0, this._getStackedValuesMaxY(_data)]);
+
+    var trans = ("translate(" +  margins.left + "," +  margins.top + ")");
+
+    return (
+      React.createElement(Chart, {
+        viewBox: props.viewBox, 
+        legend: props.legend, 
+        data: props.data, 
+        margins: props.margins, 
+        colors: props.colors, 
+        colorAccessor: props.colorAccessor, 
+        width: props.width, 
+        height: props.height, 
+        title: props.title
+      }, 
+        React.createElement("g", {transform: trans, className: props.chartClassName}, 
+          React.createElement(YAxis, {
+            yAxisClassName: props.yAxisClassName, 
+            yAxisTickValues: props.yAxisTickValues, 
+            yAxisLabel: props.yAxisLabel, 
+            yAxisLabelOffset: props.yAxisLabelOffset, 
+            yScale: yScale, 
+            margins: margins, 
+            yAxisTickCount: props.yAxisTickCount, 
+            tickFormatting: props.yAxisFormatter, 
+            width: innerWidth, 
+            height: innerHeight, 
+            xOrient: props.xOrient, 
+            yOrient: props.yOrient, 
+            gridHorizontal: props.gridHorizontal, 
+            gridHorizontalStroke: props.gridHorizontalStroke, 
+            gridHorizontalStrokeWidth: props.gridHorizontalStrokeWidth, 
+            gridHorizontalStrokeDash: props.gridHorizontalStrokeDash}
+          ), 
+          React.createElement(XAxis, {
+            xAxisClassName: props.xAxisClassName, 
+            xAxisTickValues: props.xAxisTickValues, 
+            xAxisLabel: props.xAxisLabel, 
+            xAxisLabelOffset: props.xAxisLabelOffset, 
+            xScale: xScale, 
+            margins: margins, 
+            tickFormatting: props.xAxisFormatter, 
+            width: innerWidth, 
+            height: innerHeight, 
+            xOrient: props.xOrient, 
+            yOrient: props.yOrient, 
+            gridVertical: props.gridVertical, 
+            gridVerticalStroke: props.gridVerticalStroke, 
+            gridVerticalStrokeWidth: props.gridVerticalStrokeWidth, 
+            gridVerticalStrokeDash: props.gridVerticalStrokeDash}
+          ), 
+          React.createElement(DataSeries, {
+            yScale: yScale, 
+            xScale: xScale, 
+            margins: margins, 
+            _data: _data, 
+            width: innerWidth, 
+            height: innerHeight, 
+            colors: props.colors, 
+            colorAccessor: props.colorAccessor, 
+            hoverAnimation: props.hoverAnimation, 
+            valuesAccessor: props.valuesAccessor}
+            )
+        )
+      )
+    );
+  }
+
+});
+
+},{"../common":66,"../mixins":76,"../utils":92,"./DataSeries":46,"d3":10,"react":221}],45:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var Bar = require('./Bar');
+var shade = require('../utils').shade;
+
+module.exports = React.createClass({displayName: "exports",
+
+  propTypes: {
+    fill: React.PropTypes.string,
+  },
+
+  getDefaultProps:function() {
+    return {
+      fill: '#3182BD'
+    };
+  },
+
+  getInitialState:function() {
+    return {
+      // fill is named as fill instead of initialFill to avoid
+      // confusion when passing down props from top parent
+      fill: this.props.fill
+    };
+  },
+
+  render:function() {
+
+    var props = this.props;
+
+    return (
+      React.createElement(Bar, React.__spread({}, 
+        props, 
+        {fill: this.state.fill, 
+        handleMouseOver: props.hoverAnimation ? this._animateBar : null, 
+        handleMouseLeave: props.hoverAnimation ? this._restoreBar : null})
+      )
+    );
+  },
+
+  _animateBar:function() {
+    this.setState({ 
+      fill: shade(this.props.fill, 0.2)
+    });
+  },
+
+  _restoreBar:function() {
+    this.setState({ 
+      fill: this.props.fill
+    });
+  },
+});
+
+},{"../utils":92,"./Bar":43,"react":221}],46:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+var BarContainer = require('./BarContainer');
+
+module.exports = React.createClass({
+
+  displayName: 'DataSeries',
+
+  propTypes: {
+    _data:          React.PropTypes.array,
+    colors:         React.PropTypes.func,
+    colorAccessor:  React.PropTypes.func,
+    height:         React.PropTypes.number,
+    width:          React.PropTypes.number,
+    valuesAccessor: React.PropTypes.func,
+  },
+
+  render:function() {
+    return (
+      React.createElement("g", null, this._renderBarSeries())
+    );
+  },
+
+  _renderBarSeries:function() {
+    var $__0=     this.props,_data=$__0._data,valuesAccessor=$__0.valuesAccessor;
+    return _data.map(function(layer, seriesIdx)  {
+      return valuesAccessor(layer)
+             .map(function(segment)  {return this._renderBarContainer(segment, seriesIdx);}.bind(this))
+    }.bind(this));
+  },
+
+  _renderBarContainer:function(segment, seriesIdx) {
+    var $__0=         this.props,colors=$__0.colors,colorAccessor=$__0.colorAccessor,height=$__0.height,hoverAnimation=$__0.hoverAnimation,xScale=$__0.xScale,yScale=$__0.yScale;
+    return (
+      React.createElement(BarContainer, {
+        height: height - yScale(segment.y), 
+        width: xScale.rangeBand(), 
+        x: xScale(segment.x), 
+        y: yScale( segment.y0 + segment.y), 
+        fill: colors(colorAccessor(segment, seriesIdx)), 
+        hoverAnimation: hoverAnimation}
+      )
+    )
+  }
+
+});
+
+},{"./BarContainer":45,"d3":10,"react":221}],47:[function(require,module,exports){
+
+exports.BarChart = require('./BarChart');
+
+},{"./BarChart":44}],48:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+
+module.exports = React.createClass({
+
+  displayName: 'Candle',
+
+  propTypes: {
+    className:      React.PropTypes.string,
+    shapeRendering: React.PropTypes.string,
+    stroke:         React.PropTypes.string,
+    strokeWidth:    React.PropTypes.number,
+  },
+
+  getDefaultProps:function() {
+    return {
+      className:      'rd3-candlestick-candle',
+      shapeRendering: 'crispEdges',
+      stroke:         '#000',
+      strokeWidth:    1,
+    };
+  },
+
+  render:function() {
+    var props = this.props;
+
+    return (
+      React.createElement("rect", {
+        className: props.className, 
+        fill: props.candleFill, 
+        x: props.candle_x, 
+        y: props.candle_y, 
+        stroke: props.stroke, 
+        strokeWidth: props.strokeWidth, 
+        style: { shapeRendering: props.shapeRendering}, 
+        width: props.candleWidth, 
+        height: props.candleHeight, 
+        onMouseOver: props.handleMouseOver, 
+        onMouseLeave: props.handleMouseLeave}
+      )
+    );
+  }
+
+});
+
+},{"react":221}],49:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+var utils = require('../utils');
+var DataSeries = require('./DataSeries');
+var $__0=      require('../common'),Chart=$__0.Chart,XAxis=$__0.XAxis,YAxis=$__0.YAxis;
+
+module.exports = React.createClass({
+
+  displayName: 'CandleStickChart',
+
+  propTypes: {
+    data:              React.PropTypes.oneOfType([
+                         React.PropTypes.array,
+                         React.PropTypes.object
+                       ]),
+    fillUp:            React.PropTypes.func,
+    fillUpAccessor:    React.PropTypes.func,
+    fillDown:          React.PropTypes.func,
+    fillDownAccessor:  React.PropTypes.func,
+    height:            React.PropTypes.number,
+    hoverAnimation:    React.PropTypes.bool,
+    title:             React.PropTypes.string,
+    xAccessor:         React.PropTypes.func,
+    xAxisFormatter:    React.PropTypes.func,
+    xAxisTickInterval: React.PropTypes.object,
+    xAxisTickValues:   React.PropTypes.array,
+    yAccessor:         React.PropTypes.func,
+    yAxisFormatter:    React.PropTypes.func,
+    yAxisTickCount:    React.PropTypes.number,
+    yAxisTickValues:   React.PropTypes.array,
+    width:             React.PropTypes.number,
+  },
+
+  getDefaultProps:function() {
+    return {
+      className:        'rd3-candlestick',
+      xAxisClassName:   'rd3-candlestick-xaxis',
+      yAxisClassName:   'rd3-candlestick-yaxis',
+      data:             [],
+      fillUp:           function(value)  {return '#ffffff';},
+      fillUpAccessor:   function(d, idx)  {return idx;},
+      fillDown:         d3.scale.category20c(),
+      fillDownAccessor: function(d, idx)  {return idx;},
+      height:           200,
+      hoverAnimation:   true,
+      margins:          {top: 10, right: 20, bottom: 30, left: 45},
+      legendOffset:     120,
+      title:            '',
+      xAccessor:        function(d)  {return d.x;},
+      yAccessor:        function(d)  {return { open: d.open, high: d.high, low: d.low, close: d.close };},
+      width:            400,
+    };
+  },
+
+  render:function() {
+
+    var props = this.props;
+
+    // Calculate inner chart dimensions
+    var innerWidth, innerHeight;
+    innerWidth = props.width - props.margins.left - props.margins.right;
+    innerHeight = props.height - props.margins.top - props.margins.bottom;
+
+    if (!Array.isArray(props.data)) {
+      props.data = [props.data];
+    }
+    var flattenedData = utils.flattenData(props.data, props.xAccessor, props.yAccessor);
+
+    var allValues = flattenedData.allValues,
+        xValues = flattenedData.xValues,
+        yValues = flattenedData.yValues;
+    var scales = utils.calculateScales(innerWidth, innerHeight, xValues, yValues);
+
+    var trans = ("translate(" + ( props.yAxisOffset < 0 ? props.margins.left + Math.abs(props.yAxisOffset) : props.margins.left) + "," +  props.margins.top + ")");
+
+    var dataSeries = props.data.map( function(series, idx)  {
+      return (
+          React.createElement(DataSeries, {
+            key: idx, 
+            seriesName: series.name, 
+            index: idx, 
+            xScale: scales.xScale, 
+            yScale: scales.yScale, 
+            data: series.values, 
+            fillUp: props.fillUp(props.fillUpAccessor(series, idx)), 
+            fillDown: props.fillDown(props.fillDownAccessor(series, idx)), 
+            xAccessor: props.xAccessor, 
+            yAccessor: props.yAccessor, 
+            hoverAnimation: props.hoverAnimation}
+          )
+        );
+      });
+
+    return (
+      React.createElement(Chart, {
+        viewBox: props.viewBox, 
+        width: props.width, 
+        height: props.height, 
+        margins: props.margins, 
+        title: props.title
+      }, 
+        React.createElement("g", {transform: trans, className: props.className}, 
+          React.createElement(XAxis, {
+            xAxisClassName: props.xAxisClassName, 
+            xScale: scales.xScale, 
+            xAxisTickValues: props.xAxisTickValues, 
+            xAxisTickInterval: props.xAxisTickInterval, 
+            xAxisOffset: props.xAxisOffset, 
+            tickFormatting: props.xAxisFormatter, 
+            xAxisLabel: props.xAxisLabel, 
+            xAxisLabelOffset: props.xAxisLabelOffset, 
+            xOrient: props.xOrient, 
+            yOrient: props.yOrient, 
+            margins: props.margins, 
+            width: innerWidth, 
+            height: innerHeight, 
+            gridVertical: props.gridVertical, 
+            gridVerticalStroke: props.gridVerticalStroke, 
+            gridVerticalStrokeWidth: props.gridVerticalStrokeWidth, 
+            gridVerticalStrokeDash: props.gridVerticalStrokeDash}
+          ), 
+          React.createElement(YAxis, {
+            yAxisClassName: props.yAxisClassName, 
+            yScale: scales.yScale, 
+            yAxisTickValues: props.yAxisTickValues, 
+            yAxisOffset: props.yAxisOffset, 
+            yAxisTickCount: props.yAxisTickCount, 
+            tickFormatting: props.yAxisFormatter, 
+            yAxisLabel: props.yAxisLabel, 
+            yAxisLabelOffset: props.yAxisLabelOffset, 
+            xOrient: props.xOrient, 
+            yOrient: props.yOrient, 
+            margins: props.margins, 
+            width: innerWidth, 
+            height: props.height, 
+            gridHorizontal: props.gridHorizontal, 
+            gridHorizontalStroke: props.gridHorizontalStroke, 
+            gridHorizontalStrokeWidth: props.gridHorizontalStrokeWidth, 
+            gridHorizontalStrokeDash: props.gridHorizontalStrokeDash}
+          ), 
+          dataSeries
+        )
+      )
+    );
+  }
+
+});
+
+},{"../common":66,"../utils":92,"./DataSeries":51,"d3":10,"react":221}],50:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+var utils = require('../utils');
+var Candle = require('./Candle');
+var Wick = require('./Wick');
+
+module.exports = React.createClass({
+
+  displayName: 'CandleStickContainer',
+
+  propTypes: {
+    candle_x:       React.PropTypes.number,
+    candle_y:       React.PropTypes.number,
+    className:      React.PropTypes.string,
+    candleFill:     React.PropTypes.string,
+    candleHeight:   React.PropTypes.number,
+    candleWidth:    React.PropTypes.number,
+    wick_x1:        React.PropTypes.number,
+    wick_x2:        React.PropTypes.number,
+    wick_y1:        React.PropTypes.number,
+    wick_y2:        React.PropTypes.number,
+  },
+
+  getDefaultProps:function() {
+    return {
+      className: 'rd3-candlestick-container'
+    };
+  },
+
+  getInitialState:function() {
+    // state for animation usage
+    return {
+      candleWidth: this.props.candleWidth,
+      candleFill: this.props.candleFill
+    };
+  },
+
+  render:function() {
+
+    var props = this.props;
+    var state = this.state;
+
+    // animation controller
+    var handleMouseOver, handleMouseLeave;
+    if(props.hoverAnimation) {
+      handleMouseOver = this._animateCandle;
+      handleMouseLeave = this._restoreCandle;
+    } else {
+      handleMouseOver = handleMouseLeave = null;
+    }
+
+    return (
+      React.createElement("g", {className: props.className}, 
+       React.createElement(Wick, {
+         wick_x1: props.wick_x1, 
+         wick_x2: props.wick_x2, 
+         wick_y1: props.wick_y1, 
+         wick_y2: props.wick_y2}
+       ), 
+       React.createElement(Candle, {
+         candleFill: state.candleFill, 
+         candleWidth: state.candleWidth, 
+         candle_x: props.candle_x - ((state.candleWidth - props.candleWidth) / 2), 
+         candle_y: props.candle_y, 
+         candleHeight: props.candleHeight, 
+         handleMouseOver: handleMouseOver, 
+         handleMouseLeave: handleMouseLeave}
+       )
+      )
+    );
+  },
+
+  _animateCandle:function() {
+    this.setState({ 
+      candleWidth: this.props.candleWidth * 1.5,
+      candleFill: utils.shade(this.props.candleFill, -0.2)
+    });
+  },
+
+  _restoreCandle:function() {
+    this.setState({ 
+      candleWidth: this.props.candleWidth,
+      candleFill: this.props.candleFill
+    });
+  },
+
+});
+
+},{"../utils":92,"./Candle":48,"./Wick":52,"d3":10,"react":221}],51:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+var utils = require('../utils');
+var CandlestickContainer = require('./CandlestickContainer');
+
+
+module.exports = React.createClass({
+
+  displayName: 'DataSeries',
+
+  propTypes: {
+    fillUp:   React.PropTypes.string.isRequired,
+    fillDown: React.PropTypes.string.isRequired
+  },
+
+  render:function() {
+
+    var props = this.props;
+
+    var xRange = props.xScale.range(),
+        width = Math.abs(xRange[0] - xRange[1]),
+        candleWidth = (width / (props.data.length + 2)) * 0.5;
+
+    var dataSeriesArray = props.data.map( function(d, idx) {
+      // Candles
+      var ohlc = props.yAccessor(d),
+        candle_x = props.xScale(props.xAccessor(d)) - 0.5 * candleWidth,
+        candle_y = props.yScale(Math.max(ohlc.open, ohlc.close)),
+        candleHeight = Math.abs(props.yScale(ohlc.open) - props.yScale(ohlc.close)),
+        wick_y2 = props.yScale(ohlc.low),
+        ohlcClass = (ohlc.open <= ohlc.close) ? 'up' : 'down',
+        className = ( ohlcClass + " rd3-candlestick-rect"),
+        candleFill = (ohlc.open <= ohlc.close) ? props.fillUp : props.fillDown;
+
+      //Wicks
+      var wick_x1 = props.xScale(props.xAccessor(d)),
+        wick_y1 = props.yScale(ohlc.high),
+        wick_x2 = wick_x1;
+
+      return (
+        React.createElement(CandlestickContainer, {
+          key: idx, 
+          candleFill: candleFill, 
+          candleHeight: candleHeight, 
+          candleWidth: candleWidth, 
+          candle_x: candle_x, 
+          candle_y: candle_y, 
+          wick_x1: wick_x1, 
+          wick_x2: wick_x2, 
+          wick_y1: wick_y1, 
+          wick_y2: wick_y2, 
+          hoverAnimation: props.hoverAnimation}
+        )
+      );
+    }, this);
+
+    return (
+      React.createElement("g", null, 
+        dataSeriesArray
+      )
+    );
+  }
+
+});
+
+},{"../utils":92,"./CandlestickContainer":50,"d3":10,"react":221}],52:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+
+
+module.exports = React.createClass({
+
+  displayName: 'Wick',
+
+  propTypes: {
+    className:      React.PropTypes.string,
+    shapeRendering: React.PropTypes.string,
+    stroke:         React.PropTypes.string,
+    strokeWidth:    React.PropTypes.number,
+  },
+
+  getDefaultProps:function() {
+    return {
+      className:      'rd3-candlestick-wick',
+      stroke:         '#000',
+      strokeWidth:    1,
+      shapeRendering: 'crispEdges',
+    };
+  },
+
+  render:function() {
+    var props = this.props;
+    return React.createElement("line", {
+            stroke: props.stroke, 
+            strokeWidth: props.strokeWidth, 
+            style: { shapeRendering: props.shapeRendering}, 
+            className: props.className, 
+            x1: props.wick_x1, 
+            y1: props.wick_y1, 
+            x2: props.wick_x2, 
+            y2: props.wick_y2}
+          );
+  }
+
+});
+
+},{"react":221}],53:[function(require,module,exports){
+
+exports.CandlestickChart = require('./CandlestickChart');
+
+},{"./CandlestickChart":49}],54:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+
+module.exports = React.createClass({
+
+  displayName: 'Legend',
+
+  propTypes: {
+    className:     React.PropTypes.string,
+    colors:        React.PropTypes.func,
+    colorAccessor: React.PropTypes.func,
+    data:          React.PropTypes.array.isRequired,
+    itemClassName: React.PropTypes.string,
+    margins:       React.PropTypes.object,
+    text:          React.PropTypes.string,
+    width:         React.PropTypes.number.isRequired
+  },
+
+  getDefaultProps: function() {
+    return {
+      className:    'rd3-legend',
+      colors:        d3.scale.category20c(),
+      colorAccessor: function(d, idx)  {return idx;},
+      itemClassName: 'rd3-legend-item',
+      text:          '#000'
+    };
+  },
+
+  render: function() {
+
+    var props = this.props;
+
+    var textStyle = {
+      'color': 'black',
+      'fontSize': '50%',
+      'verticalAlign': 'top'
+    };
+
+    var legendItems = [];
+
+    props.data.forEach( function(series, idx)  {
+      var itemStyle = {
+        'color': props.colors(props.colorAccessor(series, idx)),
+        'lineHeight': '60%',
+        'fontSize': '200%'
+      };
+
+      legendItems.push(
+        React.createElement("li", {
+          key: idx, 
+          className: props.itemClassName, 
+          style: itemStyle
+        }, 
+          React.createElement("span", {
+            style: textStyle
+          }, 
+            series.name
+          )
+        )
+      );
+
+    });
+
+    var topMargin = props.margins.top;
+
+    var legendBlockStyle = {
+      'wordWrap': 'break-word',
+      'width': props.width,
+      'paddingLeft': '0',
+      'marginBottom': '0',
+      'marginTop': topMargin,
+      'listStylePosition': 'inside'
+    };
+
+    return (
+      React.createElement("ul", {
+        className: props.className, 
+        style: legendBlockStyle
+      }, 
+        legendItems
+      )
+    );
+  }
+
+});
+
+},{"d3":10,"react":221}],55:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+
+var Polygon = React.createClass({displayName: "Polygon",
+
+  _animateCircle: function() {
+    this.props.structure.cursor('voronoi').cursor(this.props.id).update(function(){return 'active';});
+    // this.props.pubsub.emit('animate', this.props.id);
+  },
+
+  _restoreCircle: function() {
+    this.props.structure.cursor('voronoi').cursor(this.props.id).update(function(){return 'inactive';});
+    // this.props.pubsub.emit('restore', this.props.id);
+  },
+
+  _drawPath: function(d) {
+    if(d === undefined) {
+      return; 
+    }  
+    return 'M' + d.join(',') + 'Z';
+  },
+
+  render: function() {
+    return React.createElement("path", {
+      onMouseOver: this._animateCircle, 
+      onMouseOut: this._restoreCircle, 
+      fill: "white", 
+      opacity: "0", 
+      d: this._drawPath(this.props.vnode)});
+  }
+
+});
+
+
+module.exports = React.createClass({
+
+  displayName: 'Voronoi',
+
+  render: function() {
+    var xScale = this.props.xScale;
+    var yScale = this.props.yScale;
+
+    var voronoi = d3.geom.voronoi()
+      .x(function(d){ return xScale(d.coord.x); })
+      .y(function(d){ return yScale(d.coord.y); })
+      .clipExtent([[0, 0], [ this.props.width , this.props.height]]);
+
+    var regions = voronoi(this.props.data).map(function(vnode, idx) {
+      return React.createElement(Polygon, {structure: this.props.structure, key: idx, id: vnode.point.id, vnode: vnode});
+    }.bind(this));
+
+    return (
+      React.createElement("g", null, 
+        regions
+      )
+    );
+  }
+
+});
+
+},{"d3":10,"react":221}],56:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+
+module.exports = React.createClass({
+
+  displayName: 'AxisLine',
+
+  propTypes: {
+    scale: React.PropTypes.func.isRequired,
+    innerTickSize: React.PropTypes.number,
+    outerTickSize: React.PropTypes.number,
+    tickPadding: React.PropTypes.number,
+    tickArguments: React.PropTypes.array,
+    fill: React.PropTypes.string,
+    stroke: React.PropTypes.string
+  },
+
+  getDefaultProps:function() {
+    return {
+      innerTickSize: 6,
+      outerTickSize: 6,
+      tickPadding: 3,
+      fill: 'none',
+      tickArguments: [10],
+      tickValues: null,
+      tickFormat: null 
+    };
+  },
+
+
+  _d3_scaleExtent:function(domain) {
+    var start = domain[0], stop = domain[domain.length - 1];
+    return start < stop ? [start, stop] : [stop, start];
+  },
+
+  _d3_scaleRange:function(scale) {
+    return scale.rangeExtent ? scale.rangeExtent() : this._d3_scaleExtent(scale.range());
+  },
+
+  render:function() {
+
+    var props = this.props;
+    var sign = props.orient === "top" || props.orient === "left" ? -1 : 1;
+
+    var range = this._d3_scaleRange(props.scale);
+
+    var d;
+
+    if (props.orient === "bottom" || props.orient === "top") {
+      d = "M" + range[0] + "," + sign * props.outerTickSize + "V0H" + range[1] + "V" + sign * props.outerTickSize;
+    } else {
+      d = "M" + sign * props.outerTickSize + "," + range[0] + "H0V" + range[1] + "H" + sign * props.outerTickSize;
+    }
+
+
+    return (
+      React.createElement("path", {
+        className: "domain", 
+        d: d, 
+        style: {'shapeRendering':'crispEdges'}, 
+        fill: props.fill, 
+        stroke: props.stroke, 
+        strokeWidth: props.strokeWidth
+      }
+      )
+    );
+  }
+});
+
+},{"d3":10,"react":221}],57:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+
+module.exports = React.createClass({
+
+  displayName: 'AxisTick',
+
+  propTypes: {
+    scale: React.PropTypes.func.isRequired,
+    orient: React.PropTypes.oneOf(['top','bottom','left','right']).isRequired,
+    orient2nd: React.PropTypes.oneOf(['top','bottom','left','right']),
+    height: React.PropTypes.number.isRequired,
+    width: React.PropTypes.number.isRequired,
+    tickArguments : React.PropTypes.array,
+    tickValues: React.PropTypes.array,
+    innerTickSize: React.PropTypes.number,
+    outerTickSize: React.PropTypes.number,
+    tickPadding: React.PropTypes.number,
+    tickFormat: React.PropTypes.func,
+    tickStroke: React.PropTypes.string,
+    gridHorizontal: React.PropTypes.bool,
+    gridVertical: React.PropTypes.bool,
+    gridHorizontalStroke: React.PropTypes.string,
+    gridVerticalStroke: React.PropTypes.string,
+    gridHorizontalStrokeWidth: React.PropTypes.number,
+    gridVerticalStrokeWidth: React.PropTypes.number,
+    gridHorizontalStrokeDash: React.PropTypes.string,
+    gridVerticalStrokeDash: React.PropTypes.string
+  },
+  getDefaultProps:function() {
+    return {
+      innerTickSize: 6,
+      outerTickSize: 6,
+      tickStroke: '#000',
+      tickPadding: 3,
+      tickArguments: [10],
+      tickValues: null,
+      gridHorizontal: false,
+      gridVertical: false,
+      gridHorizontalStroke: '#D8D7D7',
+      gridVerticalStroke: '#D8D7D7',
+      gridHorizontalStrokeWidth: 1,
+      gridVerticalStrokeWidth: 1,
+      gridHorizontalStrokeDash: '5, 5',
+      gridVerticalStrokeDash: '5, 5'
+    };
+  },
+
+  render:function() {
+    var props = this.props;
+
+    var tr,
+        ticks,
+        scale,
+        adjustedScale,
+        textAnchor,
+        tickFormat,
+        y0, y1, y2, dy, x0, x1, x2, dx;
+
+    var gridStrokeWidth,
+        gridStroke,
+        gridStrokeDashArray,
+        x2grid,
+        y2grid;
+    var gridOn = false;
+
+    var sign = props.orient === 'top' || props.orient === 'right' ? -1 : 1;
+    var tickSpacing = Math.max(props.innerTickSize, 0) + props.tickPadding;
+
+    scale = props.scale;
+
+    if (props.tickValues) {
+      ticks = props.tickValues;
+    } else if (scale.ticks) {
+      ticks = scale.ticks.apply(scale, props.tickArguments);
+    } else {
+      ticks = scale.domain();
+    }
+
+    if (props.tickFormatting) {
+        tickFormat = props.tickFormatting;
+    } else if (scale.tickFormat) {
+        tickFormat = scale.tickFormat.apply(scale, props.tickArguments);
+    } else {
+        tickFormat = function(d) {return d;};
+    }
+
+    adjustedScale = scale.rangeBand ? function(d)  { return scale(d) + scale.rangeBand() / 2; } : scale;
+
+    // Still working on this
+    // Ticks and lines are not fully aligned
+    // in some orientations
+    switch (props.orient) {
+      case 'top':
+        tr = function(tick)  {return ("translate(" + adjustedScale(tick) + ",0)");};
+        textAnchor = "middle";
+        y2 = props.innerTickSize * sign;
+        y1 = tickSpacing * sign;
+        dy =  sign < 0 ? "0em" : ".71em";
+        x2grid = 0;
+        y2grid = -props.height;
+        break;
+      case 'bottom':
+        tr = function(tick)  {return ("translate(" + adjustedScale(tick) + ",0)");};
+        textAnchor = "middle";
+        y2 = props.innerTickSize * sign;
+        y1 = tickSpacing * sign;
+        dy =  sign < 0 ? "0em" : ".71em";
+        x2grid = 0;
+        y2grid = -props.height;
+        break;
+      case 'left':
+        tr = function(tick)  {return ("translate(0," + adjustedScale(tick) + ")");};
+        textAnchor = "end";
+        x2 = props.innerTickSize * -sign;
+        x1 = tickSpacing * -sign;
+        dy = ".32em";
+        x2grid = props.width;
+        y2grid = 0;
+        break;
+      case 'right':
+        tr = function(tick)  {return ("translate(0," + adjustedScale(tick) + ")");};
+        textAnchor = "start";
+        x2 = props.innerTickSize * -sign;
+        x1 = tickSpacing * -sign;
+        dy = ".32em";
+        x2grid = -props.width;
+        y2grid = 0;
+        break;
+    }
+
+    if (props.gridHorizontal) {
+      gridOn = true;
+      gridStrokeWidth = props.gridHorizontalStrokeWidth;
+      gridStroke = props.gridHorizontalStroke;
+      gridStrokeDashArray = props.gridHorizontalStrokeDash;
+    }
+    else if (props.gridVertical) {
+      gridOn = true;
+      gridStrokeWidth = props.gridVerticalStrokeWidth;
+      gridStroke = props.gridVerticalStroke;
+      gridStrokeDashArray = props.gridVerticalStrokeDash;
+    }
+
+    // return grid line if grid is enabled and grid line is not on at same position as other axis.
+    var gridLine = function(pos) {
+      if (gridOn
+        && !(props.orient2nd == 'left' && pos == 0)
+        && !(props.orient2nd == 'right' && pos == props.width)
+        && !((props.orient == 'left' || props.orient == 'right') && pos == props.height)
+      ) {
+        return (
+          React.createElement("line", {style: {
+            strokeWidth: gridStrokeWidth,
+            shapeRendering: 'crispEdges',
+            stroke: gridStroke,
+            strokeDasharray: gridStrokeDashArray
+            }, x2: x2grid, y2: y2grid})
+        )
+      }
+    }
+
+    return (
+    React.createElement("g", null, 
+      ticks.map( function(tick, idx)  {
+        return (
+          React.createElement("g", {key: idx, className: "tick", transform: tr(tick)}, 
+            gridLine(adjustedScale(tick)), 
+            React.createElement("line", {style: {shapeRendering:'crispEdges',opacity:'1',stroke:props.tickStroke}, x2: x2, y2: y2}
+            ), 
+            React.createElement("text", {
+              strokeWidth: "0.01", 
+              dy: dy, x: x1, y: y1, 
+              style: {stroke:props.tickTextStroke, fill:props.tickTextStroke}, 
+              textAnchor: textAnchor
+            }, 
+              tickFormat(tick)
+            )
+          )
+        );
+        })
+      
+    )
+    );
+  }
+
+});
+
+},{"d3":10,"react":221}],58:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+
+
+module.exports = React.createClass({
+
+  displayName: 'Label',
+
+  propTypes: {
+    height:              React.PropTypes.number,
+    horizontalTransform: React.PropTypes.string,
+    label:               React.PropTypes.string.isRequired,
+    width:               React.PropTypes.number,
+    strokeWidth:         React.PropTypes.number,
+    textAnchor:          React.PropTypes.string,
+    verticalTransform:   React.PropTypes.string
+  },
+
+  getDefaultProps:function() {
+    return {
+      horizontalTransform: 'rotate(270)',
+      strokeWidth:         0.01,
+      textAnchor:          'middle',
+      verticalTransform:   'rotate(0)'
+    };
+  },
+
+  render:function() {
+
+    var props = this.props;
+
+    if (props.label) {
+      switch (props.orient) {
+        case 'top':
+          return (
+            React.createElement("text", {
+              strokeWidth: props.strokeWidth.toString(), 
+              textAnchor: props.textAnchor, 
+              transform: props.verticalTransform, 
+              x: props.width / 2, 
+              y: props.offset
+            }, 
+              props.label
+            )
+          );
+        case 'bottom':
+          return (
+            React.createElement("text", {
+              strokeWidth: props.strokeWidth.toString(), 
+              textAnchor: props.textAnchor, 
+              transform: props.verticalTransform, 
+              x: props.width / 2, 
+              y: props.offset
+            }, 
+              props.label
+            )
+          );
+        case 'left':
+          return (
+            React.createElement("text", {
+              strokeWidth: props.strokeWidth.toString(), 
+              textAnchor: props.textAnchor, 
+              transform: props.horizontalTransform, 
+              y: -props.offset, 
+              x: -props.height / 2
+            }, 
+              props.label
+            )
+          );
+        case 'right':
+          return (
+            React.createElement("text", {
+              strokeWidth: props.strokeWidth.toString(), 
+              textAnchor: props.textAnchor, 
+              transform: props.horizontalTransform, 
+              y: props.offset, 
+              x: -props.height / 2
+            }, 
+              props.label
+            )
+          );
+      }
+    }
+    return React.createElement("text", null);
+  }
+
+});
+
+},{"react":221}],59:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+var AxisTicks = require('./AxisTicks');
+var AxisLine = require('./AxisLine');
+var Label = require('./Label');
+
+module.exports = React.createClass({
+
+  displayName: 'XAxis',
+
+  propTypes: {
+    fill:            React.PropTypes.string,
+    height:          React.PropTypes.number.isRequired,
+    width:           React.PropTypes.number.isRequired,
+    stroke:          React.PropTypes.string,
+    strokeWidth:     React.PropTypes.string,
+    tickStroke:      React.PropTypes.string,
+    xAxisClassName:  React.PropTypes.string,
+    xAxisLabel:      React.PropTypes.string,
+    xAxisTickValues: React.PropTypes.array,
+    xAxisOffset:     React.PropTypes.number,
+    xScale:          React.PropTypes.func.isRequired,
+    xOrient:         React.PropTypes.oneOf(['top', 'bottom']),
+    yOrient:         React.PropTypes.oneOf(['left', 'right']),
+    gridVertical:  React.PropTypes.bool,
+    gridVerticalStroke: React.PropTypes.string,
+    gridVerticalStrokeWidth: React.PropTypes.number,
+    gridVerticalStrokeDash: React.PropTypes.string
+  },
+
+  getDefaultProps:function() {
+    return {
+      fill:            'none',
+      stroke:          'none',
+      strokeWidth:     '1',
+      tickStroke:      '#000',
+      xAxisClassName:  'rd3-x-axis',
+      xAxisLabel:      '',
+      xAxisLabelOffset: 10,
+      xAxisOffset:      0,
+      xOrient:         'bottom',
+      yOrient:         'left'
+    };
+  },
+
+  render:function() {
+    var props = this.props;
+
+    var t = ("translate(0 ," + (props.xAxisOffset + props.height) + ")");
+
+    var tickArguments;
+    if (typeof props.xAxisTickCount !== 'undefined') {
+      tickArguments = [props.xAxisTickCount];
+    }
+
+    if (typeof props.xAxisTickInterval !== 'undefined') {
+      tickArguments = [d3.time[props.xAxisTickInterval.unit], props.xAxisTickInterval.interval];
+    }
+
+    return (
+      React.createElement("g", {
+        className: props.xAxisClassName, 
+        transform: t
+      }, 
+        React.createElement(AxisTicks, {
+          tickValues: props.xAxisTickValues, 
+          tickFormatting: props.tickFormatting, 
+          tickArguments: tickArguments, 
+          tickStroke: props.tickStroke, 
+          tickTextStroke: props.tickTextStroke, 
+          innerTickSize: props.tickSize, 
+          scale: props.xScale, 
+          orient: props.xOrient, 
+          orient2nd: props.yOrient, 
+          height: props.height, 
+          width: props.width, 
+          gridVertical: props.gridVertical, 
+          gridVerticalStroke: props.gridVerticalStroke, 
+          gridVerticalStrokeWidth: props.gridVerticalStrokeWidth, 
+          gridVerticalStrokeDash: props.gridVerticalStrokeDash}
+        ), 
+        React.createElement(AxisLine, React.__spread({
+          scale: props.xScale, 
+          stroke: props.stroke, 
+          orient: props.xOrient, 
+          outerTickSize: props.tickSize}, 
+          props)
+        ), 
+        React.createElement(Label, {
+          label: props.xAxisLabel, 
+          offset: props.xAxisLabelOffset, 
+          orient: props.xOrient, 
+          margins: props.margins, 
+          width: props.width}
+          )
+      )
+    );
+  }
+
+});
+
+},{"./AxisLine":56,"./AxisTicks":57,"./Label":58,"d3":10,"react":221}],60:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+var AxisTicks = require('./AxisTicks');
+var AxisLine = require('./AxisLine');
+var Label = require('./Label');
+
+module.exports = React.createClass({
+
+  displayName: 'YAxis',
+
+  propTypes: {
+    fill:            React.PropTypes.string,
+    stroke:          React.PropTypes.string,
+    strokeWidth:     React.PropTypes.string,
+    tickStroke:      React.PropTypes.string,
+    width:           React.PropTypes.number.isRequired,
+    height:          React.PropTypes.number.isRequired,
+    yAxisClassName:  React.PropTypes.string,
+    yAxisLabel:      React.PropTypes.string,
+    yAxisOffset:     React.PropTypes.number,
+    yAxisTickValues: React.PropTypes.array,
+    xOrient:         React.PropTypes.oneOf(['top', 'bottom']),
+    yOrient:         React.PropTypes.oneOf(['left', 'right']),
+    yScale:          React.PropTypes.func.isRequired,
+    gridVertical: React.PropTypes.bool,
+    gridVerticalStroke: React.PropTypes.string,
+    gridVerticalStrokeWidth: React.PropTypes.number,
+    gridVerticalStrokeDash: React.PropTypes.string
+  },
+
+  getDefaultProps:function() {
+    return {
+      fill:           'none',
+      stroke:         '#000',
+      strokeWidth:    '1',
+      tickStroke:     '#000',
+      yAxisClassName: 'rd3-y-axis',
+      yAxisLabel:     '',
+      yAxisOffset:    0,
+      xOrient:        'bottom',
+      yOrient:        'left'
+    };
+  },
+
+  render:function() {
+
+    var props = this.props;
+
+    var t;
+    if (props.yOrient === 'right') {
+       t = ("translate(" + (props.yAxisOffset + props.width) + ", 0)");
+    } else {
+       t = ("translate(" + props.yAxisOffset + ", 0)");
+    }
+
+    var tickArguments;
+    if (props.yAxisTickCount) {
+      tickArguments = [props.yAxisTickCount];
+    }
+
+    if (props.yAxisTickInterval) {
+      tickArguments = [d3.time[props.yAxisTickInterval.unit], props.yAxisTickInterval.interval];
+    }
+
+    return (
+      React.createElement("g", {
+        className: props.yAxisClassName, 
+        transform: t
+      }, 
+        React.createElement(AxisTicks, {
+          innerTickSize: props.tickSize, 
+          orient: props.yOrient, 
+          orient2nd: props.xOrient, 
+          tickArguments: tickArguments, 
+          tickFormatting: props.tickFormatting, 
+          tickStroke: props.tickStroke, 
+          tickTextStroke: props.tickTextStroke, 
+          tickValues: props.yAxisTickValues, 
+          scale: props.yScale, 
+          height: props.height, 
+          width: props.width, 
+          gridHorizontal: props.gridHorizontal, 
+          gridHorizontalStroke: props.gridHorizontalStroke, 
+          gridHorizontalStrokeWidth: props.gridHorizontalStrokeWidth, 
+          gridHorizontalStrokeDash: props.gridHorizontalStrokeDash}
+        ), 
+        React.createElement(AxisLine, React.__spread({
+          orient: props.yOrient, 
+          outerTickSize: props.tickSize, 
+          scale: props.yScale, 
+          stroke: props.stroke}, 
+          props)
+        ), 
+        React.createElement(Label, {
+          height: props.height, 
+          label: props.yAxisLabel, 
+          margins: props.margins, 
+          offset: props.yAxisLabelOffset, 
+          orient: props.yOrient}
+        )
+      )
+    );
+  }
+
+});
+
+},{"./AxisLine":56,"./AxisTicks":57,"./Label":58,"d3":10,"react":221}],61:[function(require,module,exports){
+
+exports.XAxis = require('./XAxis');
+exports.YAxis = require('./YAxis');
+
+},{"./XAxis":59,"./YAxis":60}],62:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var mixins = require('../../mixins');
+
+module.exports = React.createClass({
+
+  displayName: 'BasicChart',
+
+  propTypes: {
+    children:       React.PropTypes.node,
+    className:      React.PropTypes.string,
+    height:         React.PropTypes.node,
+    svgClassName:   React.PropTypes.string,
+    title:          React.PropTypes.node,
+    titleClassName: React.PropTypes.string,
+    width:          React.PropTypes.node
+  },
+
+  getDefaultProps:function() {
+    return {
+      className:      'rd3-basic-chart',
+      svgClassName:   'rd3-chart',
+      titleClassName: 'rd3-chart-title'
+    };
+  },
+
+  _renderTitle:function() {
+    var props = this.props;
+
+    if (props.title != '' && props.title != null) {
+      return (
+        React.createElement("h4", {
+          className: props.titleClassName
+        }, 
+          props.title
+        )
+      );
+    } else {
+      return null;
+    }
+  },
+
+  _renderChart: function() {
+    var props = this.props;
+
+    return (
+      React.createElement("svg", {
+        className: props.svgClassName, 
+        height: props.height, 
+        viewBox: props.viewBox, 
+        width: props.width
+      }, 
+        props.children
+      )
+    );
+  },
+
+  render: function() {
+    var props = this.props;
+
+    return (
+      React.createElement("div", {
+        className: props.className
+      }, 
+        this._renderTitle(), 
+        this._renderChart()
+      )
+    );
+  }
+});
+
+},{"../../mixins":76,"react":221}],63:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var LegendChart = require('./LegendChart');
+var BasicChart = require('./BasicChart');
+
+module.exports = React.createClass({
+
+  displayName: 'Chart',
+
+  propTypes: {
+    legend:         React.PropTypes.bool,
+    svgClassName:   React.PropTypes.string,
+    titleClassName: React.PropTypes.string
+  },
+
+  getDefaultProps: function() {
+    return {
+      legend:         false,
+      svgClassName:   'rd3-chart',
+      titleClassName: 'rd3-chart-title'
+    };
+  },
+
+  render: function() {
+    var props = this.props;
+
+    if (props.legend) {
+      return (
+        React.createElement(LegendChart, React.__spread({
+          svgClassName: props.svgClassName, 
+          titleClassName: props.titleClassName}, 
+          this.props)
+        )
+      );
+    }
+    return (
+      React.createElement(BasicChart, React.__spread({
+        svgClassName: props.svgClassName, 
+        titleClassName: props.titleClassName}, 
+        this.props)
+      )
+    );
+  }
+
+});
+
+},{"./BasicChart":62,"./LegendChart":64,"react":221}],64:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var Legend = require('../Legend');
+var d3 = require('d3');
+
+module.exports = React.createClass({
+
+  displayName: 'LegendChart',
+
+  propTypes: {
+    children:       React.PropTypes.node,
+    createClass:    React.PropTypes.string,
+    colors:         React.PropTypes.func,
+    colorAccessor:  React.PropTypes.func,
+    data:           React.PropTypes.array,
+    height:         React.PropTypes.node,
+    legend:         React.PropTypes.bool,
+    legendPosition: React.PropTypes.string,
+    margins:        React.PropTypes.object,
+    sideOffset:     React.PropTypes.number,
+    svgClassName:   React.PropTypes.string,
+    title:          React.PropTypes.node,
+    titleClassName: React.PropTypes.string,
+    viewBox:        React.PropTypes.string,
+    width:          React.PropTypes.node
+  },
+
+  getDefaultProps:function() {
+    return {
+      className:      'rd3-legend-chart',
+      colors:         d3.scale.category20c(),
+      colorAccessor:  function(d, idx)  {return idx;},
+      data:           [],
+      legend:         false,
+      legendPosition: 'right',
+      sideOffset:     90,
+      svgClassName:   'rd3-chart',
+      titleClassName: 'rd3-chart-title'
+    };
+  },
+
+  _renderLegend:function() {
+    var props = this.props;
+
+    if (props.legend) {
+      return (
+        React.createElement(Legend, {
+          colors: props.colors, 
+          colorAccessor: props.colorAccessor, 
+          data: props.data, 
+          legendPosition: props.legendPosition, 
+          margins: props.margins, 
+          width: props.sideOffset}
+        )
+      );
+    }
+  },
+
+  _renderTitle:function() {
+    var props = this.props;
+
+    if (props.title != '' && props.title != null) {
+      return (
+        React.createElement("h4", {
+          className: props.titleClassName
+        }, 
+          props.title
+        )
+      );
+    }
+    return null;
+  },
+
+  _renderChart: function() {
+    var props = this.props;
+
+    return (
+      React.createElement("svg", {
+        className: props.svgClassName, 
+        height: "100%", 
+        viewBox: props.viewBox, 
+        width: "100%"
+      }, 
+        props.children
+      )
+    );
+  },
+
+  render:function() {
+    var props = this.props;
+
+    return (
+      React.createElement("div", {
+        className: props.className, 
+        style: {'width': props.width, 'height': props.height}
+      }, 
+        this._renderTitle(), 
+        React.createElement("div", {style: { display: 'table', width: '100%', height: '100%'}}, 
+          React.createElement("div", {style: { display: 'table-cell'}}, 
+            this._renderChart()
+          ), 
+          React.createElement("div", {style: { display: 'table-cell', width: props.sideOffset, 'verticalAlign': 'top'}}, 
+            this._renderLegend()
+          )
+        )
+      )
+    );
+  }
+});
+
+},{"../Legend":54,"d3":10,"react":221}],65:[function(require,module,exports){
+
+exports.BasicChart = require('./BasicChart');
+exports.Chart = require('./Chart');
+exports.LegendChart = require('./LegendChart');
+
+},{"./BasicChart":62,"./Chart":63,"./LegendChart":64}],66:[function(require,module,exports){
+
+exports.XAxis = require('./axes').XAxis;
+exports.YAxis = require('./axes').YAxis;
+exports.Chart = require('./charts').Chart;
+exports.LegendChart = require('./charts').LegendChart;
+exports.Legend = require('./Legend');
+exports.Voronoi = require('./Voronoi');
+
+},{"./Legend":54,"./Voronoi":55,"./axes":61,"./charts":65}],67:[function(require,module,exports){
+exports.BarChart = require('./barchart').BarChart;
+exports.LineChart = require('./linechart').LineChart;
+exports.PieChart = require('./piechart').PieChart;
+exports.AreaChart = require('./areachart').AreaChart;
+exports.Treemap = require('./treemap').Treemap;
+exports.ScatterChart = require('./scatterchart').ScatterChart;
+exports.CandlestickChart = require('./candlestick').CandlestickChart;
+
+
+},{"./areachart":42,"./barchart":47,"./candlestick":53,"./linechart":73,"./piechart":81,"./scatterchart":86,"./treemap":91}],68:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+var VoronoiCircleContainer = require('./VoronoiCircleContainer');
+var Line = require('./Line');
+
+module.exports = React.createClass({
+
+  displayName: 'DataSeries',
+
+  propTypes: {
+    color: React.PropTypes.func,
+    colorAccessor: React.PropTypes.func,
+    data: React.PropTypes.array,
+    interpolationType: React.PropTypes.string,
+    xAccessor: React.PropTypes.func,
+    yAccessor: React.PropTypes.func,
+  },
+
+  getDefaultProps:function() {
+    return {
+      data: [],
+      xAccessor: function(d)  {return d.x;},
+      yAccessor: function(d)  {return d.y;},
+      interpolationType: 'linear'
+    };
+  },
+  
+  _isDate:function(d, accessor) {
+      return Object.prototype.toString.call(accessor(d)) === '[object Date]';
+  },
+
+  render:function() {
+    var props = this.props;
+    var xScale = props.xScale;
+    var yScale = props.yScale;
+    var xAccessor = props.xAccessor,
+        yAccessor = props.yAccessor;
+    
+    var interpolatePath = d3.svg.line()
+        .y( function(d)  {return props.yScale(yAccessor(d));} )
+        .interpolate(props.interpolationType);
+
+        if (this._isDate(props.data[0].values[0], xAccessor)) {
+          interpolatePath.x(function(d) {
+            return props.xScale(props.xAccessor(d).getTime());
+          });
+        } else {
+          interpolatePath.x(function(d) {
+            return props.xScale(props.xAccessor(d));
+          });
+        }
+
+    var lines = props.data.map(function(series, idx)  {
+      return (
+        React.createElement(Line, {
+          path: interpolatePath(series.values), 
+          stroke: props.colors(props.colorAccessor(series, idx)), 
+          strokeWidth: series.strokeWidth, 
+          strokeDashArray: series.strokeDashArray, 
+          seriesName: series.name, 
+          key: idx}
+        )
+      );
+    });
+
+    var voronoi = d3.geom.voronoi()
+      .x(function(d){ return xScale(d.coord.x); })
+      .y(function(d){ return yScale(d.coord.y); })
+      .clipExtent([[0, 0], [ props.width , props.height]]);
+
+    var cx, cy, circleFill;
+    var regions = voronoi(props.value).map(function(vnode, idx) {
+      var point = vnode.point.coord;
+      if (Object.prototype.toString.call(xAccessor(point)) === '[object Date]') {
+        cx = props.xScale(xAccessor(point).getTime());
+      } else {
+        cx = props.xScale(xAccessor(point));
+      }
+      if (Object.prototype.toString.call(yAccessor(point)) === '[object Date]') {
+        cy = props.yScale(yAccessor(point).getTime());
+      } else {
+        cy = props.yScale(yAccessor(point));
+      }
+      circleFill = props.colors(props.colorAccessor(vnode, vnode.point.seriesIndex));
+      
+      return (
+          React.createElement(VoronoiCircleContainer, {
+              key: idx, 
+              circleFill: circleFill, 
+              vnode: vnode, 
+              cx: cx, cy: cy, 
+              circleRadius: props.circleRadius}
+          )
+      );
+    }.bind(this));
+
+    return (
+      React.createElement("g", null, 
+        React.createElement("g", null, regions), 
+        React.createElement("g", null, lines)
+      )
+    );
+  }
+
+});
+
+},{"./Line":69,"./VoronoiCircleContainer":72,"d3":10,"react":221}],69:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+
+
+module.exports = React.createClass({
+
+  displayName: 'Line',
+
+  propTypes: {
+    fill: React.PropTypes.string,
+    path: React.PropTypes.string,
+    stroke: React.PropTypes.string,
+    strokeWidth: React.PropTypes.number,
+    strokeDashArray: React.PropTypes.string,
+  },
+
+  getDefaultProps:function() {
+    return {
+      stroke: '#3182bd',
+      fill: 'none',
+      strokeWidth: 1,
+      className: 'rd3-linechart-path'
+    };
+  },
+
+  render:function() {
+    var props = this.props;
+    return (
+      React.createElement("path", {
+        d: props.path, 
+        stroke: props.stroke, 
+        strokeWidth: props.strokeWidth, 
+        strokeDasharray: props.strokeDashArray, 
+        fill: props.fill, 
+        className: props.className}
+      )
+    );
+  }
+
+});
+
+},{"react":221}],70:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+var $__0=      require('../common'),Chart=$__0.Chart,XAxis=$__0.XAxis,YAxis=$__0.YAxis;
+var DataSeries = require('./DataSeries');
+var utils = require('../utils');
+var $__1=     require('../mixins'),CartesianChartPropsMixin=$__1.CartesianChartPropsMixin,ViewBoxMixin=$__1.ViewBoxMixin;
+
+module.exports = React.createClass({
+
+  mixins: [ CartesianChartPropsMixin, ViewBoxMixin ],
+
+  displayName: 'LineChart',
+
+  propTypes: {
+    circleRadius:   React.PropTypes.number,
+    hoverAnimation: React.PropTypes.bool,
+    margins:        React.PropTypes.object,
+ },
+
+  getDefaultProps:function() {
+    return {
+      circleRadius:    3,
+      className: 'rd3-linechart',
+      hoverAnimation: true,
+      margins:        {top: 10, right: 20, bottom: 50, left: 45},
+      xAxisClassName: 'rd3-linechart-xaxis',
+      yAxisClassName: 'rd3-linechart-yaxis',
+    };
+  },
+
+  _calculateScales: utils.calculateScales,
+
+  render:function() {
+
+    var props = this.props;
+
+    if (this.props.data && this.props.data.length < 1) {
+      return null;
+    }
+
+    // Calculate inner chart dimensions
+    var innerWidth, innerHeight;
+
+    innerWidth = this.getOuterDimensions().width - props.margins.left - props.margins.right;
+    innerHeight = this.getOuterDimensions().height - props.margins.top - props.margins.bottom;
+
+    if (!Array.isArray(props.data)) {
+      props.data = [props.data];
+    }
+
+    // Returns an object of flattened allValues, xValues, and yValues
+    var flattenedData = utils.flattenData(props.data, props.xAccessor, props.yAccessor);
+
+    var allValues = flattenedData.allValues,
+        xValues = flattenedData.xValues,
+        yValues = flattenedData.yValues;
+    var scales = this._calculateScales(innerWidth, innerHeight, xValues, yValues);
+    var trans = "translate(" + (props.yAxisOffset < 0 ? props.margins.left + Math.abs(props.yAxisOffset) : props.margins.left) + "," + props.margins.top + ")";
+
+    return (
+      React.createElement(Chart, {
+        viewBox: this.getViewBox(), 
+        legend: props.legend, 
+        data: props.data, 
+        margins: props.margins, 
+        colors: props.colors, 
+        colorAccessor: props.colorAccessor, 
+        width: props.width, 
+        height: props.height, 
+        title: props.title}, 
+        React.createElement("g", {transform: trans, className: props.className}, 
+          React.createElement(XAxis, {
+            xAxisClassName: props.xAxisClassName, 
+            strokeWidth: props.xAxisStrokeWidth, 
+            xAxisTickValues: props.xAxisTickValues, 
+            xAxisTickInterval: props.xAxisTickInterval, 
+            xAxisOffset: props.xAxisOffset, 
+            xScale: scales.xScale, 
+            xAxisLabel: props.xAxisLabel, 
+            xAxisLabelOffset: props.xAxisLabelOffset, 
+            tickFormatting: props.xAxisFormatter, 
+            xOrient: props.xOrient, 
+            yOrient: props.yOrient, 
+            data: props.data, 
+            margins: props.margins, 
+            width: innerWidth, 
+            height: innerHeight, 
+            stroke: props.axesColor, 
+            gridVertical: props.gridVertical, 
+            gridVerticalStroke: props.gridVerticalStroke, 
+            gridVerticalStrokeWidth: props.gridVerticalStrokeWidth, 
+            gridVerticalStrokeDash: props.gridVerticalStrokeDash}
+          ), 
+          React.createElement(YAxis, {
+            yAxisClassName: props.yAxisClassName, 
+            strokeWidth: props.yAxisStrokeWidth, 
+            yScale: scales.yScale, 
+            yAxisTickValues: props.yAxisTickValues, 
+            yAxisTickCount: props.yAxisTickCount, 
+            yAxisOffset: props.yAxisOffset, 
+            yAxisLabel: props.yAxisLabel, 
+            yAxisLabelOffset: props.yAxisLabelOffset, 
+            tickFormatting: props.yAxisFormatter, 
+            xOrient: props.xOrient, 
+            yOrient: props.yOrient, 
+            margins: props.margins, 
+            width: innerWidth, 
+            height: innerHeight, 
+            stroke: props.axesColor, 
+            gridHorizontal: props.gridHorizontal, 
+            gridHorizontalStroke: props.gridHorizontalStroke, 
+            gridHorizontalStrokeWidth: props.gridHorizontalStrokeWidth, 
+            gridHorizontalStrokeDash: props.gridHorizontalStrokeDash}
+          ), 
+          React.createElement(DataSeries, {
+            xScale: scales.xScale, 
+            yScale: scales.yScale, 
+            xAccessor: props.xAccessor, 
+            yAccessor: props.yAccessor, 
+            hoverAnimation: props.hoverAnimation, 
+            circleRadius: props.circleRadius, 
+            data: props.data, 
+            value: allValues, 
+            interpolationType: props.interpolationType, 
+            colors: props.colors, 
+            colorAccessor: props.colorAccessor, 
+            width: innerWidth, 
+            height: innerHeight}
+            )
+        )
+      )
+    );
+  }
+
+});
+
+},{"../common":66,"../mixins":76,"../utils":92,"./DataSeries":68,"d3":10,"react":221}],71:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+
+module.exports = React.createClass({
+
+  displayName: 'VoronoiCircle',
+
+  getDefaultProps:function() {
+    return { 
+      circleRadius: 3,
+      circleFill: '#1f77b4',
+    };
+  },
+
+  render:function() {
+    return (
+      React.createElement("g", null, 
+        React.createElement("path", {
+          onMouseOver: this.props.handleMouseOver, 
+          onMouseLeave: this.props.handleMouseLeave, 
+          fill: "transparent", 
+          d: this.props.voronoiPath}
+        ), 
+        React.createElement("circle", {
+          onMouseOver: this.props.handleMouseOver, 
+          onMouseLeave: this.props.handleMouseLeave, 
+          cx: this.props.cx, 
+          cy: this.props.cy, 
+          r: this.props.circleRadius, 
+          fill: this.props.circleFill, 
+          className: "rd3-linechart-circle"}
+        )
+      )
+    );
+  },
+});
+
+},{"d3":10,"react":221}],72:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+var shade = require('../utils').shade;
+var VoronoiCircle = require('./VoronoiCircle');
+
+module.exports = React.createClass({
+
+  displayName: 'VornoiCircleContainer',
+
+  getDefaultProps:function() {
+    return { 
+      circleRadius: 3,
+      circleFill: '#1f77b4',
+      hoverAnimation: true
+    };
+  },
+
+  getInitialState:function() {
+    return { 
+      circleRadius: this.props.circleRadius,
+      circleFill: this.props.circleFill
+    };
+  },
+
+  render:function() {
+
+    var props = this.props;
+
+    // animation controller
+    var handleMouseOver, handleMouseLeave;
+    if(props.hoverAnimation) {
+      handleMouseOver = this._animateCircle;
+      handleMouseLeave = this._restoreCircle;
+    } else {
+      handleMouseOver = handleMouseLeave = null;
+    }
+
+    return (
+      React.createElement("g", null, 
+        React.createElement(VoronoiCircle, {
+            handleMouseOver: handleMouseOver, 
+            handleMouseLeave: handleMouseLeave, 
+            voronoiPath: this._drawPath(props.vnode), 
+            cx: props.cx, 
+            cy: props.cy, 
+            circleRadius: this.state.circleRadius, 
+            circleFill: this.state.circleFill}
+        )
+      )
+    );
+  },
+
+  _animateCircle:function() {
+    this.setState({ 
+      circleRadius: this.props.circleRadius * ( 5 / 4 ),
+      circleFill: shade(this.props.circleFill, 0.2)
+    });
+  },
+
+  _restoreCircle:function() {
+    this.setState({ 
+      circleRadius: this.props.circleRadius,
+      circleFill: this.props.circleFill
+    });
+  },
+
+  _drawPath: function(d) {
+    if(d === undefined) {
+      return; 
+    }  
+    return 'M' + d.join(',') + 'Z';
+  },
+});
+
+},{"../utils":92,"./VoronoiCircle":71,"d3":10,"react":221}],73:[function(require,module,exports){
+
+exports.LineChart = require('./LineChart');
+
+},{"./LineChart":70}],74:[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+var d3 = require('d3');
+
+module.exports =  {
+
+  propTypes: {
+    axesColor:         React.PropTypes.string,
+    colors:            React.PropTypes.func,
+    colorAccessor:     React.PropTypes.func,
+    data:              React.PropTypes.array.isRequired,
+    height:            React.PropTypes.number,
+    legend:            React.PropTypes.bool,
+    legendOffset:      React.PropTypes.number,
+    title:             React.PropTypes.string,
+    width:             React.PropTypes.number,
+    xAccessor:         React.PropTypes.func,
+    xAxisFormatter:    React.PropTypes.func,
+    xAxisLabel:        React.PropTypes.string,
+    xAxisLabelOffset:  React.PropTypes.number,
+    xAxisTickCount:    React.PropTypes.number,
+    xAxisTickInterval: React.PropTypes.object,
+    xAxisTickValues:   React.PropTypes.array,
+    xOrient:           React.PropTypes.oneOf(['top', 'bottom']),
+    yAccessor:         React.PropTypes.func,
+    yAxisFormatter:    React.PropTypes.func,
+    yAxisLabel:        React.PropTypes.string,
+    yAxisLabelOffset:  React.PropTypes.number,
+    yAxisTickCount:    React.PropTypes.number,
+    yAxisTickInterval: React.PropTypes.object,
+    yAxisTickValues:   React.PropTypes.array,
+    yOrient:           React.PropTypes.oneOf(['left', 'right'])
+  },
+
+  getDefaultProps: function() {
+    return {
+      axesColor:        '#000',
+      colors:           d3.scale.category20c(),
+      colorAccessor:    function(d, idx)  {return idx;},
+      height:           200,
+      legend:           false,
+      legendOffset:     120,
+      title:            '',
+      width:            400,
+      xAccessor:        function(d)  {return d.x;},
+      // xAxisFormatter: no predefined value right now
+      xAxisLabel:       '',
+      xAxisLabelOffset: 38,
+      // xAxisTickCount: no predefined value right now
+      // xAxisTickInterval: no predefined value right now
+      // xAxisTickValues: no predefined value right now
+      xOrient:          'bottom',
+      yAccessor:        function(d)  {return d.y;},
+      // yAxisFormatter: no predefined value right now
+      yAxisLabel:       '',
+      yAxisLabelOffset: 35,
+      // yAxisTickCount: no predefined value right now
+      // yAxisTickInterval: no predefined value right now
+      // yAxisTickValues: no predefined value right now
+      yOrient:          'left'
+    };
+  }
+};
+
+},{"d3":10,"react":221}],75:[function(require,module,exports){
+
+'use strict';
+
+var React = require('react');
+
+module.exports =  {
+
+  propTypes: {
+    viewBox:           React.PropTypes.string,
+    viewBoxObject:     React.PropTypes.object
+  },
+
+  getViewBox:function() {
+    if (this.props.viewBoxObject) {
+      var v = this.props.viewBoxObject;
+      return [v.x, v.y, v.width, v.height].join(' ');
+    } else if (this.props.viewBox) {
+      return this.props.viewBox;
+    } 
+  },
+
+  getOuterDimensions:function() {
+    if (this.props.viewBoxObject) {
+      return {
+        width: this.props.viewBoxObject.width,
+        height: this.props.viewBoxObject.height
+      };
+    } else {
+      return {
+        width: this.props.width,
+        height: this.props.height
+      };
+    }
+  }
+
+};
+
+},{"react":221}],76:[function(require,module,exports){
+
+exports.CartesianChartPropsMixin = require('./CartesianChartPropsMixin');
+exports.ViewBoxMixin = require('./ViewBoxMixin');
+
+},{"./CartesianChartPropsMixin":74,"./ViewBoxMixin":75}],77:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -12562,7 +14012,7 @@ module.exports = React.createClass({
   }
 });
 
-},{"d3":46,"react":218}],48:[function(require,module,exports){
+},{"d3":10,"react":221}],78:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -12612,7 +14062,7 @@ module.exports = React.createClass({
   }
 });
 
-},{"../utils":62,"./Arc":47,"react":218}],49:[function(require,module,exports){
+},{"../utils":92,"./Arc":77,"react":221}],79:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -12687,7 +14137,7 @@ module.exports = React.createClass({
   }
 });
 
-},{"./ArcContainer":48,"d3":46,"react":218}],50:[function(require,module,exports){
+},{"./ArcContainer":78,"d3":10,"react":221}],80:[function(require,module,exports){
 'use strict';
 
 var d3 = require('d3');
@@ -12768,11 +14218,11 @@ module.exports = React.createClass({
 
 });
 
-},{"../common":35,"./DataSeries":49,"d3":46,"react":218}],51:[function(require,module,exports){
+},{"../common":66,"./DataSeries":79,"d3":10,"react":221}],81:[function(require,module,exports){
 
 exports.PieChart = require('./PieChart');
 
-},{"./PieChart":50}],52:[function(require,module,exports){
+},{"./PieChart":80}],82:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -12859,7 +14309,7 @@ module.exports = React.createClass({
 
 });
 
-},{"./VoronoiCircleContainer":55,"d3":46,"react":218}],53:[function(require,module,exports){
+},{"./VoronoiCircleContainer":85,"d3":10,"react":221}],83:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -13009,7 +14459,7 @@ module.exports = React.createClass({
 
 });
 
-},{"../common":35,"../mixins":45,"../utils":62,"./DataSeries":52,"d3":46,"react":218}],54:[function(require,module,exports){
+},{"../common":66,"../mixins":76,"../utils":92,"./DataSeries":82,"d3":10,"react":221}],84:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -13063,7 +14513,7 @@ module.exports = React.createClass({
   },
 });
 
-},{"d3":46,"react":218}],55:[function(require,module,exports){
+},{"d3":10,"react":221}],85:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -13163,11 +14613,11 @@ module.exports = React.createClass({
   },
 });
 
-},{"../utils":62,"./VoronoiCircle":54,"d3":46,"react":218}],56:[function(require,module,exports){
+},{"../utils":92,"./VoronoiCircle":84,"d3":10,"react":221}],86:[function(require,module,exports){
 
 exports.ScatterChart = require('./ScatterChart');
 
-},{"./ScatterChart":53}],57:[function(require,module,exports){
+},{"./ScatterChart":83}],87:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -13221,7 +14671,7 @@ module.exports = React.createClass({
   }
 });
 
-},{"d3":46,"react":218}],58:[function(require,module,exports){
+},{"d3":10,"react":221}],88:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -13273,7 +14723,7 @@ module.exports = React.createClass({
   }
 });
 
-},{"../utils":62,"./Cell":57,"react":218}],59:[function(require,module,exports){
+},{"../utils":92,"./Cell":87,"react":221}],89:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
@@ -13340,7 +14790,7 @@ module.exports = React.createClass({
 
 });
 
-},{"./CellContainer":58,"d3":46,"react":218}],60:[function(require,module,exports){
+},{"./CellContainer":88,"d3":10,"react":221}],90:[function(require,module,exports){
 'use strict';
 
 var d3 = require('d3');
@@ -13410,11 +14860,11 @@ module.exports = React.createClass({
 
 });
 
-},{"../common":35,"./DataSeries":59,"d3":46,"react":218}],61:[function(require,module,exports){
+},{"../common":66,"./DataSeries":89,"d3":10,"react":221}],91:[function(require,module,exports){
 
 exports.Treemap = require('./Treemap');
 
-},{"./Treemap":60}],62:[function(require,module,exports){
+},{"./Treemap":90}],92:[function(require,module,exports){
 var d3 = require('d3');
 
 
@@ -13568,7 +15018,7 @@ exports.shade = function(hex, percent)  {
 
 };
 
-},{"d3":46}],63:[function(require,module,exports){
+},{"d3":10}],93:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -13605,7 +15055,7 @@ var AutoFocusUtils = {
 };
 
 module.exports = AutoFocusUtils;
-},{"./ReactMount":127,"./findDOMNode":170,"fbjs/lib/focusNode":200}],64:[function(require,module,exports){
+},{"./ReactMount":157,"./findDOMNode":200,"fbjs/lib/focusNode":20}],94:[function(require,module,exports){
 /**
  * Copyright 2013-2015 Facebook, Inc.
  * All rights reserved.
@@ -14011,7 +15461,7 @@ var BeforeInputEventPlugin = {
 };
 
 module.exports = BeforeInputEventPlugin;
-},{"./EventConstants":76,"./EventPropagators":80,"./FallbackCompositionState":81,"./SyntheticCompositionEvent":152,"./SyntheticInputEvent":156,"fbjs/lib/ExecutionEnvironment":192,"fbjs/lib/keyOf":210}],65:[function(require,module,exports){
+},{"./EventConstants":106,"./EventPropagators":110,"./FallbackCompositionState":111,"./SyntheticCompositionEvent":182,"./SyntheticInputEvent":186,"fbjs/lib/ExecutionEnvironment":12,"fbjs/lib/keyOf":30}],95:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14151,7 +15601,7 @@ var CSSProperty = {
 };
 
 module.exports = CSSProperty;
-},{}],66:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14329,7 +15779,7 @@ ReactPerf.measureMethods(CSSPropertyOperations, 'CSSPropertyOperations', {
 
 module.exports = CSSPropertyOperations;
 }).call(this,require('_process'))
-},{"./CSSProperty":65,"./ReactPerf":133,"./dangerousStyleValue":167,"_process":219,"fbjs/lib/ExecutionEnvironment":192,"fbjs/lib/camelizeStyleName":194,"fbjs/lib/hyphenateStyleName":205,"fbjs/lib/memoizeStringOnly":212,"fbjs/lib/warning":217}],67:[function(require,module,exports){
+},{"./CSSProperty":95,"./ReactPerf":163,"./dangerousStyleValue":197,"_process":222,"fbjs/lib/ExecutionEnvironment":12,"fbjs/lib/camelizeStyleName":14,"fbjs/lib/hyphenateStyleName":25,"fbjs/lib/memoizeStringOnly":32,"fbjs/lib/warning":37}],97:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14425,7 +15875,7 @@ PooledClass.addPoolingTo(CallbackQueue);
 
 module.exports = CallbackQueue;
 }).call(this,require('_process'))
-},{"./Object.assign":84,"./PooledClass":85,"_process":219,"fbjs/lib/invariant":206}],68:[function(require,module,exports){
+},{"./Object.assign":114,"./PooledClass":115,"_process":222,"fbjs/lib/invariant":26}],98:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14747,7 +16197,7 @@ var ChangeEventPlugin = {
 };
 
 module.exports = ChangeEventPlugin;
-},{"./EventConstants":76,"./EventPluginHub":77,"./EventPropagators":80,"./ReactUpdates":145,"./SyntheticEvent":154,"./getEventTarget":176,"./isEventSupported":181,"./isTextInputElement":182,"fbjs/lib/ExecutionEnvironment":192,"fbjs/lib/keyOf":210}],69:[function(require,module,exports){
+},{"./EventConstants":106,"./EventPluginHub":107,"./EventPropagators":110,"./ReactUpdates":175,"./SyntheticEvent":184,"./getEventTarget":206,"./isEventSupported":211,"./isTextInputElement":212,"fbjs/lib/ExecutionEnvironment":12,"fbjs/lib/keyOf":30}],99:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14771,7 +16221,7 @@ var ClientReactRootIndex = {
 };
 
 module.exports = ClientReactRootIndex;
-},{}],70:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -14903,7 +16353,7 @@ ReactPerf.measureMethods(DOMChildrenOperations, 'DOMChildrenOperations', {
 
 module.exports = DOMChildrenOperations;
 }).call(this,require('_process'))
-},{"./Danger":73,"./ReactMultiChildUpdateTypes":129,"./ReactPerf":133,"./setInnerHTML":186,"./setTextContent":187,"_process":219,"fbjs/lib/invariant":206}],71:[function(require,module,exports){
+},{"./Danger":103,"./ReactMultiChildUpdateTypes":159,"./ReactPerf":163,"./setInnerHTML":216,"./setTextContent":217,"_process":222,"fbjs/lib/invariant":26}],101:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15140,7 +16590,7 @@ var DOMProperty = {
 
 module.exports = DOMProperty;
 }).call(this,require('_process'))
-},{"_process":219,"fbjs/lib/invariant":206}],72:[function(require,module,exports){
+},{"_process":222,"fbjs/lib/invariant":26}],102:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15368,7 +16818,7 @@ ReactPerf.measureMethods(DOMPropertyOperations, 'DOMPropertyOperations', {
 
 module.exports = DOMPropertyOperations;
 }).call(this,require('_process'))
-},{"./DOMProperty":71,"./ReactPerf":133,"./quoteAttributeValueForBrowser":184,"_process":219,"fbjs/lib/warning":217}],73:[function(require,module,exports){
+},{"./DOMProperty":101,"./ReactPerf":163,"./quoteAttributeValueForBrowser":214,"_process":222,"fbjs/lib/warning":37}],103:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -15516,7 +16966,7 @@ var Danger = {
 
 module.exports = Danger;
 }).call(this,require('_process'))
-},{"_process":219,"fbjs/lib/ExecutionEnvironment":192,"fbjs/lib/createNodesFromMarkup":197,"fbjs/lib/emptyFunction":198,"fbjs/lib/getMarkupWrap":202,"fbjs/lib/invariant":206}],74:[function(require,module,exports){
+},{"_process":222,"fbjs/lib/ExecutionEnvironment":12,"fbjs/lib/createNodesFromMarkup":17,"fbjs/lib/emptyFunction":18,"fbjs/lib/getMarkupWrap":22,"fbjs/lib/invariant":26}],104:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15544,7 +16994,7 @@ var keyOf = require('fbjs/lib/keyOf');
 var DefaultEventPluginOrder = [keyOf({ ResponderEventPlugin: null }), keyOf({ SimpleEventPlugin: null }), keyOf({ TapEventPlugin: null }), keyOf({ EnterLeaveEventPlugin: null }), keyOf({ ChangeEventPlugin: null }), keyOf({ SelectEventPlugin: null }), keyOf({ BeforeInputEventPlugin: null })];
 
 module.exports = DefaultEventPluginOrder;
-},{"fbjs/lib/keyOf":210}],75:[function(require,module,exports){
+},{"fbjs/lib/keyOf":30}],105:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15669,7 +17119,7 @@ var EnterLeaveEventPlugin = {
 };
 
 module.exports = EnterLeaveEventPlugin;
-},{"./EventConstants":76,"./EventPropagators":80,"./ReactMount":127,"./SyntheticMouseEvent":158,"fbjs/lib/keyOf":210}],76:[function(require,module,exports){
+},{"./EventConstants":106,"./EventPropagators":110,"./ReactMount":157,"./SyntheticMouseEvent":188,"fbjs/lib/keyOf":30}],106:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15762,7 +17212,7 @@ var EventConstants = {
 };
 
 module.exports = EventConstants;
-},{"fbjs/lib/keyMirror":209}],77:[function(require,module,exports){
+},{"fbjs/lib/keyMirror":29}],107:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16044,7 +17494,7 @@ var EventPluginHub = {
 
 module.exports = EventPluginHub;
 }).call(this,require('_process'))
-},{"./EventPluginRegistry":78,"./EventPluginUtils":79,"./ReactErrorUtils":118,"./accumulateInto":164,"./forEachAccumulated":172,"_process":219,"fbjs/lib/invariant":206,"fbjs/lib/warning":217}],78:[function(require,module,exports){
+},{"./EventPluginRegistry":108,"./EventPluginUtils":109,"./ReactErrorUtils":148,"./accumulateInto":194,"./forEachAccumulated":202,"_process":222,"fbjs/lib/invariant":26,"fbjs/lib/warning":37}],108:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16267,7 +17717,7 @@ var EventPluginRegistry = {
 
 module.exports = EventPluginRegistry;
 }).call(this,require('_process'))
-},{"_process":219,"fbjs/lib/invariant":206}],79:[function(require,module,exports){
+},{"_process":222,"fbjs/lib/invariant":26}],109:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16472,7 +17922,7 @@ var EventPluginUtils = {
 
 module.exports = EventPluginUtils;
 }).call(this,require('_process'))
-},{"./EventConstants":76,"./ReactErrorUtils":118,"_process":219,"fbjs/lib/invariant":206,"fbjs/lib/warning":217}],80:[function(require,module,exports){
+},{"./EventConstants":106,"./ReactErrorUtils":148,"_process":222,"fbjs/lib/invariant":26,"fbjs/lib/warning":37}],110:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -16610,7 +18060,7 @@ var EventPropagators = {
 
 module.exports = EventPropagators;
 }).call(this,require('_process'))
-},{"./EventConstants":76,"./EventPluginHub":77,"./accumulateInto":164,"./forEachAccumulated":172,"_process":219,"fbjs/lib/warning":217}],81:[function(require,module,exports){
+},{"./EventConstants":106,"./EventPluginHub":107,"./accumulateInto":194,"./forEachAccumulated":202,"_process":222,"fbjs/lib/warning":37}],111:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16706,7 +18156,7 @@ assign(FallbackCompositionState.prototype, {
 PooledClass.addPoolingTo(FallbackCompositionState);
 
 module.exports = FallbackCompositionState;
-},{"./Object.assign":84,"./PooledClass":85,"./getTextContentAccessor":179}],82:[function(require,module,exports){
+},{"./Object.assign":114,"./PooledClass":115,"./getTextContentAccessor":209}],112:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -16937,7 +18387,7 @@ var HTMLDOMPropertyConfig = {
 };
 
 module.exports = HTMLDOMPropertyConfig;
-},{"./DOMProperty":71,"fbjs/lib/ExecutionEnvironment":192}],83:[function(require,module,exports){
+},{"./DOMProperty":101,"fbjs/lib/ExecutionEnvironment":12}],113:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -17074,7 +18524,7 @@ var LinkedValueUtils = {
 
 module.exports = LinkedValueUtils;
 }).call(this,require('_process'))
-},{"./ReactPropTypeLocations":135,"./ReactPropTypes":136,"_process":219,"fbjs/lib/invariant":206,"fbjs/lib/warning":217}],84:[function(require,module,exports){
+},{"./ReactPropTypeLocations":165,"./ReactPropTypes":166,"_process":222,"fbjs/lib/invariant":26,"fbjs/lib/warning":37}],114:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -17122,7 +18572,7 @@ function assign(target, sources) {
 }
 
 module.exports = assign;
-},{}],85:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -17244,7 +18694,7 @@ var PooledClass = {
 
 module.exports = PooledClass;
 }).call(this,require('_process'))
-},{"_process":219,"fbjs/lib/invariant":206}],86:[function(require,module,exports){
+},{"_process":222,"fbjs/lib/invariant":26}],116:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -17285,7 +18735,7 @@ React.__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = ReactDOM;
 React.__SECRET_DOM_SERVER_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = ReactDOMServer;
 
 module.exports = React;
-},{"./Object.assign":84,"./ReactDOM":97,"./ReactDOMServer":107,"./ReactIsomorphic":125,"./deprecated":168}],87:[function(require,module,exports){
+},{"./Object.assign":114,"./ReactDOM":127,"./ReactDOMServer":137,"./ReactIsomorphic":155,"./deprecated":198}],117:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -17324,7 +18774,7 @@ var ReactBrowserComponentMixin = {
 
 module.exports = ReactBrowserComponentMixin;
 }).call(this,require('_process'))
-},{"./ReactInstanceMap":124,"./findDOMNode":170,"_process":219,"fbjs/lib/warning":217}],88:[function(require,module,exports){
+},{"./ReactInstanceMap":154,"./findDOMNode":200,"_process":222,"fbjs/lib/warning":37}],118:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -17649,7 +19099,7 @@ ReactPerf.measureMethods(ReactBrowserEventEmitter, 'ReactBrowserEventEmitter', {
 });
 
 module.exports = ReactBrowserEventEmitter;
-},{"./EventConstants":76,"./EventPluginHub":77,"./EventPluginRegistry":78,"./Object.assign":84,"./ReactEventEmitterMixin":119,"./ReactPerf":133,"./ViewportMetrics":163,"./isEventSupported":181}],89:[function(require,module,exports){
+},{"./EventConstants":106,"./EventPluginHub":107,"./EventPluginRegistry":108,"./Object.assign":114,"./ReactEventEmitterMixin":149,"./ReactPerf":163,"./ViewportMetrics":193,"./isEventSupported":211}],119:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -17774,7 +19224,7 @@ var ReactChildReconciler = {
 
 module.exports = ReactChildReconciler;
 }).call(this,require('_process'))
-},{"./ReactReconciler":138,"./instantiateReactComponent":180,"./shouldUpdateReactComponent":188,"./traverseAllChildren":189,"_process":219,"fbjs/lib/warning":217}],90:[function(require,module,exports){
+},{"./ReactReconciler":168,"./instantiateReactComponent":210,"./shouldUpdateReactComponent":218,"./traverseAllChildren":219,"_process":222,"fbjs/lib/warning":37}],120:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -17957,7 +19407,7 @@ var ReactChildren = {
 };
 
 module.exports = ReactChildren;
-},{"./PooledClass":85,"./ReactElement":114,"./traverseAllChildren":189,"fbjs/lib/emptyFunction":198}],91:[function(require,module,exports){
+},{"./PooledClass":115,"./ReactElement":144,"./traverseAllChildren":219,"fbjs/lib/emptyFunction":18}],121:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18731,7 +20181,7 @@ var ReactClass = {
 
 module.exports = ReactClass;
 }).call(this,require('_process'))
-},{"./Object.assign":84,"./ReactComponent":92,"./ReactElement":114,"./ReactNoopUpdateQueue":131,"./ReactPropTypeLocationNames":134,"./ReactPropTypeLocations":135,"_process":219,"fbjs/lib/emptyObject":199,"fbjs/lib/invariant":206,"fbjs/lib/keyMirror":209,"fbjs/lib/keyOf":210,"fbjs/lib/warning":217}],92:[function(require,module,exports){
+},{"./Object.assign":114,"./ReactComponent":122,"./ReactElement":144,"./ReactNoopUpdateQueue":161,"./ReactPropTypeLocationNames":164,"./ReactPropTypeLocations":165,"_process":222,"fbjs/lib/emptyObject":19,"fbjs/lib/invariant":26,"fbjs/lib/keyMirror":29,"fbjs/lib/keyOf":30,"fbjs/lib/warning":37}],122:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -18856,7 +20306,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = ReactComponent;
 }).call(this,require('_process'))
-},{"./ReactNoopUpdateQueue":131,"./canDefineProperty":166,"_process":219,"fbjs/lib/emptyObject":199,"fbjs/lib/invariant":206,"fbjs/lib/warning":217}],93:[function(require,module,exports){
+},{"./ReactNoopUpdateQueue":161,"./canDefineProperty":196,"_process":222,"fbjs/lib/emptyObject":19,"fbjs/lib/invariant":26,"fbjs/lib/warning":37}],123:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -18898,7 +20348,7 @@ var ReactComponentBrowserEnvironment = {
 };
 
 module.exports = ReactComponentBrowserEnvironment;
-},{"./ReactDOMIDOperations":102,"./ReactMount":127}],94:[function(require,module,exports){
+},{"./ReactDOMIDOperations":132,"./ReactMount":157}],124:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -18952,7 +20402,7 @@ var ReactComponentEnvironment = {
 
 module.exports = ReactComponentEnvironment;
 }).call(this,require('_process'))
-},{"_process":219,"fbjs/lib/invariant":206}],95:[function(require,module,exports){
+},{"_process":222,"fbjs/lib/invariant":26}],125:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19649,7 +21099,7 @@ var ReactCompositeComponent = {
 
 module.exports = ReactCompositeComponent;
 }).call(this,require('_process'))
-},{"./Object.assign":84,"./ReactComponentEnvironment":94,"./ReactCurrentOwner":96,"./ReactElement":114,"./ReactInstanceMap":124,"./ReactPerf":133,"./ReactPropTypeLocationNames":134,"./ReactPropTypeLocations":135,"./ReactReconciler":138,"./ReactUpdateQueue":144,"./shouldUpdateReactComponent":188,"_process":219,"fbjs/lib/emptyObject":199,"fbjs/lib/invariant":206,"fbjs/lib/warning":217}],96:[function(require,module,exports){
+},{"./Object.assign":114,"./ReactComponentEnvironment":124,"./ReactCurrentOwner":126,"./ReactElement":144,"./ReactInstanceMap":154,"./ReactPerf":163,"./ReactPropTypeLocationNames":164,"./ReactPropTypeLocations":165,"./ReactReconciler":168,"./ReactUpdateQueue":174,"./shouldUpdateReactComponent":218,"_process":222,"fbjs/lib/emptyObject":19,"fbjs/lib/invariant":26,"fbjs/lib/warning":37}],126:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19680,7 +21130,7 @@ var ReactCurrentOwner = {
 };
 
 module.exports = ReactCurrentOwner;
-},{}],97:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -19775,7 +21225,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = React;
 }).call(this,require('_process'))
-},{"./ReactCurrentOwner":96,"./ReactDOMTextComponent":108,"./ReactDefaultInjection":111,"./ReactInstanceHandles":123,"./ReactMount":127,"./ReactPerf":133,"./ReactReconciler":138,"./ReactUpdates":145,"./ReactVersion":146,"./findDOMNode":170,"./renderSubtreeIntoContainer":185,"_process":219,"fbjs/lib/ExecutionEnvironment":192,"fbjs/lib/warning":217}],98:[function(require,module,exports){
+},{"./ReactCurrentOwner":126,"./ReactDOMTextComponent":138,"./ReactDefaultInjection":141,"./ReactInstanceHandles":153,"./ReactMount":157,"./ReactPerf":163,"./ReactReconciler":168,"./ReactUpdates":175,"./ReactVersion":176,"./findDOMNode":200,"./renderSubtreeIntoContainer":215,"_process":222,"fbjs/lib/ExecutionEnvironment":12,"fbjs/lib/warning":37}],128:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -19826,7 +21276,7 @@ var ReactDOMButton = {
 };
 
 module.exports = ReactDOMButton;
-},{}],99:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20791,7 +22241,7 @@ assign(ReactDOMComponent.prototype, ReactDOMComponent.Mixin, ReactMultiChild.Mix
 
 module.exports = ReactDOMComponent;
 }).call(this,require('_process'))
-},{"./AutoFocusUtils":63,"./CSSPropertyOperations":66,"./DOMProperty":71,"./DOMPropertyOperations":72,"./EventConstants":76,"./Object.assign":84,"./ReactBrowserEventEmitter":88,"./ReactComponentBrowserEnvironment":93,"./ReactDOMButton":98,"./ReactDOMInput":103,"./ReactDOMOption":104,"./ReactDOMSelect":105,"./ReactDOMTextarea":109,"./ReactMount":127,"./ReactMultiChild":128,"./ReactPerf":133,"./ReactUpdateQueue":144,"./canDefineProperty":166,"./escapeTextContentForBrowser":169,"./isEventSupported":181,"./setInnerHTML":186,"./setTextContent":187,"./validateDOMNesting":190,"_process":219,"fbjs/lib/invariant":206,"fbjs/lib/keyOf":210,"fbjs/lib/shallowEqual":215,"fbjs/lib/warning":217}],100:[function(require,module,exports){
+},{"./AutoFocusUtils":93,"./CSSPropertyOperations":96,"./DOMProperty":101,"./DOMPropertyOperations":102,"./EventConstants":106,"./Object.assign":114,"./ReactBrowserEventEmitter":118,"./ReactComponentBrowserEnvironment":123,"./ReactDOMButton":128,"./ReactDOMInput":133,"./ReactDOMOption":134,"./ReactDOMSelect":135,"./ReactDOMTextarea":139,"./ReactMount":157,"./ReactMultiChild":158,"./ReactPerf":163,"./ReactUpdateQueue":174,"./canDefineProperty":196,"./escapeTextContentForBrowser":199,"./isEventSupported":211,"./setInnerHTML":216,"./setTextContent":217,"./validateDOMNesting":220,"_process":222,"fbjs/lib/invariant":26,"fbjs/lib/keyOf":30,"fbjs/lib/shallowEqual":35,"fbjs/lib/warning":37}],130:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -20971,7 +22421,7 @@ var ReactDOMFactories = mapObject({
 
 module.exports = ReactDOMFactories;
 }).call(this,require('_process'))
-},{"./ReactElement":114,"./ReactElementValidator":115,"_process":219,"fbjs/lib/mapObject":211}],101:[function(require,module,exports){
+},{"./ReactElement":144,"./ReactElementValidator":145,"_process":222,"fbjs/lib/mapObject":31}],131:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -20990,7 +22440,7 @@ var ReactDOMFeatureFlags = {
 };
 
 module.exports = ReactDOMFeatureFlags;
-},{}],102:[function(require,module,exports){
+},{}],132:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21087,7 +22537,7 @@ ReactPerf.measureMethods(ReactDOMIDOperations, 'ReactDOMIDOperations', {
 
 module.exports = ReactDOMIDOperations;
 }).call(this,require('_process'))
-},{"./DOMChildrenOperations":70,"./DOMPropertyOperations":72,"./ReactMount":127,"./ReactPerf":133,"_process":219,"fbjs/lib/invariant":206}],103:[function(require,module,exports){
+},{"./DOMChildrenOperations":100,"./DOMPropertyOperations":102,"./ReactMount":157,"./ReactPerf":163,"_process":222,"fbjs/lib/invariant":26}],133:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21243,7 +22693,7 @@ function _handleChange(event) {
 
 module.exports = ReactDOMInput;
 }).call(this,require('_process'))
-},{"./LinkedValueUtils":83,"./Object.assign":84,"./ReactDOMIDOperations":102,"./ReactMount":127,"./ReactUpdates":145,"_process":219,"fbjs/lib/invariant":206}],104:[function(require,module,exports){
+},{"./LinkedValueUtils":113,"./Object.assign":114,"./ReactDOMIDOperations":132,"./ReactMount":157,"./ReactUpdates":175,"_process":222,"fbjs/lib/invariant":26}],134:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21335,7 +22785,7 @@ var ReactDOMOption = {
 
 module.exports = ReactDOMOption;
 }).call(this,require('_process'))
-},{"./Object.assign":84,"./ReactChildren":90,"./ReactDOMSelect":105,"_process":219,"fbjs/lib/warning":217}],105:[function(require,module,exports){
+},{"./Object.assign":114,"./ReactChildren":120,"./ReactDOMSelect":135,"_process":222,"fbjs/lib/warning":37}],135:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21526,7 +22976,7 @@ function _handleChange(event) {
 
 module.exports = ReactDOMSelect;
 }).call(this,require('_process'))
-},{"./LinkedValueUtils":83,"./Object.assign":84,"./ReactMount":127,"./ReactUpdates":145,"_process":219,"fbjs/lib/warning":217}],106:[function(require,module,exports){
+},{"./LinkedValueUtils":113,"./Object.assign":114,"./ReactMount":157,"./ReactUpdates":175,"_process":222,"fbjs/lib/warning":37}],136:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21739,7 +23189,7 @@ var ReactDOMSelection = {
 };
 
 module.exports = ReactDOMSelection;
-},{"./getNodeForCharacterOffset":178,"./getTextContentAccessor":179,"fbjs/lib/ExecutionEnvironment":192}],107:[function(require,module,exports){
+},{"./getNodeForCharacterOffset":208,"./getTextContentAccessor":209,"fbjs/lib/ExecutionEnvironment":12}],137:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -21766,7 +23216,7 @@ var ReactDOMServer = {
 };
 
 module.exports = ReactDOMServer;
-},{"./ReactDefaultInjection":111,"./ReactServerRendering":142,"./ReactVersion":146}],108:[function(require,module,exports){
+},{"./ReactDefaultInjection":141,"./ReactServerRendering":172,"./ReactVersion":176}],138:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -21896,7 +23346,7 @@ assign(ReactDOMTextComponent.prototype, {
 
 module.exports = ReactDOMTextComponent;
 }).call(this,require('_process'))
-},{"./DOMChildrenOperations":70,"./DOMPropertyOperations":72,"./Object.assign":84,"./ReactComponentBrowserEnvironment":93,"./ReactMount":127,"./escapeTextContentForBrowser":169,"./setTextContent":187,"./validateDOMNesting":190,"_process":219}],109:[function(require,module,exports){
+},{"./DOMChildrenOperations":100,"./DOMPropertyOperations":102,"./Object.assign":114,"./ReactComponentBrowserEnvironment":123,"./ReactMount":157,"./escapeTextContentForBrowser":199,"./setTextContent":217,"./validateDOMNesting":220,"_process":222}],139:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -22012,7 +23462,7 @@ function _handleChange(event) {
 
 module.exports = ReactDOMTextarea;
 }).call(this,require('_process'))
-},{"./LinkedValueUtils":83,"./Object.assign":84,"./ReactDOMIDOperations":102,"./ReactUpdates":145,"_process":219,"fbjs/lib/invariant":206,"fbjs/lib/warning":217}],110:[function(require,module,exports){
+},{"./LinkedValueUtils":113,"./Object.assign":114,"./ReactDOMIDOperations":132,"./ReactUpdates":175,"_process":222,"fbjs/lib/invariant":26,"fbjs/lib/warning":37}],140:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22080,7 +23530,7 @@ var ReactDefaultBatchingStrategy = {
 };
 
 module.exports = ReactDefaultBatchingStrategy;
-},{"./Object.assign":84,"./ReactUpdates":145,"./Transaction":162,"fbjs/lib/emptyFunction":198}],111:[function(require,module,exports){
+},{"./Object.assign":114,"./ReactUpdates":175,"./Transaction":192,"fbjs/lib/emptyFunction":18}],141:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -22180,7 +23630,7 @@ module.exports = {
   inject: inject
 };
 }).call(this,require('_process'))
-},{"./BeforeInputEventPlugin":64,"./ChangeEventPlugin":68,"./ClientReactRootIndex":69,"./DefaultEventPluginOrder":74,"./EnterLeaveEventPlugin":75,"./HTMLDOMPropertyConfig":82,"./ReactBrowserComponentMixin":87,"./ReactComponentBrowserEnvironment":93,"./ReactDOMComponent":99,"./ReactDOMTextComponent":108,"./ReactDefaultBatchingStrategy":110,"./ReactDefaultPerf":112,"./ReactEventListener":120,"./ReactInjection":121,"./ReactInstanceHandles":123,"./ReactMount":127,"./ReactReconcileTransaction":137,"./SVGDOMPropertyConfig":147,"./SelectEventPlugin":148,"./ServerReactRootIndex":149,"./SimpleEventPlugin":150,"_process":219,"fbjs/lib/ExecutionEnvironment":192}],112:[function(require,module,exports){
+},{"./BeforeInputEventPlugin":94,"./ChangeEventPlugin":98,"./ClientReactRootIndex":99,"./DefaultEventPluginOrder":104,"./EnterLeaveEventPlugin":105,"./HTMLDOMPropertyConfig":112,"./ReactBrowserComponentMixin":117,"./ReactComponentBrowserEnvironment":123,"./ReactDOMComponent":129,"./ReactDOMTextComponent":138,"./ReactDefaultBatchingStrategy":140,"./ReactDefaultPerf":142,"./ReactEventListener":150,"./ReactInjection":151,"./ReactInstanceHandles":153,"./ReactMount":157,"./ReactReconcileTransaction":167,"./SVGDOMPropertyConfig":177,"./SelectEventPlugin":178,"./ServerReactRootIndex":179,"./SimpleEventPlugin":180,"_process":222,"fbjs/lib/ExecutionEnvironment":12}],142:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22418,7 +23868,7 @@ var ReactDefaultPerf = {
 };
 
 module.exports = ReactDefaultPerf;
-},{"./DOMProperty":71,"./ReactDefaultPerfAnalysis":113,"./ReactMount":127,"./ReactPerf":133,"fbjs/lib/performanceNow":214}],113:[function(require,module,exports){
+},{"./DOMProperty":101,"./ReactDefaultPerfAnalysis":143,"./ReactMount":157,"./ReactPerf":163,"fbjs/lib/performanceNow":34}],143:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -22620,7 +24070,7 @@ var ReactDefaultPerfAnalysis = {
 };
 
 module.exports = ReactDefaultPerfAnalysis;
-},{"./Object.assign":84}],114:[function(require,module,exports){
+},{"./Object.assign":114}],144:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -22870,7 +24320,7 @@ ReactElement.isValidElement = function (object) {
 
 module.exports = ReactElement;
 }).call(this,require('_process'))
-},{"./Object.assign":84,"./ReactCurrentOwner":96,"./canDefineProperty":166,"_process":219}],115:[function(require,module,exports){
+},{"./Object.assign":114,"./ReactCurrentOwner":126,"./canDefineProperty":196,"_process":222}],145:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -23154,7 +24604,7 @@ var ReactElementValidator = {
 
 module.exports = ReactElementValidator;
 }).call(this,require('_process'))
-},{"./ReactCurrentOwner":96,"./ReactElement":114,"./ReactPropTypeLocationNames":134,"./ReactPropTypeLocations":135,"./canDefineProperty":166,"./getIteratorFn":177,"_process":219,"fbjs/lib/invariant":206,"fbjs/lib/warning":217}],116:[function(require,module,exports){
+},{"./ReactCurrentOwner":126,"./ReactElement":144,"./ReactPropTypeLocationNames":164,"./ReactPropTypeLocations":165,"./canDefineProperty":196,"./getIteratorFn":207,"_process":222,"fbjs/lib/invariant":26,"fbjs/lib/warning":37}],146:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -23206,7 +24656,7 @@ assign(ReactEmptyComponent.prototype, {
 ReactEmptyComponent.injection = ReactEmptyComponentInjection;
 
 module.exports = ReactEmptyComponent;
-},{"./Object.assign":84,"./ReactElement":114,"./ReactEmptyComponentRegistry":117,"./ReactReconciler":138}],117:[function(require,module,exports){
+},{"./Object.assign":114,"./ReactElement":144,"./ReactEmptyComponentRegistry":147,"./ReactReconciler":168}],147:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -23255,7 +24705,7 @@ var ReactEmptyComponentRegistry = {
 };
 
 module.exports = ReactEmptyComponentRegistry;
-},{}],118:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -23335,7 +24785,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = ReactErrorUtils;
 }).call(this,require('_process'))
-},{"_process":219}],119:[function(require,module,exports){
+},{"_process":222}],149:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23374,7 +24824,7 @@ var ReactEventEmitterMixin = {
 };
 
 module.exports = ReactEventEmitterMixin;
-},{"./EventPluginHub":77}],120:[function(require,module,exports){
+},{"./EventPluginHub":107}],150:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23586,7 +25036,7 @@ var ReactEventListener = {
 };
 
 module.exports = ReactEventListener;
-},{"./Object.assign":84,"./PooledClass":85,"./ReactInstanceHandles":123,"./ReactMount":127,"./ReactUpdates":145,"./getEventTarget":176,"fbjs/lib/EventListener":191,"fbjs/lib/ExecutionEnvironment":192,"fbjs/lib/getUnboundedScrollPosition":203}],121:[function(require,module,exports){
+},{"./Object.assign":114,"./PooledClass":115,"./ReactInstanceHandles":153,"./ReactMount":157,"./ReactUpdates":175,"./getEventTarget":206,"fbjs/lib/EventListener":11,"fbjs/lib/ExecutionEnvironment":12,"fbjs/lib/getUnboundedScrollPosition":23}],151:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23625,7 +25075,7 @@ var ReactInjection = {
 };
 
 module.exports = ReactInjection;
-},{"./DOMProperty":71,"./EventPluginHub":77,"./ReactBrowserEventEmitter":88,"./ReactClass":91,"./ReactComponentEnvironment":94,"./ReactEmptyComponent":116,"./ReactNativeComponent":130,"./ReactPerf":133,"./ReactRootIndex":140,"./ReactUpdates":145}],122:[function(require,module,exports){
+},{"./DOMProperty":101,"./EventPluginHub":107,"./ReactBrowserEventEmitter":118,"./ReactClass":121,"./ReactComponentEnvironment":124,"./ReactEmptyComponent":146,"./ReactNativeComponent":160,"./ReactPerf":163,"./ReactRootIndex":170,"./ReactUpdates":175}],152:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -23750,7 +25200,7 @@ var ReactInputSelection = {
 };
 
 module.exports = ReactInputSelection;
-},{"./ReactDOMSelection":106,"fbjs/lib/containsNode":195,"fbjs/lib/focusNode":200,"fbjs/lib/getActiveElement":201}],123:[function(require,module,exports){
+},{"./ReactDOMSelection":136,"fbjs/lib/containsNode":15,"fbjs/lib/focusNode":20,"fbjs/lib/getActiveElement":21}],153:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -24055,7 +25505,7 @@ var ReactInstanceHandles = {
 
 module.exports = ReactInstanceHandles;
 }).call(this,require('_process'))
-},{"./ReactRootIndex":140,"_process":219,"fbjs/lib/invariant":206}],124:[function(require,module,exports){
+},{"./ReactRootIndex":170,"_process":222,"fbjs/lib/invariant":26}],154:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24103,7 +25553,7 @@ var ReactInstanceMap = {
 };
 
 module.exports = ReactInstanceMap;
-},{}],125:[function(require,module,exports){
+},{}],155:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -24180,7 +25630,7 @@ var React = {
 
 module.exports = React;
 }).call(this,require('_process'))
-},{"./Object.assign":84,"./ReactChildren":90,"./ReactClass":91,"./ReactComponent":92,"./ReactDOMFactories":100,"./ReactElement":114,"./ReactElementValidator":115,"./ReactPropTypes":136,"./ReactVersion":146,"./onlyChild":183,"_process":219}],126:[function(require,module,exports){
+},{"./Object.assign":114,"./ReactChildren":120,"./ReactClass":121,"./ReactComponent":122,"./ReactDOMFactories":130,"./ReactElement":144,"./ReactElementValidator":145,"./ReactPropTypes":166,"./ReactVersion":176,"./onlyChild":213,"_process":222}],156:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -24226,7 +25676,7 @@ var ReactMarkupChecksum = {
 };
 
 module.exports = ReactMarkupChecksum;
-},{"./adler32":165}],127:[function(require,module,exports){
+},{"./adler32":195}],157:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25079,7 +26529,7 @@ ReactPerf.measureMethods(ReactMount, 'ReactMount', {
 
 module.exports = ReactMount;
 }).call(this,require('_process'))
-},{"./DOMProperty":71,"./Object.assign":84,"./ReactBrowserEventEmitter":88,"./ReactCurrentOwner":96,"./ReactDOMFeatureFlags":101,"./ReactElement":114,"./ReactEmptyComponentRegistry":117,"./ReactInstanceHandles":123,"./ReactInstanceMap":124,"./ReactMarkupChecksum":126,"./ReactPerf":133,"./ReactReconciler":138,"./ReactUpdateQueue":144,"./ReactUpdates":145,"./instantiateReactComponent":180,"./setInnerHTML":186,"./shouldUpdateReactComponent":188,"./validateDOMNesting":190,"_process":219,"fbjs/lib/containsNode":195,"fbjs/lib/emptyObject":199,"fbjs/lib/invariant":206,"fbjs/lib/warning":217}],128:[function(require,module,exports){
+},{"./DOMProperty":101,"./Object.assign":114,"./ReactBrowserEventEmitter":118,"./ReactCurrentOwner":126,"./ReactDOMFeatureFlags":131,"./ReactElement":144,"./ReactEmptyComponentRegistry":147,"./ReactInstanceHandles":153,"./ReactInstanceMap":154,"./ReactMarkupChecksum":156,"./ReactPerf":163,"./ReactReconciler":168,"./ReactUpdateQueue":174,"./ReactUpdates":175,"./instantiateReactComponent":210,"./setInnerHTML":216,"./shouldUpdateReactComponent":218,"./validateDOMNesting":220,"_process":222,"fbjs/lib/containsNode":15,"fbjs/lib/emptyObject":19,"fbjs/lib/invariant":26,"fbjs/lib/warning":37}],158:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25578,7 +27028,7 @@ var ReactMultiChild = {
 
 module.exports = ReactMultiChild;
 }).call(this,require('_process'))
-},{"./ReactChildReconciler":89,"./ReactComponentEnvironment":94,"./ReactCurrentOwner":96,"./ReactMultiChildUpdateTypes":129,"./ReactReconciler":138,"./flattenChildren":171,"_process":219}],129:[function(require,module,exports){
+},{"./ReactChildReconciler":119,"./ReactComponentEnvironment":124,"./ReactCurrentOwner":126,"./ReactMultiChildUpdateTypes":159,"./ReactReconciler":168,"./flattenChildren":201,"_process":222}],159:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -25611,7 +27061,7 @@ var ReactMultiChildUpdateTypes = keyMirror({
 });
 
 module.exports = ReactMultiChildUpdateTypes;
-},{"fbjs/lib/keyMirror":209}],130:[function(require,module,exports){
+},{"fbjs/lib/keyMirror":29}],160:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -25708,7 +27158,7 @@ var ReactNativeComponent = {
 
 module.exports = ReactNativeComponent;
 }).call(this,require('_process'))
-},{"./Object.assign":84,"_process":219,"fbjs/lib/invariant":206}],131:[function(require,module,exports){
+},{"./Object.assign":114,"_process":222,"fbjs/lib/invariant":26}],161:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -25829,7 +27279,7 @@ var ReactNoopUpdateQueue = {
 
 module.exports = ReactNoopUpdateQueue;
 }).call(this,require('_process'))
-},{"_process":219,"fbjs/lib/warning":217}],132:[function(require,module,exports){
+},{"_process":222,"fbjs/lib/warning":37}],162:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -25923,7 +27373,7 @@ var ReactOwner = {
 
 module.exports = ReactOwner;
 }).call(this,require('_process'))
-},{"_process":219,"fbjs/lib/invariant":206}],133:[function(require,module,exports){
+},{"_process":222,"fbjs/lib/invariant":26}],163:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26022,7 +27472,7 @@ function _noMeasure(objName, fnName, func) {
 
 module.exports = ReactPerf;
 }).call(this,require('_process'))
-},{"_process":219}],134:[function(require,module,exports){
+},{"_process":222}],164:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26049,7 +27499,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = ReactPropTypeLocationNames;
 }).call(this,require('_process'))
-},{"_process":219}],135:[function(require,module,exports){
+},{"_process":222}],165:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26072,7 +27522,7 @@ var ReactPropTypeLocations = keyMirror({
 });
 
 module.exports = ReactPropTypeLocations;
-},{"fbjs/lib/keyMirror":209}],136:[function(require,module,exports){
+},{"fbjs/lib/keyMirror":29}],166:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26429,7 +27879,7 @@ function getClassName(propValue) {
 }
 
 module.exports = ReactPropTypes;
-},{"./ReactElement":114,"./ReactPropTypeLocationNames":134,"./getIteratorFn":177,"fbjs/lib/emptyFunction":198}],137:[function(require,module,exports){
+},{"./ReactElement":144,"./ReactPropTypeLocationNames":164,"./getIteratorFn":207,"fbjs/lib/emptyFunction":18}],167:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26581,7 +28031,7 @@ assign(ReactReconcileTransaction.prototype, Transaction.Mixin, Mixin);
 PooledClass.addPoolingTo(ReactReconcileTransaction);
 
 module.exports = ReactReconcileTransaction;
-},{"./CallbackQueue":67,"./Object.assign":84,"./PooledClass":85,"./ReactBrowserEventEmitter":88,"./ReactDOMFeatureFlags":101,"./ReactInputSelection":122,"./Transaction":162}],138:[function(require,module,exports){
+},{"./CallbackQueue":97,"./Object.assign":114,"./PooledClass":115,"./ReactBrowserEventEmitter":118,"./ReactDOMFeatureFlags":131,"./ReactInputSelection":152,"./Transaction":192}],168:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26689,7 +28139,7 @@ var ReactReconciler = {
 };
 
 module.exports = ReactReconciler;
-},{"./ReactRef":139}],139:[function(require,module,exports){
+},{"./ReactRef":169}],169:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26768,7 +28218,7 @@ ReactRef.detachRefs = function (instance, element) {
 };
 
 module.exports = ReactRef;
-},{"./ReactOwner":132}],140:[function(require,module,exports){
+},{"./ReactOwner":162}],170:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -26798,7 +28248,7 @@ var ReactRootIndex = {
 };
 
 module.exports = ReactRootIndex;
-},{}],141:[function(require,module,exports){
+},{}],171:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -26822,7 +28272,7 @@ var ReactServerBatchingStrategy = {
 };
 
 module.exports = ReactServerBatchingStrategy;
-},{}],142:[function(require,module,exports){
+},{}],172:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -26908,7 +28358,7 @@ module.exports = {
   renderToStaticMarkup: renderToStaticMarkup
 };
 }).call(this,require('_process'))
-},{"./ReactDefaultBatchingStrategy":110,"./ReactElement":114,"./ReactInstanceHandles":123,"./ReactMarkupChecksum":126,"./ReactServerBatchingStrategy":141,"./ReactServerRenderingTransaction":143,"./ReactUpdates":145,"./instantiateReactComponent":180,"_process":219,"fbjs/lib/emptyObject":199,"fbjs/lib/invariant":206}],143:[function(require,module,exports){
+},{"./ReactDefaultBatchingStrategy":140,"./ReactElement":144,"./ReactInstanceHandles":153,"./ReactMarkupChecksum":156,"./ReactServerBatchingStrategy":171,"./ReactServerRenderingTransaction":173,"./ReactUpdates":175,"./instantiateReactComponent":210,"_process":222,"fbjs/lib/emptyObject":19,"fbjs/lib/invariant":26}],173:[function(require,module,exports){
 /**
  * Copyright 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -26996,7 +28446,7 @@ assign(ReactServerRenderingTransaction.prototype, Transaction.Mixin, Mixin);
 PooledClass.addPoolingTo(ReactServerRenderingTransaction);
 
 module.exports = ReactServerRenderingTransaction;
-},{"./CallbackQueue":67,"./Object.assign":84,"./PooledClass":85,"./Transaction":162,"fbjs/lib/emptyFunction":198}],144:[function(require,module,exports){
+},{"./CallbackQueue":97,"./Object.assign":114,"./PooledClass":115,"./Transaction":192,"fbjs/lib/emptyFunction":18}],174:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -27256,7 +28706,7 @@ var ReactUpdateQueue = {
 
 module.exports = ReactUpdateQueue;
 }).call(this,require('_process'))
-},{"./Object.assign":84,"./ReactCurrentOwner":96,"./ReactElement":114,"./ReactInstanceMap":124,"./ReactUpdates":145,"_process":219,"fbjs/lib/invariant":206,"fbjs/lib/warning":217}],145:[function(require,module,exports){
+},{"./Object.assign":114,"./ReactCurrentOwner":126,"./ReactElement":144,"./ReactInstanceMap":154,"./ReactUpdates":175,"_process":222,"fbjs/lib/invariant":26,"fbjs/lib/warning":37}],175:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -27482,7 +28932,7 @@ var ReactUpdates = {
 
 module.exports = ReactUpdates;
 }).call(this,require('_process'))
-},{"./CallbackQueue":67,"./Object.assign":84,"./PooledClass":85,"./ReactPerf":133,"./ReactReconciler":138,"./Transaction":162,"_process":219,"fbjs/lib/invariant":206}],146:[function(require,module,exports){
+},{"./CallbackQueue":97,"./Object.assign":114,"./PooledClass":115,"./ReactPerf":163,"./ReactReconciler":168,"./Transaction":192,"_process":222,"fbjs/lib/invariant":26}],176:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27497,7 +28947,7 @@ module.exports = ReactUpdates;
 'use strict';
 
 module.exports = '0.14.7';
-},{}],147:[function(require,module,exports){
+},{}],177:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27625,7 +29075,7 @@ var SVGDOMPropertyConfig = {
 };
 
 module.exports = SVGDOMPropertyConfig;
-},{"./DOMProperty":71}],148:[function(require,module,exports){
+},{"./DOMProperty":101}],178:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27827,7 +29277,7 @@ var SelectEventPlugin = {
 };
 
 module.exports = SelectEventPlugin;
-},{"./EventConstants":76,"./EventPropagators":80,"./ReactInputSelection":122,"./SyntheticEvent":154,"./isTextInputElement":182,"fbjs/lib/ExecutionEnvironment":192,"fbjs/lib/getActiveElement":201,"fbjs/lib/keyOf":210,"fbjs/lib/shallowEqual":215}],149:[function(require,module,exports){
+},{"./EventConstants":106,"./EventPropagators":110,"./ReactInputSelection":152,"./SyntheticEvent":184,"./isTextInputElement":212,"fbjs/lib/ExecutionEnvironment":12,"fbjs/lib/getActiveElement":21,"fbjs/lib/keyOf":30,"fbjs/lib/shallowEqual":35}],179:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -27857,7 +29307,7 @@ var ServerReactRootIndex = {
 };
 
 module.exports = ServerReactRootIndex;
-},{}],150:[function(require,module,exports){
+},{}],180:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -28447,7 +29897,7 @@ var SimpleEventPlugin = {
 
 module.exports = SimpleEventPlugin;
 }).call(this,require('_process'))
-},{"./EventConstants":76,"./EventPropagators":80,"./ReactMount":127,"./SyntheticClipboardEvent":151,"./SyntheticDragEvent":153,"./SyntheticEvent":154,"./SyntheticFocusEvent":155,"./SyntheticKeyboardEvent":157,"./SyntheticMouseEvent":158,"./SyntheticTouchEvent":159,"./SyntheticUIEvent":160,"./SyntheticWheelEvent":161,"./getEventCharCode":173,"_process":219,"fbjs/lib/EventListener":191,"fbjs/lib/emptyFunction":198,"fbjs/lib/invariant":206,"fbjs/lib/keyOf":210}],151:[function(require,module,exports){
+},{"./EventConstants":106,"./EventPropagators":110,"./ReactMount":157,"./SyntheticClipboardEvent":181,"./SyntheticDragEvent":183,"./SyntheticEvent":184,"./SyntheticFocusEvent":185,"./SyntheticKeyboardEvent":187,"./SyntheticMouseEvent":188,"./SyntheticTouchEvent":189,"./SyntheticUIEvent":190,"./SyntheticWheelEvent":191,"./getEventCharCode":203,"_process":222,"fbjs/lib/EventListener":11,"fbjs/lib/emptyFunction":18,"fbjs/lib/invariant":26,"fbjs/lib/keyOf":30}],181:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28487,7 +29937,7 @@ function SyntheticClipboardEvent(dispatchConfig, dispatchMarker, nativeEvent, na
 SyntheticEvent.augmentClass(SyntheticClipboardEvent, ClipboardEventInterface);
 
 module.exports = SyntheticClipboardEvent;
-},{"./SyntheticEvent":154}],152:[function(require,module,exports){
+},{"./SyntheticEvent":184}],182:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28525,7 +29975,7 @@ function SyntheticCompositionEvent(dispatchConfig, dispatchMarker, nativeEvent, 
 SyntheticEvent.augmentClass(SyntheticCompositionEvent, CompositionEventInterface);
 
 module.exports = SyntheticCompositionEvent;
-},{"./SyntheticEvent":154}],153:[function(require,module,exports){
+},{"./SyntheticEvent":184}],183:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28563,7 +30013,7 @@ function SyntheticDragEvent(dispatchConfig, dispatchMarker, nativeEvent, nativeE
 SyntheticMouseEvent.augmentClass(SyntheticDragEvent, DragEventInterface);
 
 module.exports = SyntheticDragEvent;
-},{"./SyntheticMouseEvent":158}],154:[function(require,module,exports){
+},{"./SyntheticMouseEvent":188}],184:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -28746,7 +30196,7 @@ PooledClass.addPoolingTo(SyntheticEvent, PooledClass.fourArgumentPooler);
 
 module.exports = SyntheticEvent;
 }).call(this,require('_process'))
-},{"./Object.assign":84,"./PooledClass":85,"_process":219,"fbjs/lib/emptyFunction":198,"fbjs/lib/warning":217}],155:[function(require,module,exports){
+},{"./Object.assign":114,"./PooledClass":115,"_process":222,"fbjs/lib/emptyFunction":18,"fbjs/lib/warning":37}],185:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28784,7 +30234,7 @@ function SyntheticFocusEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticUIEvent.augmentClass(SyntheticFocusEvent, FocusEventInterface);
 
 module.exports = SyntheticFocusEvent;
-},{"./SyntheticUIEvent":160}],156:[function(require,module,exports){
+},{"./SyntheticUIEvent":190}],186:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28823,7 +30273,7 @@ function SyntheticInputEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticEvent.augmentClass(SyntheticInputEvent, InputEventInterface);
 
 module.exports = SyntheticInputEvent;
-},{"./SyntheticEvent":154}],157:[function(require,module,exports){
+},{"./SyntheticEvent":184}],187:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28909,7 +30359,7 @@ function SyntheticKeyboardEvent(dispatchConfig, dispatchMarker, nativeEvent, nat
 SyntheticUIEvent.augmentClass(SyntheticKeyboardEvent, KeyboardEventInterface);
 
 module.exports = SyntheticKeyboardEvent;
-},{"./SyntheticUIEvent":160,"./getEventCharCode":173,"./getEventKey":174,"./getEventModifierState":175}],158:[function(require,module,exports){
+},{"./SyntheticUIEvent":190,"./getEventCharCode":203,"./getEventKey":204,"./getEventModifierState":205}],188:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -28983,7 +30433,7 @@ function SyntheticMouseEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticUIEvent.augmentClass(SyntheticMouseEvent, MouseEventInterface);
 
 module.exports = SyntheticMouseEvent;
-},{"./SyntheticUIEvent":160,"./ViewportMetrics":163,"./getEventModifierState":175}],159:[function(require,module,exports){
+},{"./SyntheticUIEvent":190,"./ViewportMetrics":193,"./getEventModifierState":205}],189:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29030,7 +30480,7 @@ function SyntheticTouchEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticUIEvent.augmentClass(SyntheticTouchEvent, TouchEventInterface);
 
 module.exports = SyntheticTouchEvent;
-},{"./SyntheticUIEvent":160,"./getEventModifierState":175}],160:[function(require,module,exports){
+},{"./SyntheticUIEvent":190,"./getEventModifierState":205}],190:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29091,7 +30541,7 @@ function SyntheticUIEvent(dispatchConfig, dispatchMarker, nativeEvent, nativeEve
 SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
 
 module.exports = SyntheticUIEvent;
-},{"./SyntheticEvent":154,"./getEventTarget":176}],161:[function(require,module,exports){
+},{"./SyntheticEvent":184,"./getEventTarget":206}],191:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29147,7 +30597,7 @@ function SyntheticWheelEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticMouseEvent.augmentClass(SyntheticWheelEvent, WheelEventInterface);
 
 module.exports = SyntheticWheelEvent;
-},{"./SyntheticMouseEvent":158}],162:[function(require,module,exports){
+},{"./SyntheticMouseEvent":188}],192:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29381,7 +30831,7 @@ var Transaction = {
 
 module.exports = Transaction;
 }).call(this,require('_process'))
-},{"_process":219,"fbjs/lib/invariant":206}],163:[function(require,module,exports){
+},{"_process":222,"fbjs/lib/invariant":26}],193:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29409,7 +30859,7 @@ var ViewportMetrics = {
 };
 
 module.exports = ViewportMetrics;
-},{}],164:[function(require,module,exports){
+},{}],194:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -29471,7 +30921,7 @@ function accumulateInto(current, next) {
 
 module.exports = accumulateInto;
 }).call(this,require('_process'))
-},{"_process":219,"fbjs/lib/invariant":206}],165:[function(require,module,exports){
+},{"_process":222,"fbjs/lib/invariant":26}],195:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29514,7 +30964,7 @@ function adler32(data) {
 }
 
 module.exports = adler32;
-},{}],166:[function(require,module,exports){
+},{}],196:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29541,7 +30991,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = canDefineProperty;
 }).call(this,require('_process'))
-},{"_process":219}],167:[function(require,module,exports){
+},{"_process":222}],197:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29597,7 +31047,7 @@ function dangerousStyleValue(name, value) {
 }
 
 module.exports = dangerousStyleValue;
-},{"./CSSProperty":65}],168:[function(require,module,exports){
+},{"./CSSProperty":95}],198:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29648,7 +31098,7 @@ function deprecated(fnName, newModule, newPackage, ctx, fn) {
 
 module.exports = deprecated;
 }).call(this,require('_process'))
-},{"./Object.assign":84,"_process":219,"fbjs/lib/warning":217}],169:[function(require,module,exports){
+},{"./Object.assign":114,"_process":222,"fbjs/lib/warning":37}],199:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29687,7 +31137,7 @@ function escapeTextContentForBrowser(text) {
 }
 
 module.exports = escapeTextContentForBrowser;
-},{}],170:[function(require,module,exports){
+},{}],200:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29739,7 +31189,7 @@ function findDOMNode(componentOrElement) {
 
 module.exports = findDOMNode;
 }).call(this,require('_process'))
-},{"./ReactCurrentOwner":96,"./ReactInstanceMap":124,"./ReactMount":127,"_process":219,"fbjs/lib/invariant":206,"fbjs/lib/warning":217}],171:[function(require,module,exports){
+},{"./ReactCurrentOwner":126,"./ReactInstanceMap":154,"./ReactMount":157,"_process":222,"fbjs/lib/invariant":26,"fbjs/lib/warning":37}],201:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -29790,7 +31240,7 @@ function flattenChildren(children) {
 
 module.exports = flattenChildren;
 }).call(this,require('_process'))
-},{"./traverseAllChildren":189,"_process":219,"fbjs/lib/warning":217}],172:[function(require,module,exports){
+},{"./traverseAllChildren":219,"_process":222,"fbjs/lib/warning":37}],202:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29820,7 +31270,7 @@ var forEachAccumulated = function (arr, cb, scope) {
 };
 
 module.exports = forEachAccumulated;
-},{}],173:[function(require,module,exports){
+},{}],203:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29871,7 +31321,7 @@ function getEventCharCode(nativeEvent) {
 }
 
 module.exports = getEventCharCode;
-},{}],174:[function(require,module,exports){
+},{}],204:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -29975,7 +31425,7 @@ function getEventKey(nativeEvent) {
 }
 
 module.exports = getEventKey;
-},{"./getEventCharCode":173}],175:[function(require,module,exports){
+},{"./getEventCharCode":203}],205:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30020,7 +31470,7 @@ function getEventModifierState(nativeEvent) {
 }
 
 module.exports = getEventModifierState;
-},{}],176:[function(require,module,exports){
+},{}],206:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30050,7 +31500,7 @@ function getEventTarget(nativeEvent) {
 }
 
 module.exports = getEventTarget;
-},{}],177:[function(require,module,exports){
+},{}],207:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30091,7 +31541,7 @@ function getIteratorFn(maybeIterable) {
 }
 
 module.exports = getIteratorFn;
-},{}],178:[function(require,module,exports){
+},{}],208:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30165,7 +31615,7 @@ function getNodeForCharacterOffset(root, offset) {
 }
 
 module.exports = getNodeForCharacterOffset;
-},{}],179:[function(require,module,exports){
+},{}],209:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30199,7 +31649,7 @@ function getTextContentAccessor() {
 }
 
 module.exports = getTextContentAccessor;
-},{"fbjs/lib/ExecutionEnvironment":192}],180:[function(require,module,exports){
+},{"fbjs/lib/ExecutionEnvironment":12}],210:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -30314,7 +31764,7 @@ function instantiateReactComponent(node) {
 
 module.exports = instantiateReactComponent;
 }).call(this,require('_process'))
-},{"./Object.assign":84,"./ReactCompositeComponent":95,"./ReactEmptyComponent":116,"./ReactNativeComponent":130,"_process":219,"fbjs/lib/invariant":206,"fbjs/lib/warning":217}],181:[function(require,module,exports){
+},{"./Object.assign":114,"./ReactCompositeComponent":125,"./ReactEmptyComponent":146,"./ReactNativeComponent":160,"_process":222,"fbjs/lib/invariant":26,"fbjs/lib/warning":37}],211:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30375,7 +31825,7 @@ function isEventSupported(eventNameSuffix, capture) {
 }
 
 module.exports = isEventSupported;
-},{"fbjs/lib/ExecutionEnvironment":192}],182:[function(require,module,exports){
+},{"fbjs/lib/ExecutionEnvironment":12}],212:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30416,7 +31866,7 @@ function isTextInputElement(elem) {
 }
 
 module.exports = isTextInputElement;
-},{}],183:[function(require,module,exports){
+},{}],213:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -30452,7 +31902,7 @@ function onlyChild(children) {
 
 module.exports = onlyChild;
 }).call(this,require('_process'))
-},{"./ReactElement":114,"_process":219,"fbjs/lib/invariant":206}],184:[function(require,module,exports){
+},{"./ReactElement":144,"_process":222,"fbjs/lib/invariant":26}],214:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30479,7 +31929,7 @@ function quoteAttributeValueForBrowser(value) {
 }
 
 module.exports = quoteAttributeValueForBrowser;
-},{"./escapeTextContentForBrowser":169}],185:[function(require,module,exports){
+},{"./escapeTextContentForBrowser":199}],215:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30496,7 +31946,7 @@ module.exports = quoteAttributeValueForBrowser;
 var ReactMount = require('./ReactMount');
 
 module.exports = ReactMount.renderSubtreeIntoContainer;
-},{"./ReactMount":127}],186:[function(require,module,exports){
+},{"./ReactMount":157}],216:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30587,7 +32037,7 @@ if (ExecutionEnvironment.canUseDOM) {
 }
 
 module.exports = setInnerHTML;
-},{"fbjs/lib/ExecutionEnvironment":192}],187:[function(require,module,exports){
+},{"fbjs/lib/ExecutionEnvironment":12}],217:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30628,7 +32078,7 @@ if (ExecutionEnvironment.canUseDOM) {
 }
 
 module.exports = setTextContent;
-},{"./escapeTextContentForBrowser":169,"./setInnerHTML":186,"fbjs/lib/ExecutionEnvironment":192}],188:[function(require,module,exports){
+},{"./escapeTextContentForBrowser":199,"./setInnerHTML":216,"fbjs/lib/ExecutionEnvironment":12}],218:[function(require,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -30672,7 +32122,7 @@ function shouldUpdateReactComponent(prevElement, nextElement) {
 }
 
 module.exports = shouldUpdateReactComponent;
-},{}],189:[function(require,module,exports){
+},{}],219:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -30864,7 +32314,7 @@ function traverseAllChildren(children, callback, traverseContext) {
 
 module.exports = traverseAllChildren;
 }).call(this,require('_process'))
-},{"./ReactCurrentOwner":96,"./ReactElement":114,"./ReactInstanceHandles":123,"./getIteratorFn":177,"_process":219,"fbjs/lib/invariant":206,"fbjs/lib/warning":217}],190:[function(require,module,exports){
+},{"./ReactCurrentOwner":126,"./ReactElement":144,"./ReactInstanceHandles":153,"./getIteratorFn":207,"_process":222,"fbjs/lib/invariant":26,"fbjs/lib/warning":37}],220:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015, Facebook, Inc.
@@ -31230,1279 +32680,12 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = validateDOMNesting;
 }).call(this,require('_process'))
-},{"./Object.assign":84,"_process":219,"fbjs/lib/emptyFunction":198,"fbjs/lib/warning":217}],191:[function(require,module,exports){
-(function (process){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @providesModule EventListener
- * @typechecks
- */
-
-'use strict';
-
-var emptyFunction = require('./emptyFunction');
-
-/**
- * Upstream version of event listener. Does not take into account specific
- * nature of platform.
- */
-var EventListener = {
-  /**
-   * Listen to DOM events during the bubble phase.
-   *
-   * @param {DOMEventTarget} target DOM element to register listener on.
-   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
-   * @param {function} callback Callback function.
-   * @return {object} Object with a `remove` method.
-   */
-  listen: function (target, eventType, callback) {
-    if (target.addEventListener) {
-      target.addEventListener(eventType, callback, false);
-      return {
-        remove: function () {
-          target.removeEventListener(eventType, callback, false);
-        }
-      };
-    } else if (target.attachEvent) {
-      target.attachEvent('on' + eventType, callback);
-      return {
-        remove: function () {
-          target.detachEvent('on' + eventType, callback);
-        }
-      };
-    }
-  },
-
-  /**
-   * Listen to DOM events during the capture phase.
-   *
-   * @param {DOMEventTarget} target DOM element to register listener on.
-   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
-   * @param {function} callback Callback function.
-   * @return {object} Object with a `remove` method.
-   */
-  capture: function (target, eventType, callback) {
-    if (target.addEventListener) {
-      target.addEventListener(eventType, callback, true);
-      return {
-        remove: function () {
-          target.removeEventListener(eventType, callback, true);
-        }
-      };
-    } else {
-      if (process.env.NODE_ENV !== 'production') {
-        console.error('Attempted to listen to events during the capture phase on a ' + 'browser that does not support the capture phase. Your application ' + 'will not receive some events.');
-      }
-      return {
-        remove: emptyFunction
-      };
-    }
-  },
-
-  registerDefault: function () {}
-};
-
-module.exports = EventListener;
-}).call(this,require('_process'))
-},{"./emptyFunction":198,"_process":219}],192:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule ExecutionEnvironment
- */
-
-'use strict';
-
-var canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
-
-/**
- * Simple, lightweight module assisting with the detection and context of
- * Worker. Helps avoid circular dependencies and allows code to reason about
- * whether or not they are in a Worker, even if they never include the main
- * `ReactWorker` dependency.
- */
-var ExecutionEnvironment = {
-
-  canUseDOM: canUseDOM,
-
-  canUseWorkers: typeof Worker !== 'undefined',
-
-  canUseEventListeners: canUseDOM && !!(window.addEventListener || window.attachEvent),
-
-  canUseViewport: canUseDOM && !!window.screen,
-
-  isInWorker: !canUseDOM // For now, this is true - might change in the future.
-
-};
-
-module.exports = ExecutionEnvironment;
-},{}],193:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule camelize
- * @typechecks
- */
-
-"use strict";
-
-var _hyphenPattern = /-(.)/g;
-
-/**
- * Camelcases a hyphenated string, for example:
- *
- *   > camelize('background-color')
- *   < "backgroundColor"
- *
- * @param {string} string
- * @return {string}
- */
-function camelize(string) {
-  return string.replace(_hyphenPattern, function (_, character) {
-    return character.toUpperCase();
-  });
-}
-
-module.exports = camelize;
-},{}],194:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule camelizeStyleName
- * @typechecks
- */
-
-'use strict';
-
-var camelize = require('./camelize');
-
-var msPattern = /^-ms-/;
-
-/**
- * Camelcases a hyphenated CSS property name, for example:
- *
- *   > camelizeStyleName('background-color')
- *   < "backgroundColor"
- *   > camelizeStyleName('-moz-transition')
- *   < "MozTransition"
- *   > camelizeStyleName('-ms-transition')
- *   < "msTransition"
- *
- * As Andi Smith suggests
- * (http://www.andismith.com/blog/2012/02/modernizr-prefixed/), an `-ms` prefix
- * is converted to lowercase `ms`.
- *
- * @param {string} string
- * @return {string}
- */
-function camelizeStyleName(string) {
-  return camelize(string.replace(msPattern, 'ms-'));
-}
-
-module.exports = camelizeStyleName;
-},{"./camelize":193}],195:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule containsNode
- * @typechecks
- */
-
-'use strict';
-
-var isTextNode = require('./isTextNode');
-
-/*eslint-disable no-bitwise */
-
-/**
- * Checks if a given DOM node contains or is another DOM node.
- *
- * @param {?DOMNode} outerNode Outer DOM node.
- * @param {?DOMNode} innerNode Inner DOM node.
- * @return {boolean} True if `outerNode` contains or is `innerNode`.
- */
-function containsNode(_x, _x2) {
-  var _again = true;
-
-  _function: while (_again) {
-    var outerNode = _x,
-        innerNode = _x2;
-    _again = false;
-
-    if (!outerNode || !innerNode) {
-      return false;
-    } else if (outerNode === innerNode) {
-      return true;
-    } else if (isTextNode(outerNode)) {
-      return false;
-    } else if (isTextNode(innerNode)) {
-      _x = outerNode;
-      _x2 = innerNode.parentNode;
-      _again = true;
-      continue _function;
-    } else if (outerNode.contains) {
-      return outerNode.contains(innerNode);
-    } else if (outerNode.compareDocumentPosition) {
-      return !!(outerNode.compareDocumentPosition(innerNode) & 16);
-    } else {
-      return false;
-    }
-  }
-}
-
-module.exports = containsNode;
-},{"./isTextNode":208}],196:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule createArrayFromMixed
- * @typechecks
- */
-
-'use strict';
-
-var toArray = require('./toArray');
-
-/**
- * Perform a heuristic test to determine if an object is "array-like".
- *
- *   A monk asked Joshu, a Zen master, "Has a dog Buddha nature?"
- *   Joshu replied: "Mu."
- *
- * This function determines if its argument has "array nature": it returns
- * true if the argument is an actual array, an `arguments' object, or an
- * HTMLCollection (e.g. node.childNodes or node.getElementsByTagName()).
- *
- * It will return false for other array-like objects like Filelist.
- *
- * @param {*} obj
- * @return {boolean}
- */
-function hasArrayNature(obj) {
-  return(
-    // not null/false
-    !!obj && (
-    // arrays are objects, NodeLists are functions in Safari
-    typeof obj == 'object' || typeof obj == 'function') &&
-    // quacks like an array
-    'length' in obj &&
-    // not window
-    !('setInterval' in obj) &&
-    // no DOM node should be considered an array-like
-    // a 'select' element has 'length' and 'item' properties on IE8
-    typeof obj.nodeType != 'number' && (
-    // a real array
-    Array.isArray(obj) ||
-    // arguments
-    'callee' in obj ||
-    // HTMLCollection/NodeList
-    'item' in obj)
-  );
-}
-
-/**
- * Ensure that the argument is an array by wrapping it in an array if it is not.
- * Creates a copy of the argument if it is already an array.
- *
- * This is mostly useful idiomatically:
- *
- *   var createArrayFromMixed = require('createArrayFromMixed');
- *
- *   function takesOneOrMoreThings(things) {
- *     things = createArrayFromMixed(things);
- *     ...
- *   }
- *
- * This allows you to treat `things' as an array, but accept scalars in the API.
- *
- * If you need to convert an array-like object, like `arguments`, into an array
- * use toArray instead.
- *
- * @param {*} obj
- * @return {array}
- */
-function createArrayFromMixed(obj) {
-  if (!hasArrayNature(obj)) {
-    return [obj];
-  } else if (Array.isArray(obj)) {
-    return obj.slice();
-  } else {
-    return toArray(obj);
-  }
-}
-
-module.exports = createArrayFromMixed;
-},{"./toArray":216}],197:[function(require,module,exports){
-(function (process){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule createNodesFromMarkup
- * @typechecks
- */
-
-/*eslint-disable fb-www/unsafe-html*/
-
-'use strict';
-
-var ExecutionEnvironment = require('./ExecutionEnvironment');
-
-var createArrayFromMixed = require('./createArrayFromMixed');
-var getMarkupWrap = require('./getMarkupWrap');
-var invariant = require('./invariant');
-
-/**
- * Dummy container used to render all markup.
- */
-var dummyNode = ExecutionEnvironment.canUseDOM ? document.createElement('div') : null;
-
-/**
- * Pattern used by `getNodeName`.
- */
-var nodeNamePattern = /^\s*<(\w+)/;
-
-/**
- * Extracts the `nodeName` of the first element in a string of markup.
- *
- * @param {string} markup String of markup.
- * @return {?string} Node name of the supplied markup.
- */
-function getNodeName(markup) {
-  var nodeNameMatch = markup.match(nodeNamePattern);
-  return nodeNameMatch && nodeNameMatch[1].toLowerCase();
-}
-
-/**
- * Creates an array containing the nodes rendered from the supplied markup. The
- * optionally supplied `handleScript` function will be invoked once for each
- * <script> element that is rendered. If no `handleScript` function is supplied,
- * an exception is thrown if any <script> elements are rendered.
- *
- * @param {string} markup A string of valid HTML markup.
- * @param {?function} handleScript Invoked once for each rendered <script>.
- * @return {array<DOMElement|DOMTextNode>} An array of rendered nodes.
- */
-function createNodesFromMarkup(markup, handleScript) {
-  var node = dummyNode;
-  !!!dummyNode ? process.env.NODE_ENV !== 'production' ? invariant(false, 'createNodesFromMarkup dummy not initialized') : invariant(false) : undefined;
-  var nodeName = getNodeName(markup);
-
-  var wrap = nodeName && getMarkupWrap(nodeName);
-  if (wrap) {
-    node.innerHTML = wrap[1] + markup + wrap[2];
-
-    var wrapDepth = wrap[0];
-    while (wrapDepth--) {
-      node = node.lastChild;
-    }
-  } else {
-    node.innerHTML = markup;
-  }
-
-  var scripts = node.getElementsByTagName('script');
-  if (scripts.length) {
-    !handleScript ? process.env.NODE_ENV !== 'production' ? invariant(false, 'createNodesFromMarkup(...): Unexpected <script> element rendered.') : invariant(false) : undefined;
-    createArrayFromMixed(scripts).forEach(handleScript);
-  }
-
-  var nodes = createArrayFromMixed(node.childNodes);
-  while (node.lastChild) {
-    node.removeChild(node.lastChild);
-  }
-  return nodes;
-}
-
-module.exports = createNodesFromMarkup;
-}).call(this,require('_process'))
-},{"./ExecutionEnvironment":192,"./createArrayFromMixed":196,"./getMarkupWrap":202,"./invariant":206,"_process":219}],198:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule emptyFunction
- */
-
-"use strict";
-
-function makeEmptyFunction(arg) {
-  return function () {
-    return arg;
-  };
-}
-
-/**
- * This function accepts and discards inputs; it has no side effects. This is
- * primarily useful idiomatically for overridable function endpoints which
- * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
- */
-function emptyFunction() {}
-
-emptyFunction.thatReturns = makeEmptyFunction;
-emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
-emptyFunction.thatReturnsTrue = makeEmptyFunction(true);
-emptyFunction.thatReturnsNull = makeEmptyFunction(null);
-emptyFunction.thatReturnsThis = function () {
-  return this;
-};
-emptyFunction.thatReturnsArgument = function (arg) {
-  return arg;
-};
-
-module.exports = emptyFunction;
-},{}],199:[function(require,module,exports){
-(function (process){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule emptyObject
- */
-
-'use strict';
-
-var emptyObject = {};
-
-if (process.env.NODE_ENV !== 'production') {
-  Object.freeze(emptyObject);
-}
-
-module.exports = emptyObject;
-}).call(this,require('_process'))
-},{"_process":219}],200:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule focusNode
- */
-
-'use strict';
-
-/**
- * @param {DOMElement} node input/textarea to focus
- */
-function focusNode(node) {
-  // IE8 can throw "Can't move focus to the control because it is invisible,
-  // not enabled, or of a type that does not accept the focus." for all kinds of
-  // reasons that are too expensive and fragile to test.
-  try {
-    node.focus();
-  } catch (e) {}
-}
-
-module.exports = focusNode;
-},{}],201:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule getActiveElement
- * @typechecks
- */
-
-/* eslint-disable fb-www/typeof-undefined */
-
-/**
- * Same as document.activeElement but wraps in a try-catch block. In IE it is
- * not safe to call document.activeElement if there is nothing focused.
- *
- * The activeElement will be null only if the document or document body is not
- * yet defined.
- */
-'use strict';
-
-function getActiveElement() /*?DOMElement*/{
-  if (typeof document === 'undefined') {
-    return null;
-  }
-  try {
-    return document.activeElement || document.body;
-  } catch (e) {
-    return document.body;
-  }
-}
-
-module.exports = getActiveElement;
-},{}],202:[function(require,module,exports){
-(function (process){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule getMarkupWrap
- */
-
-/*eslint-disable fb-www/unsafe-html */
-
-'use strict';
-
-var ExecutionEnvironment = require('./ExecutionEnvironment');
-
-var invariant = require('./invariant');
-
-/**
- * Dummy container used to detect which wraps are necessary.
- */
-var dummyNode = ExecutionEnvironment.canUseDOM ? document.createElement('div') : null;
-
-/**
- * Some browsers cannot use `innerHTML` to render certain elements standalone,
- * so we wrap them, render the wrapped nodes, then extract the desired node.
- *
- * In IE8, certain elements cannot render alone, so wrap all elements ('*').
- */
-
-var shouldWrap = {};
-
-var selectWrap = [1, '<select multiple="true">', '</select>'];
-var tableWrap = [1, '<table>', '</table>'];
-var trWrap = [3, '<table><tbody><tr>', '</tr></tbody></table>'];
-
-var svgWrap = [1, '<svg xmlns="http://www.w3.org/2000/svg">', '</svg>'];
-
-var markupWrap = {
-  '*': [1, '?<div>', '</div>'],
-
-  'area': [1, '<map>', '</map>'],
-  'col': [2, '<table><tbody></tbody><colgroup>', '</colgroup></table>'],
-  'legend': [1, '<fieldset>', '</fieldset>'],
-  'param': [1, '<object>', '</object>'],
-  'tr': [2, '<table><tbody>', '</tbody></table>'],
-
-  'optgroup': selectWrap,
-  'option': selectWrap,
-
-  'caption': tableWrap,
-  'colgroup': tableWrap,
-  'tbody': tableWrap,
-  'tfoot': tableWrap,
-  'thead': tableWrap,
-
-  'td': trWrap,
-  'th': trWrap
-};
-
-// Initialize the SVG elements since we know they'll always need to be wrapped
-// consistently. If they are created inside a <div> they will be initialized in
-// the wrong namespace (and will not display).
-var svgElements = ['circle', 'clipPath', 'defs', 'ellipse', 'g', 'image', 'line', 'linearGradient', 'mask', 'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect', 'stop', 'text', 'tspan'];
-svgElements.forEach(function (nodeName) {
-  markupWrap[nodeName] = svgWrap;
-  shouldWrap[nodeName] = true;
-});
-
-/**
- * Gets the markup wrap configuration for the supplied `nodeName`.
- *
- * NOTE: This lazily detects which wraps are necessary for the current browser.
- *
- * @param {string} nodeName Lowercase `nodeName`.
- * @return {?array} Markup wrap configuration, if applicable.
- */
-function getMarkupWrap(nodeName) {
-  !!!dummyNode ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Markup wrapping node not initialized') : invariant(false) : undefined;
-  if (!markupWrap.hasOwnProperty(nodeName)) {
-    nodeName = '*';
-  }
-  if (!shouldWrap.hasOwnProperty(nodeName)) {
-    if (nodeName === '*') {
-      dummyNode.innerHTML = '<link />';
-    } else {
-      dummyNode.innerHTML = '<' + nodeName + '></' + nodeName + '>';
-    }
-    shouldWrap[nodeName] = !dummyNode.firstChild;
-  }
-  return shouldWrap[nodeName] ? markupWrap[nodeName] : null;
-}
-
-module.exports = getMarkupWrap;
-}).call(this,require('_process'))
-},{"./ExecutionEnvironment":192,"./invariant":206,"_process":219}],203:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule getUnboundedScrollPosition
- * @typechecks
- */
-
-'use strict';
-
-/**
- * Gets the scroll position of the supplied element or window.
- *
- * The return values are unbounded, unlike `getScrollPosition`. This means they
- * may be negative or exceed the element boundaries (which is possible using
- * inertial scrolling).
- *
- * @param {DOMWindow|DOMElement} scrollable
- * @return {object} Map with `x` and `y` keys.
- */
-function getUnboundedScrollPosition(scrollable) {
-  if (scrollable === window) {
-    return {
-      x: window.pageXOffset || document.documentElement.scrollLeft,
-      y: window.pageYOffset || document.documentElement.scrollTop
-    };
-  }
-  return {
-    x: scrollable.scrollLeft,
-    y: scrollable.scrollTop
-  };
-}
-
-module.exports = getUnboundedScrollPosition;
-},{}],204:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule hyphenate
- * @typechecks
- */
-
-'use strict';
-
-var _uppercasePattern = /([A-Z])/g;
-
-/**
- * Hyphenates a camelcased string, for example:
- *
- *   > hyphenate('backgroundColor')
- *   < "background-color"
- *
- * For CSS style names, use `hyphenateStyleName` instead which works properly
- * with all vendor prefixes, including `ms`.
- *
- * @param {string} string
- * @return {string}
- */
-function hyphenate(string) {
-  return string.replace(_uppercasePattern, '-$1').toLowerCase();
-}
-
-module.exports = hyphenate;
-},{}],205:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule hyphenateStyleName
- * @typechecks
- */
-
-'use strict';
-
-var hyphenate = require('./hyphenate');
-
-var msPattern = /^ms-/;
-
-/**
- * Hyphenates a camelcased CSS property name, for example:
- *
- *   > hyphenateStyleName('backgroundColor')
- *   < "background-color"
- *   > hyphenateStyleName('MozTransition')
- *   < "-moz-transition"
- *   > hyphenateStyleName('msTransition')
- *   < "-ms-transition"
- *
- * As Modernizr suggests (http://modernizr.com/docs/#prefixed), an `ms` prefix
- * is converted to `-ms-`.
- *
- * @param {string} string
- * @return {string}
- */
-function hyphenateStyleName(string) {
-  return hyphenate(string).replace(msPattern, '-ms-');
-}
-
-module.exports = hyphenateStyleName;
-},{"./hyphenate":204}],206:[function(require,module,exports){
-(function (process){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule invariant
- */
-
-'use strict';
-
-/**
- * Use invariant() to assert state which your program assumes to be true.
- *
- * Provide sprintf-style format (only %s is supported) and arguments
- * to provide information about what broke and what you were
- * expecting.
- *
- * The invariant message will be stripped in production, but the invariant
- * will remain to ensure logic does not differ in production.
- */
-
-function invariant(condition, format, a, b, c, d, e, f) {
-  if (process.env.NODE_ENV !== 'production') {
-    if (format === undefined) {
-      throw new Error('invariant requires an error message argument');
-    }
-  }
-
-  if (!condition) {
-    var error;
-    if (format === undefined) {
-      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
-    } else {
-      var args = [a, b, c, d, e, f];
-      var argIndex = 0;
-      error = new Error(format.replace(/%s/g, function () {
-        return args[argIndex++];
-      }));
-      error.name = 'Invariant Violation';
-    }
-
-    error.framesToPop = 1; // we don't care about invariant's own frame
-    throw error;
-  }
-}
-
-module.exports = invariant;
-}).call(this,require('_process'))
-},{"_process":219}],207:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule isNode
- * @typechecks
- */
-
-/**
- * @param {*} object The object to check.
- * @return {boolean} Whether or not the object is a DOM node.
- */
-'use strict';
-
-function isNode(object) {
-  return !!(object && (typeof Node === 'function' ? object instanceof Node : typeof object === 'object' && typeof object.nodeType === 'number' && typeof object.nodeName === 'string'));
-}
-
-module.exports = isNode;
-},{}],208:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule isTextNode
- * @typechecks
- */
-
-'use strict';
-
-var isNode = require('./isNode');
-
-/**
- * @param {*} object The object to check.
- * @return {boolean} Whether or not the object is a DOM text node.
- */
-function isTextNode(object) {
-  return isNode(object) && object.nodeType == 3;
-}
-
-module.exports = isTextNode;
-},{"./isNode":207}],209:[function(require,module,exports){
-(function (process){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule keyMirror
- * @typechecks static-only
- */
-
-'use strict';
-
-var invariant = require('./invariant');
-
-/**
- * Constructs an enumeration with keys equal to their value.
- *
- * For example:
- *
- *   var COLORS = keyMirror({blue: null, red: null});
- *   var myColor = COLORS.blue;
- *   var isColorValid = !!COLORS[myColor];
- *
- * The last line could not be performed if the values of the generated enum were
- * not equal to their keys.
- *
- *   Input:  {key1: val1, key2: val2}
- *   Output: {key1: key1, key2: key2}
- *
- * @param {object} obj
- * @return {object}
- */
-var keyMirror = function (obj) {
-  var ret = {};
-  var key;
-  !(obj instanceof Object && !Array.isArray(obj)) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'keyMirror(...): Argument must be an object.') : invariant(false) : undefined;
-  for (key in obj) {
-    if (!obj.hasOwnProperty(key)) {
-      continue;
-    }
-    ret[key] = key;
-  }
-  return ret;
-};
-
-module.exports = keyMirror;
-}).call(this,require('_process'))
-},{"./invariant":206,"_process":219}],210:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule keyOf
- */
-
-/**
- * Allows extraction of a minified key. Let's the build system minify keys
- * without losing the ability to dynamically use key strings as values
- * themselves. Pass in an object with a single key/val pair and it will return
- * you the string key of that single record. Suppose you want to grab the
- * value for a key 'className' inside of an object. Key/val minification may
- * have aliased that key to be 'xa12'. keyOf({className: null}) will return
- * 'xa12' in that case. Resolve keys you want to use once at startup time, then
- * reuse those resolutions.
- */
-"use strict";
-
-var keyOf = function (oneKeyObj) {
-  var key;
-  for (key in oneKeyObj) {
-    if (!oneKeyObj.hasOwnProperty(key)) {
-      continue;
-    }
-    return key;
-  }
-  return null;
-};
-
-module.exports = keyOf;
-},{}],211:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule mapObject
- */
-
-'use strict';
-
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-/**
- * Executes the provided `callback` once for each enumerable own property in the
- * object and constructs a new object from the results. The `callback` is
- * invoked with three arguments:
- *
- *  - the property value
- *  - the property name
- *  - the object being traversed
- *
- * Properties that are added after the call to `mapObject` will not be visited
- * by `callback`. If the values of existing properties are changed, the value
- * passed to `callback` will be the value at the time `mapObject` visits them.
- * Properties that are deleted before being visited are not visited.
- *
- * @grep function objectMap()
- * @grep function objMap()
- *
- * @param {?object} object
- * @param {function} callback
- * @param {*} context
- * @return {?object}
- */
-function mapObject(object, callback, context) {
-  if (!object) {
-    return null;
-  }
-  var result = {};
-  for (var name in object) {
-    if (hasOwnProperty.call(object, name)) {
-      result[name] = callback.call(context, object[name], name, object);
-    }
-  }
-  return result;
-}
-
-module.exports = mapObject;
-},{}],212:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule memoizeStringOnly
- * @typechecks static-only
- */
-
-'use strict';
-
-/**
- * Memoizes the return value of a function that accepts one string argument.
- *
- * @param {function} callback
- * @return {function}
- */
-function memoizeStringOnly(callback) {
-  var cache = {};
-  return function (string) {
-    if (!cache.hasOwnProperty(string)) {
-      cache[string] = callback.call(this, string);
-    }
-    return cache[string];
-  };
-}
-
-module.exports = memoizeStringOnly;
-},{}],213:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule performance
- * @typechecks
- */
-
-'use strict';
-
-var ExecutionEnvironment = require('./ExecutionEnvironment');
-
-var performance;
-
-if (ExecutionEnvironment.canUseDOM) {
-  performance = window.performance || window.msPerformance || window.webkitPerformance;
-}
-
-module.exports = performance || {};
-},{"./ExecutionEnvironment":192}],214:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule performanceNow
- * @typechecks
- */
-
-'use strict';
-
-var performance = require('./performance');
-
-var performanceNow;
-
-/**
- * Detect if we can use `window.performance.now()` and gracefully fallback to
- * `Date.now()` if it doesn't exist. We need to support Firefox < 15 for now
- * because of Facebook's testing infrastructure.
- */
-if (performance.now) {
-  performanceNow = function () {
-    return performance.now();
-  };
-} else {
-  performanceNow = function () {
-    return Date.now();
-  };
-}
-
-module.exports = performanceNow;
-},{"./performance":213}],215:[function(require,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule shallowEqual
- * @typechecks
- * 
- */
-
-'use strict';
-
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-/**
- * Performs equality by iterating through keys on an object and returning false
- * when any key has values which are not strictly equal between the arguments.
- * Returns true when the values of all keys are strictly equal.
- */
-function shallowEqual(objA, objB) {
-  if (objA === objB) {
-    return true;
-  }
-
-  if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {
-    return false;
-  }
-
-  var keysA = Object.keys(objA);
-  var keysB = Object.keys(objB);
-
-  if (keysA.length !== keysB.length) {
-    return false;
-  }
-
-  // Test for A's keys different from B.
-  var bHasOwnProperty = hasOwnProperty.bind(objB);
-  for (var i = 0; i < keysA.length; i++) {
-    if (!bHasOwnProperty(keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-module.exports = shallowEqual;
-},{}],216:[function(require,module,exports){
-(function (process){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule toArray
- * @typechecks
- */
-
-'use strict';
-
-var invariant = require('./invariant');
-
-/**
- * Convert array-like objects to arrays.
- *
- * This API assumes the caller knows the contents of the data type. For less
- * well defined inputs use createArrayFromMixed.
- *
- * @param {object|function|filelist} obj
- * @return {array}
- */
-function toArray(obj) {
-  var length = obj.length;
-
-  // Some browse builtin objects can report typeof 'function' (e.g. NodeList in
-  // old versions of Safari).
-  !(!Array.isArray(obj) && (typeof obj === 'object' || typeof obj === 'function')) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'toArray: Array-like object expected') : invariant(false) : undefined;
-
-  !(typeof length === 'number') ? process.env.NODE_ENV !== 'production' ? invariant(false, 'toArray: Object needs a length property') : invariant(false) : undefined;
-
-  !(length === 0 || length - 1 in obj) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'toArray: Object should have keys for indices') : invariant(false) : undefined;
-
-  // Old IE doesn't give collections access to hasOwnProperty. Assume inputs
-  // without method will throw during the slice call and skip straight to the
-  // fallback.
-  if (obj.hasOwnProperty) {
-    try {
-      return Array.prototype.slice.call(obj);
-    } catch (e) {
-      // IE < 9 does not support Array#slice on collections objects
-    }
-  }
-
-  // Fall back to copying key by key. This assumes all keys have a value,
-  // so will not preserve sparsely populated inputs.
-  var ret = Array(length);
-  for (var ii = 0; ii < length; ii++) {
-    ret[ii] = obj[ii];
-  }
-  return ret;
-}
-
-module.exports = toArray;
-}).call(this,require('_process'))
-},{"./invariant":206,"_process":219}],217:[function(require,module,exports){
-(function (process){
-/**
- * Copyright 2014-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule warning
- */
-
-'use strict';
-
-var emptyFunction = require('./emptyFunction');
-
-/**
- * Similar to invariant but only logs a warning if the condition is not met.
- * This can be used to log issues in development environments in critical
- * paths. Removing the logging code for production environments will keep the
- * same logic and follow the same code paths.
- */
-
-var warning = emptyFunction;
-
-if (process.env.NODE_ENV !== 'production') {
-  warning = function (condition, format) {
-    for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-      args[_key - 2] = arguments[_key];
-    }
-
-    if (format === undefined) {
-      throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
-    }
-
-    if (format.indexOf('Failed Composite propType: ') === 0) {
-      return; // Ignore CompositeComponent proptype check.
-    }
-
-    if (!condition) {
-      var argIndex = 0;
-      var message = 'Warning: ' + format.replace(/%s/g, function () {
-        return args[argIndex++];
-      });
-      if (typeof console !== 'undefined') {
-        console.error(message);
-      }
-      try {
-        // --- Welcome to debugging React ---
-        // This error was thrown as a convenience so that you can use this stack
-        // to find the callsite that caused this warning to fire.
-        throw new Error(message);
-      } catch (x) {}
-    }
-  };
-}
-
-module.exports = warning;
-}).call(this,require('_process'))
-},{"./emptyFunction":198,"_process":219}],218:[function(require,module,exports){
+},{"./Object.assign":114,"_process":222,"fbjs/lib/emptyFunction":18,"fbjs/lib/warning":37}],221:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./lib/React');
 
-},{"./lib/React":86}],219:[function(require,module,exports){
+},{"./lib/React":116}],222:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
