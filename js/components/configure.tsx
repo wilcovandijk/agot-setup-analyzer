@@ -10,6 +10,7 @@
 
 import { CardSettings } from "./cardSettings";
 import DeckStore = require('../stores/deckStore')
+import SetupStore = require('../stores/setupStore')
 import AppDispatcher = require('../dispatcher/AppDispatcher');
 import SetupActionID = require('../actions/SetupActionID');
 
@@ -18,7 +19,9 @@ interface IConfigureProps {
 }
 
 interface IConfigureState {
-  displayDeck : Array<ICard>
+  displayDeck : Array<ICard>;
+  mulliganOnPoor : boolean;
+  mulliganWithoutKey : boolean;
 }
 
 class Configure extends React.Component<IConfigureProps, IConfigureState> {
@@ -31,11 +34,14 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     this.state = this.getStateFromStores();
 
     DeckStore.subscribe(this._onChange.bind(this));
+    SetupStore.subscribe(this._onChange.bind(this));
   }
 
   private getStateFromStores(){
     return {
-      displayDeck: DeckStore.getDisplayDeck()
+      displayDeck: DeckStore.getDisplayDeck(),
+      mulliganOnPoor : SetupStore.mulliganOnPoor,
+      mulliganWithoutKey : SetupStore.mulliganWithoutKey
     }
   }
 
@@ -81,6 +87,20 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     return -1;
   }
 
+  private toggleMulliganOnPoor(){
+    AppDispatcher.dispatch({
+      actionType: SetupActionID.TOGGLE_MULIGAN_ON_POOR,
+      data: null
+    })
+  }
+
+  private toggleMulliganWithoutKey(){
+    AppDispatcher.dispatch({
+      actionType: SetupActionID.TOGGLE_MULIGAN_WITHOUT_KEY,
+      data: null
+    })
+  }
+
   public render() {
     var displayDeck = this.state.displayDeck;
 
@@ -120,6 +140,17 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     return (
       <section className="content">
         <section className="configure">
+          <p>Mulligan Settings</p>
+          <div>
+            <input type="checkbox" checked={this.state.mulliganOnPoor} onClick={this.toggleMulliganOnPoor} />
+            <label>Mulligan if Poor Setup</label>
+          </div>
+
+          <div>
+            <input type="checkbox" checked={this.state.mulliganWithoutKey} onClick={this.toggleMulliganWithoutKey} />
+            <label>Mulligan if no Key Character</label>
+          </div>
+
           <p>This section is a work in progress. You can configure cards as being <i className="fa fa-key fa-fw"></i> Key cards, <i className="fa fa-exclamation-triangle fa-fw"></i> Try to Avoid Cards, and <i className="fa fa-ban fa-fw"></i>Restricted Cards</p>
           <p>Key Cards will be set up as often as possible. As long as you can set up at least 2 total characters, a set up with a key card will be used if available</p>
           <p>Try to Avoid Cards will be avoided unless there is nothing else that can be used. For example, if you have only 3 gold worth of characters to set up, and a 5 cost try to avoid character, it will set up the character. By default this includes characters with positive enter play abilities</p>

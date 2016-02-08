@@ -25,6 +25,9 @@ class SetupStoreStatic implements ISetupStore {
   public exampleSetup;
   public onChanges : Array<any>;
 
+  public mulliganOnPoor : boolean;
+  public mulliganWithoutKey : boolean;
+
   public cardsSetup : number;
   public goldSetup : number;
   public simulations : number;
@@ -49,6 +52,8 @@ class SetupStoreStatic implements ISetupStore {
 
     this.exampleSetup = {draw:[]};
     this.onChanges = [];
+    this.mulliganOnPoor = false;
+    this.mulliganWithoutKey = false;
     this.resetStats();
   }
 
@@ -86,7 +91,7 @@ class SetupStoreStatic implements ISetupStore {
 
       var setup = null;
       for (var i = 0; i < runs; i++){
-        setup = this.runSetup();
+        setup = this.runSetup(true);
         this.setups.push(setup);
 
       }
@@ -219,7 +224,7 @@ class SetupStoreStatic implements ISetupStore {
     return this.setUp(setup, remainingCards);
   }
 
-  private runSetup(){
+  private runSetup(mulligan){
     var drawDeck = this.deck.drawDeck;
     var deckSize = drawDeck.length;
     var draw = [];
@@ -261,6 +266,22 @@ class SetupStoreStatic implements ISetupStore {
       }
     });
 
+    bestSetup.draw = draw;
+
+    if (mulligan && bestSetup.keyCards == 0 && this.mulliganWithoutKey){
+       return this.runSetup(false);
+    }
+
+    if (bestSetup.cards.length < 3 || bestSetup.distinctCharacters <= 1){
+      if (mulligan && this.mulliganOnPoor){
+        //try to mulligan for a better hand...
+        return this.runSetup(false);
+      }
+      this.poorSetups++;
+    } else if (bestSetup.cards.length >= 5){
+      this.greatSetups++;
+    }
+
     var credited = [];
     bestSetup.cards.forEach((pos) => {
       var card = this.deck.drawDeck[pos];
@@ -271,8 +292,6 @@ class SetupStoreStatic implements ISetupStore {
       card.setup_count++;
     });
 
-    bestSetup.draw = draw;
-
     this.goldSetup += bestSetup.currentCost;
     this.cardsSetup += bestSetup.cards.length;
     this.simulations++;
@@ -281,13 +300,17 @@ class SetupStoreStatic implements ISetupStore {
     this.distinctCharCounts[bestSetup.distinctCharacters] += 1;
     this.goldCounts[bestSetup.currentCost] += 1;
 
-    if (bestSetup.cards.length < 3 || bestSetup.distinctCharacters <= 1){
-      this.poorSetups++;
-    } else if (bestSetup.cards.length >= 5){
-      this.greatSetups++;
-    }
-
     return bestSetup;
+  }
+
+  public toggleMulliganOnPoor(){
+    this.mulliganOnPoor = !this.mulliganOnPoor;
+    this.inform();
+  }
+
+  public toggleMulliganWithoutKey(){
+    this.mulliganWithoutKey = !this.mulliganWithoutKey;
+    this.inform();
   }
 }
 
@@ -297,6 +320,10 @@ AppDispatcher.register(function(payload:IActionPayload){
   console.log("setupStore : payload", payload);
   if (payload.actionType == SetupActionID.PERFORM_SIMULATIONS){
     SetupStore.performSimulation(payload.data);
+  } if (payload.actionType == SetupActionID.TOGGLE_MULIGAN_ON_POOR){
+    SetupStore.toggleMulliganOnPoor();
+  } if (payload.actionType == SetupActionID.TOGGLE_MULIGAN_WITHOUT_KEY){
+    SetupStore.toggleMulliganWithoutKey();
   }
 });
 
