@@ -7,12 +7,19 @@
 /// <reference path="../../typings/tsd.d.ts" />
 /// <reference path="../interfaces.d.ts"/>
 
+console.log("setupStore");
+
+import AppDispatcher = require('../dispatcher/AppDispatcher');
+import SetupActionID = require('../actions/setupActionID');
+import DeckStore = require('./deckStore')
+
+
 // Generic "model" object. You can use whatever
 // framework you want. For this application it
 // may not even be worth separating this logic
 // out, but we do this to demonstrate one way to
 // separate out parts of your application.
-class SetupStore implements ISetupStore {
+class SetupStoreStatic implements ISetupStore {
   public deck : IDeckStore;
 
   public exampleSetup;
@@ -26,7 +33,6 @@ class SetupStore implements ISetupStore {
   public cardCounts : Array<number>;
 
   public keyCards : Array<string>;
-  public avoidCards : Array<number>;
 
   public neverSetupCards : Array<string>;
 
@@ -36,32 +42,10 @@ class SetupStore implements ISetupStore {
 
   public setups : Array<any>;
 
-  constructor(deck : IDeckStore) {
+  constructor() {
     var self = this;
-    this.deck = deck;
+    this.deck = DeckStore;
     this.neverSetupCards = ['02006', '02034', '01035'];
-
-    this.deck.subscribe(function(){
-      self.resetStats();
-      self.avoidCards = [];
-
-      for(var pos in self.deck.drawDeck){
-        var card = deck.drawDeck[pos];
-
-        if (self.neverSetupCards.filter((c) => c == card.code).length > 0){
-          continue;
-        }
-
-        if (card.enter_play_effect){
-          self.avoidCards.push(pos);
-        }
-      }
-
-      if (self.deck.drawDeck.length >= 7){
-        self.performSimulation(5000);
-      }
-      self.inform();
-    });
 
     this.exampleSetup = {draw:[]};
     this.onChanges = [];
@@ -87,9 +71,17 @@ class SetupStore implements ISetupStore {
     this.distinctCharCounts = [0, 0, 0, 0, 0, 0, 0, 0];
     this.goldCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     this.traitStats = {};
+
+    this.deck.displayDeck.forEach(c => c.setup_count = 0);
   }
 
   public performSimulation(runs : number){
+    console.log("start sim");
+      if (DeckStore.getDrawDeck().length < 7){
+        console.log("not enough cards");
+        return;
+      }
+
       this.resetStats()
 
       var setup = null;
@@ -99,6 +91,7 @@ class SetupStore implements ISetupStore {
 
       }
       this.exampleSetup = setup;
+      console.log("end sim");
       this.inform();
   }
 
@@ -141,11 +134,11 @@ class SetupStore implements ISetupStore {
   }
 
   protected scoreSetup(setup){
-    var avoidedCardsUsed = this.avoidCards.filter((c) => setup.cards.filter((s) => s == c).length > 0).length;
 
     var factors = [
       setup.distinctCharacters > 1, // must have at least > 1 char
-      (setup.cards.length - avoidedCardsUsed), // cards used that we like to setup
+      setup.keyCards,
+      (setup.cards.length - setup.avoidedCards), // cards used that we like to setup
       setup.cards.length, // cards used overall
       setup.currentCost + setup.income, // effective gold used at setup
       setup.limitedUsed, // was a limited card able to be played?
@@ -197,6 +190,12 @@ class SetupStore implements ISetupStore {
         setup.limitedUsed = true;
       }
 
+      if (card.is_key_card){
+        setup.keyCards++;
+      } else if (card.is_avoided){
+        setup.avoidedCards++;
+      }
+
       if (card.type_code == 'character'){
         setup.strength += card.strength;
         setup.distinctCharacters++;
@@ -234,12 +233,12 @@ class SetupStore implements ISetupStore {
 
     var filteredDraw = draw.filter(function(d) {
       var card = drawDeck[d];
-      return card.type_code == 'character'
+      return (card.type_code == 'character'
              || (card.type_code == 'location'
                  && card.code != '02006')
              || (card.type_code == 'attachment'
                  && card.code != '02034'
-                 && card.code != '01035');
+                 && card.code != '01035')) && ! card.is_restricted;
     })
 
     var possibleSetup = this.setUp({
@@ -250,6 +249,8 @@ class SetupStore implements ISetupStore {
       strength: 0,
       income: 0,
       enterPlayEffects: 0,
+      keyCards: 0,
+      avoidedCards: 0,
       cards: []
     }, filteredDraw);
 
@@ -289,4 +290,15 @@ class SetupStore implements ISetupStore {
     return bestSetup;
   }
 }
-export { SetupStore };
+
+var SetupStore:SetupStoreStatic = new SetupStoreStatic();
+
+AppDispatcher.register(function(payload:IActionPayload){
+  console.log("setupStore : payload", payload);
+  if (payload.actionType == SetupActionID.PERFORM_SIMULATIONS){
+    SetupStore.performSimulation(payload.data);
+  }
+});
+
+
+export = SetupStore;

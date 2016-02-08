@@ -23,6 +23,9 @@ interface ICard {
   enter_play_effect : boolean;
   income : number;
   attachmentRestriction : Array<string>;
+  is_key_card : boolean;
+  is_avoided : boolean;
+  is_restricted : boolean;
 }
 
 interface IDeckStore {
@@ -47,7 +50,6 @@ interface ISetupStore {
   greatSetups : number;
   cardCounts : Array<number>;
   goldCounts : Array<number>;
-  avoidCards : Array<number>;
   distinctCharCounts : Array<number>;
   traitStats : { [id: string] : string };
   setups : Array<any>;
@@ -92,4 +94,9 @@ interface IAppProps {
 interface IAppState {
   editing? : string;
   nowShowing? : string
+}
+
+interface IActionPayload {
+  actionType: string;
+  data: any;
 }

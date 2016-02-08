@@ -8,10 +8,14 @@
 /// <reference path="../typings/tsd.d.ts" />
 /// <reference path="./interfaces.d.ts"/>
 
-import { DeckStore } from "./stores/DeckStore"
-import { SetupStore } from "./stores/SetupStore"
+console.log("app");
+import AppDispatcher = require('./dispatcher/AppDispatcher');
+import DeckStore = require('./stores/deckStore')
+import { SetupActions } from './actions/SetupActions';
+import SetupStore = require('./stores/setupStore')
 import { DeckImport } from "./components/DeckImport"
 import { Simulation } from "./components/Simulation"
+
 
 class DeckAnalyzerApp extends React.Component<IAppProps, IAppState> {
   public state : IAppState;
@@ -40,15 +44,12 @@ class DeckAnalyzerApp extends React.Component<IAppProps, IAppState> {
   }
 }
 
-var deck = new DeckStore();
-var setup = new SetupStore(deck);
-
 function render() {
   ReactDOM.render(
-    <DeckAnalyzerApp setup={setup}/>,
+    <DeckAnalyzerApp setup={SetupStore}/>,
     document.getElementsByClassName('setup-app')[0]
   );
 }
 
-setup.subscribe(render);
+SetupStore.subscribe(render);
 render();

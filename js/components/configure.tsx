@@ -8,22 +8,39 @@
 /// <reference path="../interfaces.d.ts"/>
 /// <reference path="../libs/react-d3.d.ts" />
 
-import { CardItem } from "../cardItem";
-
+import { CardSettings } from "./cardSettings";
+import DeckStore = require('../stores/deckStore')
+import AppDispatcher = require('../dispatcher/AppDispatcher');
+import SetupActionID = require('../actions/SetupActionID');
 
 interface IConfigureProps {
   setup : ISetupStore;
 }
 
 interface IConfigureState {
+  displayDeck : Array<ICard>
 }
 
 class Configure extends React.Component<IConfigureProps, IConfigureState> {
 
-  public state : ICardItemState;
+  public state : IConfigureState;
 
   constructor(props : IConfigureProps){
     super(props);
+
+    this.state = this.getStateFromStores();
+
+    DeckStore.subscribe(this._onChange.bind(this));
+  }
+
+  private getStateFromStores(){
+    return {
+      displayDeck: DeckStore.getDisplayDeck()
+    }
+  }
+
+  private _onChange(){
+    this.setState(this.getStateFromStores());
   }
 
   /**
@@ -39,33 +56,44 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
 
 
   public render() {
-    var deck = this.props.setup.deck;
+    var displayDeck = this.state.displayDeck;
 
     var i = 0;
 
-    var avoidedCards = this.props.setup.avoidCards.map((pos) => deck.drawDeck[pos]);
+    var avoidedCards = displayDeck.filter((card) => card.is_avoided);
     avoidedCards = avoidedCards.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
 
     var avoidedItems = avoidedCards.map((card) => {
       i++;
-
-      var code = card.code + i;
-      var image = "http://thronesdb.com/" + card.imagesrc;
-      var className = "card-container";
-
       return (
-        <div className={className}><img src={image}/></div>
+        <CardSettings key={card.code} code={card.code} />
+      );
+    });
+
+    var allCards = displayDeck.sort(function(c1, c2) {
+      if (c1.cost == c2.cost){
+        return c2.cost - c1.cost;
+      } else if (c1.name < c2.name) {
+         return 1;
+      }
+      return -1;
+    }).map((card) => {
+      return (
+        <CardSettings key={card.code} code={card.code}/>
       );
     });
 
     return (
       <section className="content">
-        <section className="example">
+        <section className="configure">
           <div>Cards avoided during setup if possible:</div>
-          <div className="example-container">
+          <div className="card-list">
             {avoidedItems}
           </div>
           <p>This section is a work in progress, and will soon be the home of configuration settings...</p>
+          <div className="card-list">
+            {allCards}
+          </div>
         </section>
       </section>
     );

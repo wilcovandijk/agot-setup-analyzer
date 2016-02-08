@@ -15,6 +15,8 @@ import { Configure } from "./configure"
 import { SimulationStats } from "./simulationStats"
 
 import { BarChart } from 'react-d3';
+import AppDispatcher = require('../dispatcher/AppDispatcher');
+import SetupActionID = require('../actions/SetupActionID');
 
 
 interface ISimulationProps {
@@ -43,6 +45,13 @@ class Simulation extends React.Component<ISimulationProps, ISimulationState> {
   //   return false;
   // }
 
+  public rerunSimulation(){
+    AppDispatcher.dispatch({
+      actionType: SetupActionID.PERFORM_SIMULATIONS,
+      data: 5000
+    })
+  }
+
 
   public render() {
     if (this.props.setup.deck.drawDeck.length == 0){
@@ -57,6 +66,8 @@ class Simulation extends React.Component<ISimulationProps, ISimulationState> {
 
     return (
       <section className="simulation">
+      <button className="action" onClick={this.rerunSimulation}>Rerun Simulation</button>
+
       <div className="worko-tabs">
         <input className="state" type="radio" title="tab-one" name="tabs-state" id="tab-one" defaultChecked />
         <input className="state" type="radio" title="tab-two" name="tabs-state" id="tab-two" />

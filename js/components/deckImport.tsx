@@ -7,6 +7,13 @@
 /// <reference path="../../typings/tsd.d.ts" />
 /// <reference path="../interfaces.d.ts"/>
 
+console.log("deckImport");
+import AppDispatcher = require('../dispatcher/AppDispatcher');
+import DeckActionID = require('../actions/deckActionID');
+import SetupActionID = require('../actions/SetupActionID');
+import { SetupActions } from '../actions/SetupActions';
+
+
 interface IDeckImportProps {
   deck : IDeckStore;
 }
@@ -34,7 +41,24 @@ class DeckImport extends React.Component<IDeckImportProps, IDeckImportState> {
   }
 
   public handleImportDeck(event : __React.MouseEvent){
-    this.props.deck.loadDeck(ReactDOM.findDOMNode<HTMLTextAreaElement>(this.refs["deckText"]).value);
+    var text = ReactDOM.findDOMNode<HTMLTextAreaElement>(this.refs["deckText"]).value;
+
+    SetupActions.test("actions");
+
+    AppDispatcher.dispatch({
+      actionType: SetupActionID.TEST,
+      data: "direct"
+    });
+
+    AppDispatcher.dispatch({
+      actionType: DeckActionID.LOAD_DECK,
+      data: text
+    });
+    //
+    AppDispatcher.dispatch({
+      actionType: SetupActionID.PERFORM_SIMULATIONS,
+      data: 5000
+    })
   }
 
   public render() {
@@ -51,5 +75,10 @@ class DeckImport extends React.Component<IDeckImportProps, IDeckImportState> {
     );
   }
 }
+
+AppDispatcher.dispatch({
+  actionType: "SETUP",
+  data: null
+});
 
 export { DeckImport };

@@ -7,7 +7,7 @@
 /// <reference path="../../typings/tsd.d.ts" />
 /// <reference path="../interfaces.d.ts"/>
 
-console.log("deckStore");
+console.log("cardStore");
 
 import AppDispatcher = require('../dispatcher/AppDispatcher');
 import DeckActionID = require('../actions/DeckActionID');
@@ -28,7 +28,7 @@ class DeckStoreStatic implements IDeckStore {
     this.allCards = {};
     var self = this;
 
-    //TODO: Move cards to their own store, and move API call to it's own API
+    //TODO: Move cards to their own store, and move API call to it's own API section
     var req = $.get("js/data/cards.json", function (result) {
       result.forEach((cardData) => {
         self.allCards[cardData['pack_name'] + " - " + cardData['name']] = cardData;
@@ -52,49 +52,11 @@ class DeckStoreStatic implements IDeckStore {
     return this.drawDeck;
   }
 
-  public getCard(code) : ICard{
-    var cards = this.getDisplayDeck().filter(c => c.code == code)
-
-    if (cards.length >= 0){
-      return cards[0];
-    }
-    return null;
-  }
-
-  public markKeyCard(code){
-    var card = this.getCard(code);
-    card.is_key_card = !card.is_key_card;
-    card.is_avoided = false;
-    card.is_restricted = false;
-
-    this.inform();
-  }
-
-  public markAvoidedCard(code){
-    var card = this.getCard(code);
-    card.is_key_card = false;
-    card.is_avoided = !card.is_avoided;
-    card.is_restricted = false;
-
-    this.inform();
-  }
-
-  public markRestrictedCard(code){
-    var card = this.getCard(code);
-    card.is_key_card = false;
-    card.is_avoided = false;
-    card.is_restricted = !card.is_restricted;
-
-    this.inform();
-  }
-
   public loadDeck(text : string) {
     var regexp = new RegExp('([0-9])x ([^(]+) \\(([^)]+)\\)', 'g');
 
     this.drawDeck = [];
     this.displayDeck = [];
-
-    var neverSetup = ['02006', '02034', '01035'];
 
       var cardToAdd = regexp.exec(text);
 
@@ -104,18 +66,10 @@ class DeckStoreStatic implements IDeckStore {
           card.count = +cardToAdd[1];
           card.setup_count = 0;
 
-          card.is_key_card = false;
-          card.is_avoided = false;
-          card.is_restricted = false;
-
           this.addLimitedStatus(card);
           this.addIncomeBonus(card);
           this.addMarshalEffects(card);
           this.addAttachmentRestrictions(card);
-
-          if (card.enter_play_effect){
-            card.is_avoided = true;
-          }
 
           this.displayDeck.push(card);
           for (var i = 0; i < card.count; i++){
@@ -188,15 +142,8 @@ class DeckStoreStatic implements IDeckStore {
 var DeckStore:DeckStoreStatic = new DeckStoreStatic();
 
 AppDispatcher.register(function(payload:IActionPayload){
-  console.log("deckStore: payload", payload);
   if (payload.actionType == DeckActionID.LOAD_DECK){
     DeckStore.loadDeck(payload.data);
-  } else if (payload.actionType == DeckActionID.MARK_KEY_CARD){
-    DeckStore.markKeyCard(payload.data);
-  } else if (payload.actionType == DeckActionID.MARK_AVOID_CARD){
-    DeckStore.markAvoidedCard(payload.data);
-  } else if (payload.actionType == DeckActionID.MARK_NEVER_CARD){
-    DeckStore.markRestrictedCard(payload.data);
   }
 });
 

@@ -82,22 +82,25 @@ public onNext(){
       );
     });
 
-    var exampleItems = this.props.setup.setups[this.state.shownSetup].draw.map((pos) => {
-      i++;
+    var exampleItems =  null;
+    if (this.props.setup.setups[this.state.shownSetup]){
+        exampleItems = this.props.setup.setups[this.state.shownSetup].draw.map((pos) => {
+        i++;
 
-      var card = this.props.setup.deck.drawDeck[pos];
-      var code = card.code + i;
-      var image = "http://thronesdb.com/" + card.imagesrc;
-      var className = "card-container";
+        var card = this.props.setup.deck.drawDeck[pos];
+        var code = card.code + i;
+        var image = "http://thronesdb.com/" + card.imagesrc;
+        var className = "card-container";
 
-      if (this.props.setup.setups[this.state.shownSetup].cards.filter((p) => p == pos).length > 0){
-        className += " selected";
-      }
+        if (this.props.setup.setups[this.state.shownSetup].cards.filter((p) => p == pos).length > 0){
+          className += " selected";
+        }
 
-      return (
-        <div className={className}><img src={image}/></div>
-      );
-    });
+        return (
+          <div key={pos} className={className}><img src={image}/></div>
+        );
+      });
+    }
 
     var cardUsageData = [{"name": "Used Cards",
     "values": [
@@ -138,7 +141,7 @@ public onNext(){
           plural = "s";
         }
         cardsUsed.push(
-          <p>{i} Card{plural} : {Math.round(10000*this.props.setup.cardCounts[i]/this.props.setup.simulations)/100}%</p>
+          <p key={i}>{i} Card{plural} : {Math.round(10000*this.props.setup.cardCounts[i]/this.props.setup.simulations)/100}%</p>
         );
       }
     }
@@ -151,7 +154,7 @@ public onNext(){
           plural = "s";
         }
         goldUsed.push(
-          <p>{i} Gold{plural} : {Math.round(10000*this.props.setup.goldCounts[i]/this.props.setup.simulations)/100}%</p>
+          <p key={i}>{i} Gold{plural} : {Math.round(10000*this.props.setup.goldCounts[i]/this.props.setup.simulations)/100}%</p>
         );
       }
     }
@@ -161,7 +164,7 @@ public onNext(){
         <section className="example">
           <div>{this.props.setup.deck.drawDeck.length} Cards</div>
           <div>Examples:<button onClick={this.onPrevious.bind(this)}>Previous</button> <button onClick={this.onNext.bind(this)}>Next</button></div>
-          <div className="example-container">
+          <div className="card-list example">
             {exampleItems}
           </div>
         </section>
