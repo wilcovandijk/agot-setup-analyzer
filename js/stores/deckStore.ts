@@ -108,6 +108,10 @@ class DeckStoreStatic implements IDeckStore {
           card.is_avoided = false;
           card.is_restricted = false;
 
+          if (neverSetup.filter(c => c == card.code).length > 0){
+            card.is_restricted = true;
+          }
+
           this.addLimitedStatus(card);
           this.addIncomeBonus(card);
           this.addMarshalEffects(card);

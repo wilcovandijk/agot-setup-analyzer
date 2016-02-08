@@ -75,7 +75,7 @@ class Simulation extends React.Component<ISimulationProps, ISimulationState> {
 
         <div className="tabs flex-tabs">
           <label htmlFor="tab-one" id="tab-one-label" className="tab">Setup Stats</label>
-          <label htmlFor="tab-two" id="tab-two-label" className="tab">Restrictions</label>
+          <label htmlFor="tab-two" id="tab-two-label" className="tab">Configure</label>
           <label htmlFor="tab-three" id="tab-three-label" className="tab">About</label>
 
 
