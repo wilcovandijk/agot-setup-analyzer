@@ -2,3 +2,5 @@ js/**/*.js
 js/*.js
 node_modules
 .DS_Store
+build
+dist

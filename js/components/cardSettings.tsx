@@ -16,11 +16,10 @@ import DeckActionID = require('../actions/deckActionID');
 
 interface ICardSettingsProps {
   key : string;
-  code: string;
+  card: ICard;
 }
 
 interface ICardSettingsState {
-  card : ICard;
 }
 
 class CardSettings extends React.Component<ICardSettingsProps, ICardSettingsState> {
@@ -32,20 +31,20 @@ class CardSettings extends React.Component<ICardSettingsProps, ICardSettingsStat
   constructor(props : ICardSettingsProps){
     super(props);
 
-    this.state = this.getStateFromStores();
-    DeckStore.subscribe(this._onChange.bind(this));
+    // this.state = this.getStateFromStores();
+    // DeckStore.subscribe(this._onChange.bind(this));
   }
 
-  public getStateFromStores(){
-    return {
-      card: DeckStore.getCard(this.props.code)
-    };
-  }
+  // public getStateFromStores(){
+  //   return {
+  //     card: DeckStore.getCard(this.props.code)
+  //   };
+  // }
 
-  private _onChange(){
-    console.log("on change");
-    this.setState(this.getStateFromStores());
-  }
+  // private _onChange(){
+  //   console.log("on change");
+  //   this.setState(this.getStateFromStores());
+  // }
 
   /**
    * This is a completely optional performance enhancement that you can
@@ -61,27 +60,27 @@ class CardSettings extends React.Component<ICardSettingsProps, ICardSettingsStat
   public onMarkKey(){
     AppDispatcher.dispatch({
       actionType: DeckActionID.MARK_KEY_CARD,
-      data: this.props.code
+      data: this.props.card.code
     });
   }
 
   public onMarkAvoided(){
     AppDispatcher.dispatch({
       actionType: DeckActionID.MARK_AVOID_CARD,
-      data: this.props.code
+      data: this.props.card.code
     });
   }
 
   public onMarkRestricted(){
     AppDispatcher.dispatch({
       actionType: DeckActionID.MARK_NEVER_CARD,
-      data: this.props.code
+      data: this.props.card.code
     });
   }
 
 
   public render() {
-    var card = this.state.card;
+    var card = this.props.card;
 
     var image = "http://thronesdb.com/" + card.imagesrc;
     var className = "card-container";

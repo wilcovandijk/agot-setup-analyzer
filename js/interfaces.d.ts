@@ -60,6 +60,20 @@ interface ISetupStore {
   inform();
 }
 
+interface SetupStats{
+  simulations : number;
+  cardsSetup : number;
+  goldSetup : number;
+  poorSetups : number;
+  greatSetups : number;
+  cardCounts : Array<number>;
+  goldCounts : Array<number>;
+}
+
+interface SetupSettings{
+
+}
+
 interface IDeckModel {
   key : any;
   drawDeck : Array<ICard>;

@@ -110,7 +110,7 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     var avoidedItems = avoidedCards.sort(this.cardSort).map((card) => {
       i++;
       return (
-        <CardSettings key={card.code} code={card.code} />
+        <CardSettings key={card.code} card={card} />
       );
     });
 
@@ -118,7 +118,7 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     var keyItems = keyCards.sort(this.cardSort).map((card) => {
       i++;
       return (
-        <CardSettings key={card.code} code={card.code} />
+        <CardSettings key={card.code} card={card} />
       );
     });
 
@@ -126,14 +126,14 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     var restrictedItems = restrictedCards.sort(this.cardSort).map((card) => {
       i++;
       return (
-        <CardSettings key={card.code} code={card.code} />
+        <CardSettings key={card.code} card={card} />
       );
     });
 
     var cards = displayDeck.sort(this.cardSort);
     var allCards = cards.map((card) => {
       return (
-        <CardSettings key={card.code} code={card.code}/>
+        <CardSettings key={card.code} card={card}/>
       );
     });
 
