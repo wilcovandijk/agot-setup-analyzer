@@ -22,6 +22,7 @@ interface IConfigureState {
   displayDeck : Array<ICard>;
   mulliganOnPoor : boolean;
   mulliganWithoutKey : boolean;
+  mulliganIfNotGreat : boolean;
 }
 
 class Configure extends React.Component<IConfigureProps, IConfigureState> {
@@ -41,7 +42,8 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     return {
       displayDeck: DeckStore.getDisplayDeck(),
       mulliganOnPoor : SetupStore.mulliganOnPoor,
-      mulliganWithoutKey : SetupStore.mulliganWithoutKey
+      mulliganWithoutKey : SetupStore.mulliganWithoutKey,
+      mulliganIfNotGreat : SetupStore.mulliganIfNotGreat
     }
   }
 
@@ -101,6 +103,13 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     })
   }
 
+  private toggleMulliganIfNotGreat(){
+    AppDispatcher.dispatch({
+      actionType: SetupActionID.TOGGLE_MULIGAN_IF_NOT_GREAT,
+      data: null
+    })
+  }
+
   public render() {
     var displayDeck = this.state.displayDeck;
 
@@ -142,13 +151,18 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
         <section className="configure">
           <p>Mulligan Settings</p>
           <div>
-            <input type="checkbox" checked={this.state.mulliganOnPoor} onClick={this.toggleMulliganOnPoor} />
-            <label>Mulligan if Poor Setup</label>
+            <input id="mulligan-if-poor" type="checkbox" checked={this.state.mulliganOnPoor} onClick={this.toggleMulliganOnPoor} />
+            <label htmlFor="mulligan-if-poor">Mulligan if Poor Setup</label>
           </div>
 
           <div>
-            <input type="checkbox" checked={this.state.mulliganWithoutKey} onClick={this.toggleMulliganWithoutKey} />
-            <label>Mulligan if no Key Character</label>
+            <input id="mulligan-if-not-great" type="checkbox" checked={this.state.mulliganIfNotGreat} onClick={this.toggleMulliganIfNotGreat} />
+            <label htmlFor="mulligan-if-not-great">Mulligan if Not Great Setup</label>
+          </div>
+
+          <div>
+            <input id="mulligan-without-key" type="checkbox" checked={this.state.mulliganWithoutKey} onClick={this.toggleMulliganWithoutKey} />
+            <label htmlFor="mulligan-without-key">Mulligan if No Key Character</label>
           </div>
 
           <p>This section is a work in progress. You can configure cards as being <i className="fa fa-key fa-fw"></i> Key cards, <i className="fa fa-exclamation-triangle fa-fw"></i> Try to Avoid Cards, and <i className="fa fa-ban fa-fw"></i>Restricted Cards</p>

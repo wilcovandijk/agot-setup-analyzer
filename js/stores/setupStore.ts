@@ -27,6 +27,7 @@ class SetupStoreStatic implements ISetupStore {
 
   public mulliganOnPoor : boolean;
   public mulliganWithoutKey : boolean;
+  public mulliganIfNotGreat : boolean;
 
   public cardsSetup : number;
   public goldSetup : number;
@@ -54,6 +55,7 @@ class SetupStoreStatic implements ISetupStore {
     this.onChanges = [];
     this.mulliganOnPoor = false;
     this.mulliganWithoutKey = false;
+    this.mulliganIfNotGreat = false;
     this.resetStats();
   }
 
@@ -273,13 +275,15 @@ class SetupStoreStatic implements ISetupStore {
     }
 
     if (bestSetup.cards.length < 3 || bestSetup.distinctCharacters <= 1){
-      if (mulligan && this.mulliganOnPoor){
+      if (mulligan && (this.mulliganOnPoor || this.mulliganIfNotGreat)){
         //try to mulligan for a better hand...
         return this.runSetup(false);
       }
       this.poorSetups++;
     } else if (bestSetup.cards.length >= 5){
       this.greatSetups++;
+    } else if (mulligan && this.mulliganIfNotGreat){
+      return this.runSetup(false);
     }
 
     var credited = [];
@@ -312,6 +316,11 @@ class SetupStoreStatic implements ISetupStore {
     this.mulliganWithoutKey = !this.mulliganWithoutKey;
     this.inform();
   }
+
+  public toggleMulliganIfNotGreat(){
+    this.mulliganIfNotGreat = !this.mulliganIfNotGreat;
+    this.inform();
+  }
 }
 
 var SetupStore:SetupStoreStatic = new SetupStoreStatic();
@@ -320,10 +329,12 @@ AppDispatcher.register(function(payload:IActionPayload){
   console.log("setupStore : payload", payload);
   if (payload.actionType == SetupActionID.PERFORM_SIMULATIONS){
     SetupStore.performSimulation(payload.data);
-  } if (payload.actionType == SetupActionID.TOGGLE_MULIGAN_ON_POOR){
+  } else if (payload.actionType == SetupActionID.TOGGLE_MULIGAN_ON_POOR){
     SetupStore.toggleMulliganOnPoor();
-  } if (payload.actionType == SetupActionID.TOGGLE_MULIGAN_WITHOUT_KEY){
+  } else if (payload.actionType == SetupActionID.TOGGLE_MULIGAN_WITHOUT_KEY){
     SetupStore.toggleMulliganWithoutKey();
+  } else if (payload.actionType == SetupActionID.TOGGLE_MULIGAN_IF_NOT_GREAT){
+    SetupStore.toggleMulliganIfNotGreat();
   }
 });
 
