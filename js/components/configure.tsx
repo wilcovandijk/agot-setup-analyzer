@@ -128,6 +128,11 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     return (
       <section className="content">
         <section className="configure">
+          <p>This section is a work in progress. The Setup Analyzer will now attempt to mulligan your first draw if it doesn't meet certain criteria. This page provides all the current settings for configuring what setups to prefer and what hands to mulligan. You can configure cards as being <i className="fa fa-key fa-fw"></i> Key cards, <i className="fa fa-exclamation-triangle fa-fw"></i> Try to Avoid Cards, and <i className="fa fa-ban fa-fw"></i>Restricted Cards</p>
+          <p>Key Cards will be set up as often as possible. As long as you can set up at least 2 total characters, a set up with a key card will be used if available</p>
+          <p>Try to Avoid Cards will be avoided unless there is nothing else that can be used. For example, if you have only 3 gold worth of cards to set up, and a 5 cost try to avoid card, it will set up the card. By default this includes characters with positive enter play abilities</p>
+          <p>Restricted cards will never be set up under any circumstances. By default this includes negative attachments</p>
+
           <p>Mulligan Settings</p>
           <div>
             <input id="mulligan-if-poor" type="checkbox" checked={this.props.settings.mulliganOnPoor} onClick={this.toggleMulliganOnPoor} />
@@ -143,11 +148,6 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
             <input id="mulligan-without-key" type="checkbox" checked={this.props.settings.mulliganWithoutKey} onClick={this.toggleMulliganWithoutKey} />
             <label htmlFor="mulligan-without-key">Mulligan if No Key Character</label>
           </div>
-
-          <p>This section is a work in progress. You can configure cards as being <i className="fa fa-key fa-fw"></i> Key cards, <i className="fa fa-exclamation-triangle fa-fw"></i> Try to Avoid Cards, and <i className="fa fa-ban fa-fw"></i>Restricted Cards</p>
-          <p>Key Cards will be set up as often as possible. As long as you can set up at least 2 total characters, a set up with a key card will be used if available</p>
-          <p>Try to Avoid Cards will be avoided unless there is nothing else that can be used. For example, if you have only 3 gold worth of cards to set up, and a 5 cost try to avoid card, it will set up the card. By default this includes characters with positive enter play abilities</p>
-          <p>Restricted cards will never be set up under any circumstances. By default this includes negative attachments</p>
 
           <div>Key cards:</div>
           <div className="card-list">
