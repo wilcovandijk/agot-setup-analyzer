@@ -870,7 +870,10 @@ var SetupStoreStatic = (function () {
             return this.runSetup(false);
         }
         if (bestSetup.cards.length < 3 || bestSetup.distinctCharacters <= 1) {
-            if (mulligan && (this.settings.mulliganOnPoor || this.settings.mulliganIfNotGreat)) {
+            if (mulligan &&
+                (this.settings.mulliganOnPoor
+                    || this.settings.mulliganIfNotGreat
+                    || this.settings.mulliganOn3Card)) {
                 return this.runSetup(false);
             }
             this.stats.poorSetups++;
@@ -878,10 +881,10 @@ var SetupStoreStatic = (function () {
         else if (bestSetup.cards.length >= 5) {
             this.stats.greatSetups++;
         }
-        else if (mulligan && this.settings.mulliganIfNotGreat) {
+        else if (mulligan && bestSetup.cards.length < 5 && this.settings.mulliganIfNotGreat) {
             return this.runSetup(false);
         }
-        else if (bestSetup.cards.length <= 3 && mulligan && this.settings.mulliganOn3Card) {
+        else if (mulligan && bestSetup.cards.length <= 3 && this.settings.mulliganOn3Card) {
             return this.runSetup(false);
         }
         var credited = [];
