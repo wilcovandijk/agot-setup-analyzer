@@ -21,3 +21,7 @@ gulp.task('default', ['scripts'], function() {
         .pipe(source('bundle.js'))
         .pipe(gulp.dest('dist'));
 });
+
+gulp.task('watch', ['default'], function() {
+  gulp.watch(['js/**/*.ts', 'js/**/*.tsx'], ['default']);
+});

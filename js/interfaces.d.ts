@@ -29,13 +29,38 @@ interface ICard {
 }
 
 interface IDeckStore {
-  drawDeck : Array<ICard>;
-  displayDeck : Array<ICard>;
-  onChanges : Array<any>;
+  loadDeck(text : string);
+  getDrawDeck() : Array<ICard>;
+  getDisplayDeck() : Array<ICard>;
 
   subscribe(onChange);
   inform();
-  loadDeck(text : string);
+}
+
+interface ISetupStats{
+  simulations : number;
+  cardsSetup : number;
+  goldSetup : number;
+  poorSetups : number;
+  greatSetups : number;
+  cardCounts : Array<number>;
+  goldCounts : Array<number>;
+  distinctCharCounts : Array<number>;
+  traitStats : { [id: string] : string };
+
+}
+
+interface ISetupSettings{
+  minimumCards : number;
+  minimumCharacters : number;
+
+  greatCardCounts : number;
+  greatCharacterCounts : number;
+
+  mulliganOnPoor : boolean;
+  mulliganWithoutKey : boolean;
+  mulliganIfNotGreat : boolean;
+  mulliganIfUnderXCards : number;
 }
 
 interface ISetupStore {
@@ -43,35 +68,14 @@ interface ISetupStore {
 
   exampleSetup : any;
 
-  cardsSetup : number;
-  goldSetup : number;
-  simulations : number;
-  poorSetups : number;
-  greatSetups : number;
-  cardCounts : Array<number>;
-  goldCounts : Array<number>;
-  distinctCharCounts : Array<number>;
-  traitStats : { [id: string] : string };
+  getStats() : ISetupStats;
+  getSettings() : ISetupSettings;
   setups : Array<any>;
 
   performSimulation(runs : number);
 
   subscribe(onChange);
   inform();
-}
-
-interface SetupStats{
-  simulations : number;
-  cardsSetup : number;
-  goldSetup : number;
-  poorSetups : number;
-  greatSetups : number;
-  cardCounts : Array<number>;
-  goldCounts : Array<number>;
-}
-
-interface SetupSettings{
-
 }
 
 interface IDeckModel {

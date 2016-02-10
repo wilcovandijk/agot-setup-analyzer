@@ -13,7 +13,8 @@ import { BarChart } from 'react-d3';
 
 
 interface ISimulationStatsProps {
-  setup : ISetupStore;
+  stats : ISetupStats;
+  displayDeck : Array<ICard>;
 }
 
 interface ISimulationStatsState {
@@ -42,33 +43,12 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
   //   return false;
   // }
 
-
-public onPrevious(){
-  var index = this.state.shownSetup - 1;
-  index = Math.min(index, this.props.setup.setups.length-1);
-
-  this.setState({
-    shownSetup: index
-  });
-}
-
-public onNext(){
-  var index = this.state.shownSetup + 1;
-  if (index >= this.props.setup.setups.length){
-    index = 0;
-  }
-
-  this.setState({
-    shownSetup: index
-  });
-}
-
   public render() {
-    var deck = this.props.setup.deck;
+    var deck = this.props.displayDeck;
 
     var i = 0;
 
-    var orderedDeck = deck.displayDeck.sort((c1, c2) => c2.setup_count - c1.setup_count);
+    var orderedDeck = deck.sort((c1, c2) => c2.setup_count - c1.setup_count);
 
     var cardItems = orderedDeck.map((card) => {
       var code = card.code + i;
@@ -77,39 +57,20 @@ public onNext(){
         <CardItem
           key={code}
           card={card}
-          simulations={this.props.setup.simulations}
+          simulations={this.props.stats.simulations}
         />
       );
     });
 
-    var exampleItems =  null;
-    if (this.props.setup.setups[this.state.shownSetup]){
-        exampleItems = this.props.setup.setups[this.state.shownSetup].draw.map((pos) => {
-        i++;
-
-        var card = this.props.setup.deck.drawDeck[pos];
-        var code = card.code + i;
-        var image = "http://thronesdb.com/" + card.imagesrc;
-        var className = "card-container";
-
-        if (this.props.setup.setups[this.state.shownSetup].cards.filter((p) => p == pos).length > 0){
-          className += " selected";
-        }
-
-        return (
-          <div key={pos} className={className}><img src={image}/></div>
-        );
-      });
-    }
-
-    var cardUsageData = [{"name": "Used Cards",
-    "values": [
-    ]}];
+    var cardUsageData = [{
+      "name": "Used Cards",
+      "values": []
+    }];
 
     for (var i = 0; i < 8; i++){
       cardUsageData[0].values.push({
         "x": i,
-        "y":  Math.round(10000*this.props.setup.cardCounts[i] / this.props.setup.simulations)/100
+        "y":  Math.round(10000*this.props.stats.cardCounts[i] / this.props.stats.simulations)/100
       });
     }
 
@@ -119,7 +80,7 @@ public onNext(){
     for (var i = 0; i < 9; i++){
       goldUsageData[0].values.push({
         "x": i,
-        "y":  Math.round(10000*this.props.setup.goldCounts[i] / this.props.setup.simulations)/100
+        "y":  Math.round(10000*this.props.stats.goldCounts[i] / this.props.stats.simulations)/100
       });
     }
 
@@ -129,57 +90,50 @@ public onNext(){
     for (var i = 0; i < 8; i++){
       distinctCharData[0].values.push({
         "x": i,
-        "y":  Math.round(10000*this.props.setup.distinctCharCounts[i] / this.props.setup.simulations)/100
+        "y":  Math.round(10000*this.props.stats.distinctCharCounts[i] / this.props.stats.simulations)/100
       });
     }
 
     var cardsUsed = [];
     for (var i = 0; i < 8; i++){
-      if (this.props.setup.cardCounts[i] > 0){
+      if (this.props.stats.cardCounts[i] > 0){
         var plural = "";
         if (i != 1){
           plural = "s";
         }
         cardsUsed.push(
-          <p key={i}>{i} Card{plural} : {Math.round(10000*this.props.setup.cardCounts[i]/this.props.setup.simulations)/100}%</p>
+          <p key={i}>{i} Card{plural} : {Math.round(10000*this.props.stats.cardCounts[i]/this.props.stats.simulations)/100}%</p>
         );
       }
     }
 
     var goldUsed = [];
     for (var i = 0; i < 9; i++){
-      if (this.props.setup.goldCounts[i] > 0){
+      if (this.props.stats.goldCounts[i] > 0){
         var plural = "";
         if (i != 1){
           plural = "s";
         }
         goldUsed.push(
-          <p key={i}>{i} Gold{plural} : {Math.round(10000*this.props.setup.goldCounts[i]/this.props.setup.simulations)/100}%</p>
+          <p key={i}>{i} Gold{plural} : {Math.round(10000*this.props.stats.goldCounts[i]/this.props.stats.simulations)/100}%</p>
         );
       }
     }
 
     return (
-      <section className="content">
-        <section className="example">
-          <div>{this.props.setup.deck.drawDeck.length} Cards</div>
-          <div>Examples:<button onClick={this.onPrevious.bind(this)}>Previous</button> <button onClick={this.onNext.bind(this)}>Next</button></div>
-          <div className="card-list example">
-            {exampleItems}
-          </div>
-        </section>
+      <div>
         <section className="stats">
           <section className="info">
-            <p>Runs: {this.props.setup.simulations}</p>
-            <p>Avg Gold: {Math.round(10000*this.props.setup.goldSetup/this.props.setup.simulations)/10000}</p>
-            <p>Avg Cards: {Math.round(10000*this.props.setup.cardsSetup/this.props.setup.simulations)/10000}</p>
+            <p>Runs: {this.props.stats.simulations}</p>
+            <p>Avg Gold: {Math.round(10000*this.props.stats.goldSetup/this.props.stats.simulations)/10000}</p>
+            <p>Avg Cards: {Math.round(10000*this.props.stats.cardsSetup/this.props.stats.simulations)/10000}</p>
 
             <p><span className="tooltip hint--top" data-hint="Percentage of Setups with 2 or less cards set up or only 1 character">
                 Poor Setups:
-              </span> {Math.round(100*this.props.setup.poorSetups/this.props.setup.simulations)}%</p>
+              </span> {Math.round(100*this.props.stats.poorSetups/this.props.stats.simulations)}%</p>
             <p><span className="tooltip hint--top" data-hint="Percentage of Setups with 5 or more cards set up and over 1 character">
               Great Setups:
-              </span> {Math.round(100*this.props.setup.greatSetups/this.props.setup.simulations)}%</p>
+              </span> {Math.round(100*this.props.stats.greatSetups/this.props.stats.simulations)}%</p>
             <p><strong>Cards Setup:</strong></p>
             {cardsUsed}
             <p><strong>Gold Used:</strong></p>
@@ -220,7 +174,7 @@ public onNext(){
             {cardItems}
           </ul>
         </section>
-      </section>
+      </div>
     );
   }
 }

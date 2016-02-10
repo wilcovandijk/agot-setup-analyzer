@@ -39,6 +39,7 @@
         "components/cardSettings.tsx",
         "components/configure.tsx",
         "components/deckImport.tsx",
+        "components/setupExample.tsx",
         "components/simulation.tsx",
         "components/simulationStats.tsx"
     ],

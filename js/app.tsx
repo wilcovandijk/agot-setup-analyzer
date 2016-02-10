@@ -37,7 +37,7 @@ class DeckAnalyzerApp extends React.Component<IAppProps, IAppState> {
         </header>
         <section className="main">
           <DeckImport deck={this.props.setup.deck} />
-          <Simulation setup={this.props.setup} />
+          <Simulation setup={this.props.setup} deck={this.props.setup.deck} />
         </section>
       </div>
     );

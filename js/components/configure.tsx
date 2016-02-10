@@ -15,14 +15,11 @@ import AppDispatcher = require('../dispatcher/AppDispatcher');
 import SetupActionID = require('../actions/SetupActionID');
 
 interface IConfigureProps {
-  setup : ISetupStore;
+  settings : ISetupSettings;
+  displayDeck : Array<ICard>;
 }
 
 interface IConfigureState {
-  displayDeck : Array<ICard>;
-  mulliganOnPoor : boolean;
-  mulliganWithoutKey : boolean;
-  mulliganIfNotGreat : boolean;
 }
 
 class Configure extends React.Component<IConfigureProps, IConfigureState> {
@@ -31,24 +28,6 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
 
   constructor(props : IConfigureProps){
     super(props);
-
-    this.state = this.getStateFromStores();
-
-    DeckStore.subscribe(this._onChange.bind(this));
-    SetupStore.subscribe(this._onChange.bind(this));
-  }
-
-  private getStateFromStores(){
-    return {
-      displayDeck: DeckStore.getDisplayDeck(),
-      mulliganOnPoor : SetupStore.mulliganOnPoor,
-      mulliganWithoutKey : SetupStore.mulliganWithoutKey,
-      mulliganIfNotGreat : SetupStore.mulliganIfNotGreat
-    }
-  }
-
-  private _onChange(){
-    this.setState(this.getStateFromStores());
   }
 
   /**
@@ -111,7 +90,7 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
   }
 
   public render() {
-    var displayDeck = this.state.displayDeck;
+    var displayDeck = this.props.displayDeck;
 
     var i = 0;
 
@@ -151,17 +130,17 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
         <section className="configure">
           <p>Mulligan Settings</p>
           <div>
-            <input id="mulligan-if-poor" type="checkbox" checked={this.state.mulliganOnPoor} onClick={this.toggleMulliganOnPoor} />
+            <input id="mulligan-if-poor" type="checkbox" checked={this.props.settings.mulliganOnPoor} onClick={this.toggleMulliganOnPoor} />
             <label htmlFor="mulligan-if-poor">Mulligan if Poor Setup</label>
           </div>
 
           <div>
-            <input id="mulligan-if-not-great" type="checkbox" checked={this.state.mulliganIfNotGreat} onClick={this.toggleMulliganIfNotGreat} />
+            <input id="mulligan-if-not-great" type="checkbox" checked={this.props.settings.mulliganIfNotGreat} onClick={this.toggleMulliganIfNotGreat} />
             <label htmlFor="mulligan-if-not-great">Mulligan if Not Great Setup</label>
           </div>
 
           <div>
-            <input id="mulligan-without-key" type="checkbox" checked={this.state.mulliganWithoutKey} onClick={this.toggleMulliganWithoutKey} />
+            <input id="mulligan-without-key" type="checkbox" checked={this.props.settings.mulliganWithoutKey} onClick={this.toggleMulliganWithoutKey} />
             <label htmlFor="mulligan-without-key">Mulligan if No Key Character</label>
           </div>
 

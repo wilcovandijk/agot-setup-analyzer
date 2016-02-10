@@ -13,6 +13,8 @@ import { About } from "./about"
 import { Configure } from "./configure"
 
 import { SimulationStats } from "./simulationStats"
+import { SetupExample } from "./setupExample"
+
 
 import { BarChart } from 'react-d3';
 import AppDispatcher = require('../dispatcher/AppDispatcher');
@@ -21,6 +23,7 @@ import SetupActionID = require('../actions/SetupActionID');
 
 interface ISimulationProps {
   setup : ISetupStore;
+  deck : IDeckStore;
 }
 
 interface ISimulationState {
@@ -32,6 +35,13 @@ class Simulation extends React.Component<ISimulationProps, ISimulationState> {
 
   constructor(props : ISimulationProps){
     super(props);
+
+    this.props.setup.subscribe(this._onChange.bind(this));
+    this.props.deck.subscribe(this._onChange.bind(this));
+  }
+
+  private _onChange(){
+    this.setState({});
   }
 
   /**
@@ -54,7 +64,7 @@ class Simulation extends React.Component<ISimulationProps, ISimulationState> {
 
 
   public render() {
-    if (this.props.setup.deck.drawDeck.length == 0){
+    if (this.props.deck.getDrawDeck().length == 0){
       return (
         <section className="simulation">
           <section className="example">
@@ -80,11 +90,14 @@ class Simulation extends React.Component<ISimulationProps, ISimulationState> {
 
 
            <div id="tab-one-panel" className="panel active">
-            <SimulationStats setup={this.props.setup} />
+             <section className="content">
+               <SetupExample setups={this.props.setup.setups} drawDeck={this.props.deck.getDrawDeck()} />
+               <SimulationStats stats={this.props.setup.getStats()} displayDeck={this.props.deck.getDisplayDeck()} />
+             </section>
            </div>
 
            <div id="tab-two-panel" className="panel">
-                <Configure setup={this.props.setup} />
+                <Configure settings={this.props.setup.getSettings()} displayDeck={this.props.deck.getDisplayDeck()} />
             </div>
 
             <div id="tab-three-panel" className="panel">

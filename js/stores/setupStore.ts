@@ -25,24 +25,11 @@ class SetupStoreStatic implements ISetupStore {
   public exampleSetup;
   public onChanges : Array<any>;
 
-  public mulliganOnPoor : boolean;
-  public mulliganWithoutKey : boolean;
-  public mulliganIfNotGreat : boolean;
-
-  public cardsSetup : number;
-  public goldSetup : number;
-  public simulations : number;
-  public poorSetups : number;
-  public greatSetups : number;
-  public cardCounts : Array<number>;
+  public stats : ISetupStats;
+  public settings : ISetupSettings;
 
   public keyCards : Array<string>;
-
   public neverSetupCards : Array<string>;
-
-  public distinctCharCounts : Array<number>;
-  public goldCounts: Array<number>;
-  public traitStats : { [id: string] : string };
 
   public setups : Array<any>;
 
@@ -53,9 +40,20 @@ class SetupStoreStatic implements ISetupStore {
 
     this.exampleSetup = {draw:[]};
     this.onChanges = [];
-    this.mulliganOnPoor = false;
-    this.mulliganWithoutKey = false;
-    this.mulliganIfNotGreat = false;
+
+    this.settings = {
+      minimumCards: 3,
+      minimumCharacters: 2,
+
+      greatCardCounts: 5,
+      greatCharacterCounts : 2,
+
+      mulliganOnPoor : false,
+      mulliganWithoutKey : false,
+      mulliganIfNotGreat : false,
+      mulliganIfUnderXCards : 4
+    };
+
     this.resetStats();
   }
 
@@ -68,18 +66,28 @@ class SetupStoreStatic implements ISetupStore {
   }
 
   public resetStats(){
-    this.simulations = 0;
-    this.goldSetup = 0;
-    this.cardsSetup = 0;
-    this.greatSetups = 0;
-    this.poorSetups = 0;
+    this.stats = {
+      simulations : 0,
+      goldSetup : 0,
+      cardsSetup : 0,
+      greatSetups : 0,
+      poorSetups : 0,
+      cardCounts : [0, 0, 0, 0, 0, 0, 0, 0],
+      distinctCharCounts : [0, 0, 0, 0, 0, 0, 0, 0],
+      goldCounts : [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      traitStats : {}
+    }
     this.setups = [];
-    this.cardCounts = [0, 0, 0, 0, 0, 0, 0, 0];
-    this.distinctCharCounts = [0, 0, 0, 0, 0, 0, 0, 0];
-    this.goldCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-    this.traitStats = {};
 
-    this.deck.displayDeck.forEach(c => c.setup_count = 0);
+    this.deck.getDisplayDeck().forEach(c => c.setup_count = 0);
+  }
+
+  public getSettings() : ISetupSettings{
+    return this.settings;
+  }
+
+  public getStats() : ISetupStats{
+    return this.stats;
   }
 
   public performSimulation(runs : number){
@@ -108,8 +116,8 @@ class SetupStoreStatic implements ISetupStore {
       return false;
     }
 
-    var attachments = setup.cards.map(c => this.deck.drawDeck[c]).filter(c => c.type_code == 'attachment');
-    var characters = setup.cards.map(c => this.deck.drawDeck[c]).filter(c => c.type_code == 'character');
+    var attachments = setup.cards.map(c => this.deck.getDrawDeck()[c]).filter(c => c.type_code == 'attachment');
+    var characters = setup.cards.map(c => this.deck.getDrawDeck()[c]).filter(c => c.type_code == 'character');
 
     var unattachables = attachments.filter((att) => {
       var regex = att.attachmentRestriction.reduce((prev, curr) => (prev ? prev + "|" : "") + curr, "");
@@ -165,7 +173,7 @@ class SetupStoreStatic implements ISetupStore {
   }
 
   public setUp(setup, remainingCards){
-    var drawDeck = this.deck.drawDeck;
+    var drawDeck = this.deck.getDrawDeck();
     if (remainingCards.length == 0){
       if (!this.validateSetup(setup)){
         //this is invalid
@@ -227,7 +235,7 @@ class SetupStoreStatic implements ISetupStore {
   }
 
   private runSetup(mulligan){
-    var drawDeck = this.deck.drawDeck;
+    var drawDeck = this.deck.getDrawDeck();
     var deckSize = drawDeck.length;
     var draw = [];
     while (draw.length < 7){
@@ -270,25 +278,25 @@ class SetupStoreStatic implements ISetupStore {
 
     bestSetup.draw = draw;
 
-    if (mulligan && bestSetup.keyCards == 0 && this.mulliganWithoutKey){
+    if (mulligan && bestSetup.keyCards == 0 && this.settings.mulliganWithoutKey){
        return this.runSetup(false);
     }
 
     if (bestSetup.cards.length < 3 || bestSetup.distinctCharacters <= 1){
-      if (mulligan && (this.mulliganOnPoor || this.mulliganIfNotGreat)){
+      if (mulligan && (this.settings.mulliganOnPoor || this.settings.mulliganIfNotGreat)){
         //try to mulligan for a better hand...
         return this.runSetup(false);
       }
-      this.poorSetups++;
+      this.stats.poorSetups++;
     } else if (bestSetup.cards.length >= 5){
-      this.greatSetups++;
-    } else if (mulligan && this.mulliganIfNotGreat){
+      this.stats.greatSetups++;
+    } else if (mulligan && this.settings.mulliganIfNotGreat){
       return this.runSetup(false);
     }
 
     var credited = [];
     bestSetup.cards.forEach((pos) => {
-      var card = this.deck.drawDeck[pos];
+      var card = drawDeck[pos];
       if (card.is_unique && credited.filter((c) => c == card).length > 0){
         return;
       }
@@ -296,29 +304,29 @@ class SetupStoreStatic implements ISetupStore {
       card.setup_count++;
     });
 
-    this.goldSetup += bestSetup.currentCost;
-    this.cardsSetup += bestSetup.cards.length;
-    this.simulations++;
+    this.stats.goldSetup += bestSetup.currentCost;
+    this.stats.cardsSetup += bestSetup.cards.length;
+    this.stats.simulations++;
 
-    this.cardCounts[bestSetup.cards.length] += 1;
-    this.distinctCharCounts[bestSetup.distinctCharacters] += 1;
-    this.goldCounts[bestSetup.currentCost] += 1;
+    this.stats.cardCounts[bestSetup.cards.length] += 1;
+    this.stats.distinctCharCounts[bestSetup.distinctCharacters] += 1;
+    this.stats.goldCounts[bestSetup.currentCost] += 1;
 
     return bestSetup;
   }
 
   public toggleMulliganOnPoor(){
-    this.mulliganOnPoor = !this.mulliganOnPoor;
+    this.settings.mulliganOnPoor = !this.settings.mulliganOnPoor;
     this.inform();
   }
 
   public toggleMulliganWithoutKey(){
-    this.mulliganWithoutKey = !this.mulliganWithoutKey;
+    this.settings.mulliganWithoutKey = !this.settings.mulliganWithoutKey;
     this.inform();
   }
 
   public toggleMulliganIfNotGreat(){
-    this.mulliganIfNotGreat = !this.mulliganIfNotGreat;
+    this.settings.mulliganIfNotGreat = !this.settings.mulliganIfNotGreat;
     this.inform();
   }
 }
