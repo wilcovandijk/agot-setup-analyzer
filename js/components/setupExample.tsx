@@ -89,6 +89,7 @@ public onNext(){
           <div className="card-list example">
             {exampleItems}
           </div>
+          <p>Does something look wrong? <a href="mailto:jason@red5dev.com">Let me know!</a></p>
         </section>
     );
   }
