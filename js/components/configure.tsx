@@ -109,6 +109,18 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
       );
     });
 
+    var avoided = null;
+    if (avoidedCards.length > 0){
+      avoided = (
+        <div>
+          <div>Try to Avoid Cards:</div>
+          <div className="card-list">
+            {avoidedItems}
+          </div>
+        </div>
+      )
+    }
+
     var keyCards = displayDeck.filter((card) => card.is_key_card).sort(this.cardSort);
     var keyItems = keyCards.sort(this.cardSort).map((card) => {
       i++;
@@ -117,6 +129,18 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
       );
     });
 
+    var key = null;
+    if (keyCards.length > 0){
+      key = (
+        <div>
+          <div>Key cards:</div>
+          <div className="card-list">
+            {keyItems}
+          </div>
+        </div>
+      );
+    }
+
     var restrictedCards = displayDeck.filter((card) => card.is_restricted).sort(this.cardSort);
     var restrictedItems = restrictedCards.sort(this.cardSort).map((card) => {
       i++;
@@ -124,6 +148,18 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
         <CardSettings key={card.code} card={card} />
       );
     });
+
+    var restricted = null;
+    if (restrictedCards.length > 0){
+      restricted = (
+        <div>
+          <div>Restricted Cards:</div>
+          <div className="card-list">
+            {restrictedItems}
+          </div>
+        </div>
+      );
+    }
 
     var cards = displayDeck.sort(this.cardSort);
     var allCards = cards.map((card) => {
@@ -161,21 +197,13 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
             <label htmlFor="mulligan-without-key">Mulligan if No Key Character</label>
           </div>
 
-          <div>Key cards:</div>
-          <div className="card-list">
-            {keyItems}
-          </div>
+          {key}
 
-          <div>Try to Avoid Cards:</div>
-          <div className="card-list">
-            {avoidedItems}
-          </div>
+          {avoided}
 
-          <div>Restricted Cards:</div>
-          <div className="card-list">
-            {restrictedItems}
-          </div>
+          {restricted}
 
+          <div>All Cards:</div>
           <div className="card-list">
             {allCards}
           </div>
