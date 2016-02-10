@@ -89,6 +89,13 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     })
   }
 
+  private toggleMulliganOnThreeCard(){
+    AppDispatcher.dispatch({
+      actionType: SetupActionID.TOGGLE_MULLIGAN_ON_THREE_CARD,
+      data: null
+    })
+  }
+
   public render() {
     var displayDeck = this.props.displayDeck;
 
@@ -136,12 +143,17 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
           <p>Mulligan Settings</p>
           <div>
             <input id="mulligan-if-poor" type="checkbox" checked={this.props.settings.mulliganOnPoor} onClick={this.toggleMulliganOnPoor} />
-            <label htmlFor="mulligan-if-poor">Mulligan if Poor Setup</label>
+            <label htmlFor="mulligan-if-poor">Mulligan if 2 Card Setup or 1 Character</label>
+          </div>
+
+          <div>
+            <input id="mulligan-if-poor" type="checkbox" checked={this.props.settings.mulliganOn3Card} onClick={this.toggleMulliganOnThreeCard} />
+            <label htmlFor="mulligan-if-poor">Mulligan on 3 Card Setup</label>
           </div>
 
           <div>
             <input id="mulligan-if-not-great" type="checkbox" checked={this.props.settings.mulliganIfNotGreat} onClick={this.toggleMulliganIfNotGreat} />
-            <label htmlFor="mulligan-if-not-great">Mulligan if Not Great Setup</label>
+            <label htmlFor="mulligan-if-not-great">Mulligan on 4 Card Setup</label>
           </div>
 
           <div>

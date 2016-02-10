@@ -52,7 +52,7 @@ interface ISetupStats{
 
 interface ISetupSettings{
   simulations : number;
-  
+
   minimumCards : number;
   minimumCharacters : number;
 
@@ -60,6 +60,7 @@ interface ISetupSettings{
   greatCharacterCounts : number;
 
   mulliganOnPoor : boolean;
+  mulliganOn3Card : boolean;
   mulliganWithoutKey : boolean;
   mulliganIfNotGreat : boolean;
   mulliganIfUnderXCards : number;

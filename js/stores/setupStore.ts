@@ -48,6 +48,7 @@ class SetupStoreStatic implements ISetupStore {
       greatCharacterCounts : 2,
 
       mulliganOnPoor : false,
+      mulliganOn3Card : false,
       mulliganWithoutKey : false,
       mulliganIfNotGreat : false,
       mulliganIfUnderXCards : 4
@@ -305,6 +306,8 @@ class SetupStoreStatic implements ISetupStore {
       this.stats.greatSetups++;
     } else if (mulligan && this.settings.mulliganIfNotGreat){
       return this.runSetup(false);
+    } else if (bestSetup.cards.length <= 3 && mulligan && this.settings.mulliganOn3Card){
+      return this.runSetup(false);
     }
 
     var credited = [];
@@ -343,6 +346,11 @@ class SetupStoreStatic implements ISetupStore {
     this.inform();
   }
 
+  public toggleThreeCardMulligan(){
+    this.settings.mulliganOn3Card = !this.settings.mulliganOn3Card;
+    this.inform();
+  }
+
   public setNumberOfSimulations(simulations){
     this.settings.simulations = simulations;
     this.inform();
@@ -360,6 +368,8 @@ AppDispatcher.register(function(payload:IActionPayload){
     SetupStore.toggleMulliganWithoutKey();
   } else if (payload.actionType == SetupActionID.TOGGLE_MULIGAN_IF_NOT_GREAT){
     SetupStore.toggleMulliganIfNotGreat();
+  } else if (payload.actionType == SetupActionID.TOGGLE_MULLIGAN_ON_THREE_CARD){
+    SetupStore.toggleThreeCardMulligan();
   }
 });
 
