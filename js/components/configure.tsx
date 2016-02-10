@@ -147,8 +147,8 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
           </div>
 
           <div>
-            <input id="mulligan-if-poor" type="checkbox" checked={this.props.settings.mulliganOn3Card} onClick={this.toggleMulliganOnThreeCard} />
-            <label htmlFor="mulligan-if-poor">Mulligan on 3 Card Setup</label>
+            <input id="mulligan-on-three" type="checkbox" checked={this.props.settings.mulliganOn3Card} onClick={this.toggleMulliganOnThreeCard} />
+            <label htmlFor="mulligan-on-three">Mulligan on 3 Card Setup</label>
           </div>
 
           <div>
