@@ -20,6 +20,7 @@ var SetupActionID = (function () {
     SetupActionID.TOGGLE_MULIGAN_ON_POOR = "SETUP.TOGGLE_MULIGAN_ON_POOR";
     SetupActionID.TOGGLE_MULIGAN_WITHOUT_KEY = "SETUP.TOGGLE_MULIGAN_WITHOUT_KEY";
     SetupActionID.TOGGLE_MULIGAN_IF_NOT_GREAT = "SETUP.TOGGLE_MULIGAN_IF_NOT_GREAT";
+    SetupActionID.TOGGLE_MULLIGAN_ON_THREE_CARD = "SETUP.TOGGLE_MULLIGAN_ON_THREE_CARD";
     SetupActionID.TEST = "TEST";
     return SetupActionID;
 })();
@@ -331,6 +332,12 @@ var Configure = (function (_super) {
             data: null
         });
     };
+    Configure.prototype.toggleMulliganOnThreeCard = function () {
+        AppDispatcher.dispatch({
+            actionType: SetupActionID.TOGGLE_MULLIGAN_ON_THREE_CARD,
+            data: null
+        });
+    };
     Configure.prototype.render = function () {
         var displayDeck = this.props.displayDeck;
         var i = 0;
@@ -353,7 +360,7 @@ var Configure = (function (_super) {
         var allCards = cards.map(function (card) {
             return (React.createElement(cardSettings_1.CardSettings, {"key": card.code, "card": card}));
         });
-        return (React.createElement("section", {"className": "content"}, React.createElement("section", {"className": "configure"}, React.createElement("p", null, "This section is a work in progress. The Setup Analyzer will now attempt to mulligan your first draw if it doesn't meet certain criteria. This page provides all the current settings for configuring what setups to prefer and what hands to mulligan. You can configure cards as being ", React.createElement("i", {"className": "fa fa-key fa-fw"}), " Key cards, ", React.createElement("i", {"className": "fa fa-exclamation-triangle fa-fw"}), " Try to Avoid Cards, and ", React.createElement("i", {"className": "fa fa-ban fa-fw"}), "Restricted Cards"), React.createElement("p", null, "Key Cards will be set up as often as possible. As long as you can set up at least 2 total characters, a set up with a key card will be used if available"), React.createElement("p", null, "Try to Avoid Cards will be avoided unless there is nothing else that can be used. For example, if you have only 3 gold worth of cards to set up, and a 5 cost try to avoid card, it will set up the card. By default this includes characters with positive enter play abilities"), React.createElement("p", null, "Restricted cards will never be set up under any circumstances. By default this includes negative attachments"), React.createElement("p", null, "Mulligan Settings"), React.createElement("div", null, React.createElement("input", {"id": "mulligan-if-poor", "type": "checkbox", "checked": this.props.settings.mulliganOnPoor, "onClick": this.toggleMulliganOnPoor}), React.createElement("label", {"htmlFor": "mulligan-if-poor"}, "Mulligan if Poor Setup")), React.createElement("div", null, React.createElement("input", {"id": "mulligan-if-not-great", "type": "checkbox", "checked": this.props.settings.mulliganIfNotGreat, "onClick": this.toggleMulliganIfNotGreat}), React.createElement("label", {"htmlFor": "mulligan-if-not-great"}, "Mulligan if Not Great Setup")), React.createElement("div", null, React.createElement("input", {"id": "mulligan-without-key", "type": "checkbox", "checked": this.props.settings.mulliganWithoutKey, "onClick": this.toggleMulliganWithoutKey}), React.createElement("label", {"htmlFor": "mulligan-without-key"}, "Mulligan if No Key Character")), React.createElement("div", null, "Key cards:"), React.createElement("div", {"className": "card-list"}, keyItems), React.createElement("div", null, "Try to Avoid Cards:"), React.createElement("div", {"className": "card-list"}, avoidedItems), React.createElement("div", null, "Restricted Cards:"), React.createElement("div", {"className": "card-list"}, restrictedItems), React.createElement("div", {"className": "card-list"}, allCards))));
+        return (React.createElement("section", {"className": "content"}, React.createElement("section", {"className": "configure"}, React.createElement("p", null, "This section is a work in progress. The Setup Analyzer will now attempt to mulligan your first draw if it doesn't meet certain criteria. This page provides all the current settings for configuring what setups to prefer and what hands to mulligan. You can configure cards as being ", React.createElement("i", {"className": "fa fa-key fa-fw"}), " Key cards, ", React.createElement("i", {"className": "fa fa-exclamation-triangle fa-fw"}), " Try to Avoid Cards, and ", React.createElement("i", {"className": "fa fa-ban fa-fw"}), "Restricted Cards"), React.createElement("p", null, "Key Cards will be set up as often as possible. As long as you can set up at least 2 total characters, a set up with a key card will be used if available"), React.createElement("p", null, "Try to Avoid Cards will be avoided unless there is nothing else that can be used. For example, if you have only 3 gold worth of cards to set up, and a 5 cost try to avoid card, it will set up the card. By default this includes characters with positive enter play abilities"), React.createElement("p", null, "Restricted cards will never be set up under any circumstances. By default this includes negative attachments"), React.createElement("p", null, "Mulligan Settings"), React.createElement("div", null, React.createElement("input", {"id": "mulligan-if-poor", "type": "checkbox", "checked": this.props.settings.mulliganOnPoor, "onClick": this.toggleMulliganOnPoor}), React.createElement("label", {"htmlFor": "mulligan-if-poor"}, "Mulligan if 2 Card Setup or 1 Character")), React.createElement("div", null, React.createElement("input", {"id": "mulligan-if-poor", "type": "checkbox", "checked": this.props.settings.mulliganOn3Card, "onClick": this.toggleMulliganOnThreeCard}), React.createElement("label", {"htmlFor": "mulligan-if-poor"}, "Mulligan on 3 Card Setup")), React.createElement("div", null, React.createElement("input", {"id": "mulligan-if-not-great", "type": "checkbox", "checked": this.props.settings.mulliganIfNotGreat, "onClick": this.toggleMulliganIfNotGreat}), React.createElement("label", {"htmlFor": "mulligan-if-not-great"}, "Mulligan on 4 Card Setup")), React.createElement("div", null, React.createElement("input", {"id": "mulligan-without-key", "type": "checkbox", "checked": this.props.settings.mulliganWithoutKey, "onClick": this.toggleMulliganWithoutKey}), React.createElement("label", {"htmlFor": "mulligan-without-key"}, "Mulligan if No Key Character")), React.createElement("div", null, "Key cards:"), React.createElement("div", {"className": "card-list"}, keyItems), React.createElement("div", null, "Try to Avoid Cards:"), React.createElement("div", {"className": "card-list"}, avoidedItems), React.createElement("div", null, "Restricted Cards:"), React.createElement("div", {"className": "card-list"}, restrictedItems), React.createElement("div", {"className": "card-list"}, allCards))));
     };
     return Configure;
 })(React.Component);
@@ -672,6 +679,7 @@ var SetupStoreStatic = (function () {
             greatCardCounts: 5,
             greatCharacterCounts: 2,
             mulliganOnPoor: false,
+            mulliganOn3Card: false,
             mulliganWithoutKey: false,
             mulliganIfNotGreat: false,
             mulliganIfUnderXCards: 4
@@ -873,6 +881,9 @@ var SetupStoreStatic = (function () {
         else if (mulligan && this.settings.mulliganIfNotGreat) {
             return this.runSetup(false);
         }
+        else if (bestSetup.cards.length <= 3 && mulligan && this.settings.mulliganOn3Card) {
+            return this.runSetup(false);
+        }
         var credited = [];
         bestSetup.cards.forEach(function (pos) {
             var card = drawDeck[pos];
@@ -902,6 +913,10 @@ var SetupStoreStatic = (function () {
         this.settings.mulliganIfNotGreat = !this.settings.mulliganIfNotGreat;
         this.inform();
     };
+    SetupStoreStatic.prototype.toggleThreeCardMulligan = function () {
+        this.settings.mulliganOn3Card = !this.settings.mulliganOn3Card;
+        this.inform();
+    };
     SetupStoreStatic.prototype.setNumberOfSimulations = function (simulations) {
         this.settings.simulations = simulations;
         this.inform();
@@ -921,6 +936,9 @@ AppDispatcher.register(function (payload) {
     }
     else if (payload.actionType == SetupActionID.TOGGLE_MULIGAN_IF_NOT_GREAT) {
         SetupStore.toggleMulliganIfNotGreat();
+    }
+    else if (payload.actionType == SetupActionID.TOGGLE_MULLIGAN_ON_THREE_CARD) {
+        SetupStore.toggleThreeCardMulligan();
     }
 });
 module.exports = SetupStore;
