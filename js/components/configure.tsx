@@ -163,7 +163,7 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
           <div className="card-list">
             {restrictedItems}
           </div>
-          <p>This section is a work in progress, and will soon be the home of configuration settings...</p>
+
           <div className="card-list">
             {allCards}
           </div>
