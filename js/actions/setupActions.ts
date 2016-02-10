@@ -7,8 +7,6 @@
 /// <reference path="../../typings/tsd.d.ts" />
 /// <reference path="../interfaces.d.ts"/>
 
- console.log("setupActions");
-
 import AppDispatcher = require('../dispatcher/appDispatcher');
 import SetupActionID = require('./setupActionId');
 
@@ -32,7 +30,6 @@ class SetupActionsStatic {
   }
 
   public test(from:string){
-    console.log("about to dispatch test?");
     this.dispatcher.dispatch({
       actionType: SetupActionID.TEST,
       data: from

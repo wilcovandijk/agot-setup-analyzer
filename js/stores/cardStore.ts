@@ -7,8 +7,6 @@
 /// <reference path="../../typings/tsd.d.ts" />
 /// <reference path="../interfaces.d.ts"/>
 
-console.log("cardStore");
-
 import AppDispatcher = require('../dispatcher/AppDispatcher');
 import DeckActionID = require('../actions/DeckActionID');
 

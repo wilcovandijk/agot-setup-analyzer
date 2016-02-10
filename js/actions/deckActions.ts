@@ -7,8 +7,6 @@
 /// <reference path="../../typings/tsd.d.ts" />
 /// <reference path="../interfaces.d.ts"/>
 
- console.log("deckActions");
-
 import AppDispatcher = require('../dispatcher/AppDispatcher');
 import DeckActionID = require('./deckActionID');
 
@@ -20,12 +18,10 @@ class DeckActionsStatic {
 
 
   public deckLoad(text:string){
-    console.log("loading", DeckActionID.LOAD_DECK, text);
     AppDispatcher.dispatch({
       actionType: DeckActionID.LOAD_DECK,
       data: text
     });
-    console.log("done loading");
   }
 
   public markKeyCard(code:string){

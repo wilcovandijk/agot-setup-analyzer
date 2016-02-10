@@ -7,8 +7,6 @@
 /// <reference path="../../typings/tsd.d.ts" />
 /// <reference path="../interfaces.d.ts"/>
 
-console.log("deckStore");
-
 import AppDispatcher = require('../dispatcher/AppDispatcher');
 import DeckActionID = require('../actions/DeckActionID');
 
@@ -192,7 +190,6 @@ class DeckStoreStatic implements IDeckStore {
 var DeckStore:DeckStoreStatic = new DeckStoreStatic();
 
 AppDispatcher.register(function(payload:IActionPayload){
-  console.log("deckStore: payload", payload);
   if (payload.actionType == DeckActionID.LOAD_DECK){
     DeckStore.loadDeck(payload.data);
   } else if (payload.actionType == DeckActionID.MARK_KEY_CARD){

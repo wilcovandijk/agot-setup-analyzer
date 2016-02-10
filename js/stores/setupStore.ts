@@ -7,8 +7,6 @@
 /// <reference path="../../typings/tsd.d.ts" />
 /// <reference path="../interfaces.d.ts"/>
 
-console.log("setupStore");
-
 import AppDispatcher = require('../dispatcher/AppDispatcher');
 import SetupActionID = require('../actions/setupActionID');
 import DeckStore = require('./deckStore')
@@ -42,6 +40,7 @@ class SetupStoreStatic implements ISetupStore {
     this.onChanges = [];
 
     this.settings = {
+      simulations: 5000,
       minimumCards: 3,
       minimumCharacters: 2,
 
@@ -91,23 +90,37 @@ class SetupStoreStatic implements ISetupStore {
   }
 
   public performSimulation(runs : number){
-    console.log("start sim");
       if (DeckStore.getDrawDeck().length < 7){
-        console.log("not enough cards");
         return;
       }
 
       this.resetStats()
 
       var setup = null;
-      for (var i = 0; i < runs; i++){
-        setup = this.runSetup(true);
-        this.setups.push(setup);
+      var self = this;
+      var i = 0;
+      var process : () => void;
+      var process = function(){
+        var steps = Math.min(runs-i, 100);
+        for (var j=0; j < steps;j++){
+          setup = self.runSetup(true);
+          self.setups.push(setup);
+        }
+        self.inform();
 
+        if (i < runs){
+          i += steps;
+          setTimeout(process, 1);
+        }
       }
-      this.exampleSetup = setup;
-      console.log("end sim");
-      this.inform();
+      process();
+      // for (var i = 0; i < runs; i++){
+      //   setup = this.runSetup(true);
+      //   this.setups.push(setup);
+      //   this.inform();
+      // }
+      // this.exampleSetup = setup;
+      // this.inform();
   }
 
   protected validateSetup(setup){
@@ -329,14 +342,18 @@ class SetupStoreStatic implements ISetupStore {
     this.settings.mulliganIfNotGreat = !this.settings.mulliganIfNotGreat;
     this.inform();
   }
+
+  public setNumberOfSimulations(simulations){
+    this.settings.simulations = simulations;
+    this.inform();
+  }
 }
 
 var SetupStore:SetupStoreStatic = new SetupStoreStatic();
 
 AppDispatcher.register(function(payload:IActionPayload){
-  console.log("setupStore : payload", payload);
   if (payload.actionType == SetupActionID.PERFORM_SIMULATIONS){
-    SetupStore.performSimulation(payload.data);
+    SetupStore.performSimulation(SetupStore.settings.simulations);
   } else if (payload.actionType == SetupActionID.TOGGLE_MULIGAN_ON_POOR){
     SetupStore.toggleMulliganOnPoor();
   } else if (payload.actionType == SetupActionID.TOGGLE_MULIGAN_WITHOUT_KEY){

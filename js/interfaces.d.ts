@@ -51,6 +51,8 @@ interface ISetupStats{
 }
 
 interface ISetupSettings{
+  simulations : number;
+  
   minimumCards : number;
   minimumCharacters : number;
 

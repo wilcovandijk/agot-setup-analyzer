@@ -27,21 +27,34 @@ interface ISimulationProps {
 }
 
 interface ISimulationState {
+  running : boolean;
+  percentage : number;
 }
 
 class Simulation extends React.Component<ISimulationProps, ISimulationState> {
 
-  public state : ICardItemState;
+  public state : ISimulationState;
 
   constructor(props : ISimulationProps){
     super(props);
 
     this.props.setup.subscribe(this._onChange.bind(this));
     this.props.deck.subscribe(this._onChange.bind(this));
+
+    this.state = this.getStateFromStores();
   }
 
   private _onChange(){
-    this.setState({});
+    this.setState(this.getStateFromStores());
+    // console.log("changing ", this.state);
+    // this.setState(this.getStateFromStores());
+  }
+
+  public getStateFromStores(){
+    return {
+      running : this.props.setup.getStats().simulations > 0 && this.props.setup.getStats().simulations < 5000,
+      percentage : Math.round((this.props.setup.getStats().simulations / 5000) * 100)
+    }
   }
 
   /**
@@ -64,7 +77,7 @@ class Simulation extends React.Component<ISimulationProps, ISimulationState> {
 
 
   public render() {
-    if (this.props.deck.getDrawDeck().length == 0){
+    if (this.state.percentage == 0){
       return (
         <section className="simulation">
           <section className="example">
@@ -74,33 +87,54 @@ class Simulation extends React.Component<ISimulationProps, ISimulationState> {
       );
     }
 
+    var top = null;
+    if (this.state.percentage < 100){
+      top = (
+        <div className="progress">
+          <div className="progress-bar" role="progressbar" aria-valuenow="{this.state.percentage}"
+          aria-valuemin="0" aria-valuemax="100" style={{width: this.state.percentage +'%'}}>
+            Simulating... {this.state.percentage}%
+          </div>
+        </div>
+      );
+    } else{
+      top = (
+        <button className="action" onClick={this.rerunSimulation}>Rerun Simulation</button>
+      );
+    }
+
     return (
       <section className="simulation">
-      <button className="action" onClick={this.rerunSimulation}>Rerun Simulation</button>
+      {top}
 
       <div className="worko-tabs">
         <input className="state" type="radio" title="tab-one" name="tabs-state" id="tab-one" defaultChecked />
         <input className="state" type="radio" title="tab-two" name="tabs-state" id="tab-two" />
         <input className="state" type="radio" title="tab-three" name="tabs-state" id="tab-three" />
+        <input className="state" type="radio" title="tab-four" name="tabs-state" id="tab-four" />
 
         <div className="tabs flex-tabs">
-          <label htmlFor="tab-one" id="tab-one-label" className="tab">Setup Stats</label>
-          <label htmlFor="tab-two" id="tab-two-label" className="tab">Configure</label>
-          <label htmlFor="tab-three" id="tab-three-label" className="tab">About</label>
+          <label htmlFor="tab-one" id="tab-one-label" className="tab">Stats</label>
+          <label htmlFor="tab-two" id="tab-two-label" className="tab">Examples</label>
+          <label htmlFor="tab-three" id="tab-three-label" className="tab">Configure</label>
+          <label htmlFor="tab-four" id="tab-four-label" className="tab">About</label>
 
 
            <div id="tab-one-panel" className="panel active">
              <section className="content">
-               <SetupExample setups={this.props.setup.setups} drawDeck={this.props.deck.getDrawDeck()} />
                <SimulationStats stats={this.props.setup.getStats()} displayDeck={this.props.deck.getDisplayDeck()} />
              </section>
            </div>
 
            <div id="tab-two-panel" className="panel">
+              <SetupExample setups={this.props.setup.setups} drawDeck={this.props.deck.getDrawDeck()} />
+           </div>
+
+           <div id="tab-three-panel" className="panel">
                 <Configure settings={this.props.setup.getSettings()} displayDeck={this.props.deck.getDisplayDeck()} />
             </div>
 
-            <div id="tab-three-panel" className="panel">
+            <div id="tab-four-panel" className="panel">
                  <About />
              </div>
 

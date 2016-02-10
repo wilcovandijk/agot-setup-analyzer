@@ -7,7 +7,6 @@
 /// <reference path="../../typings/tsd.d.ts" />
 /// <reference path="../interfaces.d.ts"/>
 
-console.log("deckImport");
 import AppDispatcher = require('../dispatcher/AppDispatcher');
 import DeckActionID = require('../actions/deckActionID');
 import SetupActionID = require('../actions/SetupActionID');
