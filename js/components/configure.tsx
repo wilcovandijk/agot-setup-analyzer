@@ -96,6 +96,13 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     })
   }
 
+  private toggleRequireOneCharacter(){
+    AppDispatcher.dispatch({
+      actionType: SetupActionID.TOGGLE_REQUIRE_ONE_CHARACTER,
+      data: null
+    })
+  }
+
   public render() {
     var displayDeck = this.props.displayDeck;
 
@@ -175,6 +182,12 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
           <p>Key Cards will be set up as often as possible. As long as you can set up at least 2 total characters, a set up with a key card will be used if available</p>
           <p>Try to Avoid Cards will be avoided unless there is nothing else that can be used. For example, if you have only 3 gold worth of cards to set up, and a 5 cost try to avoid card, it will set up the card. By default this includes characters with positive enter play abilities</p>
           <p>Restricted cards will never be set up under any circumstances. By default this includes negative attachments</p>
+
+          <p>Hand Quality Settings</p>
+          <div>
+            <input id="require-one-character" type="checkbox" checked={this.props.settings.requireOneCharacter} onClick={this.toggleRequireOneCharacter} />
+            <label htmlFor="mulligan-if-poor">Require One Character. If this is not selected, one character setups will not be de-emphaized unless they contain less cards</label>
+          </div>
 
           <p>Mulligan Settings</p>
           <div>

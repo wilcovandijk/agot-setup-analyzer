@@ -59,6 +59,8 @@ interface ISetupSettings{
   greatCardCounts : number;
   greatCharacterCounts : number;
 
+  requireOneCharacter: boolean;
+
   mulliganOnPoor : boolean;
   mulliganOn3Card : boolean;
   mulliganWithoutKey : boolean;

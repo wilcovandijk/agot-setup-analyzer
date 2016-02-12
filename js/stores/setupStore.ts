@@ -47,6 +47,8 @@ class SetupStoreStatic implements ISetupStore {
       greatCardCounts: 5,
       greatCharacterCounts : 2,
 
+      requireOneCharacter: true,
+
       mulliganOnPoor : false,
       mulliganOn3Card : false,
       mulliganWithoutKey : false,
@@ -165,7 +167,7 @@ class SetupStoreStatic implements ISetupStore {
   protected scoreSetup(setup){
 
     var factors = [
-      setup.distinctCharacters > 1, // must have at least > 1 char
+      this.settings.requireOneCharacter ? setup.distinctCharacters > 1 : 0, // must have at least > 1 char
       setup.keyCards,
       (setup.cards.length - setup.avoidedCards), // cards used that we like to setup
       setup.cards.length, // cards used overall
@@ -296,7 +298,7 @@ class SetupStoreStatic implements ISetupStore {
        return this.runSetup(false);
     }
 
-    if (bestSetup.cards.length < 3 || bestSetup.distinctCharacters <= 1){
+    if (bestSetup.cards.length < 3 || (bestSetup.distinctCharacters <= 1 && this.settings.requireOneCharacter)){
       if (mulligan &&
         (this.settings.mulliganOnPoor
           || this.settings.mulliganIfNotGreat
@@ -354,6 +356,11 @@ class SetupStoreStatic implements ISetupStore {
     this.inform();
   }
 
+  public toggleRequireOneCharacter(){
+    this.settings.requireOneCharacter = !this.settings.requireOneCharacter;
+    this.inform();
+  }
+
   public setNumberOfSimulations(simulations){
     this.settings.simulations = simulations;
     this.inform();
@@ -373,6 +380,8 @@ AppDispatcher.register(function(payload:IActionPayload){
     SetupStore.toggleMulliganIfNotGreat();
   } else if (payload.actionType == SetupActionID.TOGGLE_MULLIGAN_ON_THREE_CARD){
     SetupStore.toggleThreeCardMulligan();
+  } else if (payload.actionType == SetupActionID.TOGGLE_REQUIRE_ONE_CHARACTER){
+    SetupStore.toggleRequireOneCharacter();
   }
 });
 
