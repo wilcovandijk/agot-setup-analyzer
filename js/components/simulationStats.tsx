@@ -9,12 +9,15 @@
 /// <reference path="../libs/react-d3.d.ts" />
 
 import { CardItem } from "../cardItem";
-import { BarChart } from 'react-d3';
+import { BarGraph } from "./barGraph"
+
 
 
 interface ISimulationStatsProps {
   stats : ISetupStats;
+  noMulliganStats : ISetupStats;
   displayDeck : Array<ICard>;
+  setups : Array<any>;
 }
 
 interface ISimulationStatsState {
@@ -62,16 +65,39 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
       );
     });
 
-    var cardUsageData = [{
-      "name": "Used Cards",
-      "values": []
-    }];
+    var options = {
+
+};
+
+    var cardUsageData = {
+      labels: ["0 card", "1 card", "2 cards", "3 cards", "4 cards", "5 cards", "6 cards", "7 cards"],
+      datasets: [
+          {
+              label: "With Mulligan",
+              fillColor: "rgba(68,121,186,0.8)",
+              strokeColor: "rgba(68,121,186,0.8)",
+              highlightFill: "rgba(68,121,186,1)",
+              highlightStroke: "rgba(68,121,186,1)",
+              data: []
+          },
+          {
+              label: "Without Mulligan",
+              fillColor: "rgba(85,104,127,0.4)",
+              strokeColor: "rgba(85,104,127,0.4)",
+              highlightFill: "rgba(85,104,127,1)",
+              highlightStroke: "rgba(85,104,127,1)",
+              data: []
+          }
+      ]
+  };
+
 
     for (var i = 0; i < 8; i++){
-      cardUsageData[0].values.push({
-        "x": i,
-        "y":  Math.round(10000*this.props.stats.cardCounts[i] / this.props.stats.simulations)/100
-      });
+      var withMulligan = Math.round(10000*this.props.stats.cardCounts[i] / this.props.stats.simulations)/100;
+      var withoutMuligan = Math.round(10000*this.props.noMulliganStats.cardCounts[i] / this.props.stats.simulations)/100;
+
+      cardUsageData.datasets[0].data.push(withMulligan);
+      cardUsageData.datasets[1].data.push(withoutMuligan);
     }
 
     var goldUsageData = [{"name": "Gold Spent",
@@ -120,6 +146,17 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
       }
     }
 
+    var scatterData = [{
+    name: "Setups",
+    values: [ ]
+  }];
+    this.props.setups.forEach(setup => {
+        scatterData[0].values.push({
+          x: setup.cards.length,
+          y: setup.currentCost
+        });
+    });
+
     return (
       <div>
         <section className="stats">
@@ -140,33 +177,14 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
             {goldUsed}
           </section>
           <section className="charts">
-            <BarChart
+            <BarGraph
                 data={cardUsageData}
-                width={500}
-                height={200}
-                fill={'#3182bd'}
-                title='Cards Used'
-                yAxisLabel='Percent'
-                xAxisLabel='Cards'
+                options={options}
+                width="500"
+                height="200"
+                showLegend={true}
                 />
-              <BarChart
-                  data={goldUsageData}
-                  width={500}
-                  height={200}
-                  fill={'#3182bd'}
-                  title='Gold Used'
-                  yAxisLabel='Percent'
-                  xAxisLabel='Gold Spent'
-                  />
-              <BarChart
-                  data={distinctCharData}
-                  width={500}
-                  height={200}
-                  fill={'#3182bd'}
-                  title='Characters Out After Setup'
-                  yAxisLabel='Percent'
-                  xAxisLabel='Distinct Characters'
-                  />
+
           </section>
         </section>
         <section className="deck">

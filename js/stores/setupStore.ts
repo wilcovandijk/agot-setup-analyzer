@@ -24,6 +24,7 @@ class SetupStoreStatic implements ISetupStore {
   public onChanges : Array<any>;
 
   public stats : ISetupStats;
+  public noMulliganStats : ISetupStats;
   public settings : ISetupSettings;
 
   public keyCards : Array<string>;
@@ -79,6 +80,17 @@ class SetupStoreStatic implements ISetupStore {
       goldCounts : [0, 0, 0, 0, 0, 0, 0, 0, 0],
       traitStats : {}
     }
+    this.noMulliganStats = {
+      simulations : 0,
+      goldSetup : 0,
+      cardsSetup : 0,
+      greatSetups : 0,
+      poorSetups : 0,
+      cardCounts : [0, 0, 0, 0, 0, 0, 0, 0],
+      distinctCharCounts : [0, 0, 0, 0, 0, 0, 0, 0],
+      goldCounts : [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      traitStats : {}
+    };
     this.setups = [];
 
     this.deck.getDisplayDeck().forEach(c => c.setup_count = 0);
@@ -90,6 +102,10 @@ class SetupStoreStatic implements ISetupStore {
 
   public getStats() : ISetupStats{
     return this.stats;
+  }
+
+  public getNoMulliganStats() : ISetupStats{
+    return this.noMulliganStats;
   }
 
   public performSimulation(runs : number){
@@ -250,7 +266,10 @@ class SetupStoreStatic implements ISetupStore {
     return this.setUp(setup, remainingCards);
   }
 
-  private runSetup(mulligan){
+  private runSetup(mulligan, previousSetup = null){
+    if (previousSetup && !mulligan){
+      this.updateStats(this.noMulliganStats, previousSetup);
+    }
     var drawDeck = this.deck.getDrawDeck();
     var deckSize = drawDeck.length;
     var draw = [];
@@ -295,7 +314,7 @@ class SetupStoreStatic implements ISetupStore {
     bestSetup.draw = draw;
 
     if (mulligan && bestSetup.keyCards == 0 && this.settings.mulliganWithoutKey){
-       return this.runSetup(false);
+       return this.runSetup(false, bestSetup);
     }
 
     if (bestSetup.cards.length < 3 || (bestSetup.distinctCharacters <= 1 && this.settings.requireOneCharacter)){
@@ -304,15 +323,15 @@ class SetupStoreStatic implements ISetupStore {
           || this.settings.mulliganIfNotGreat
           || this.settings.mulliganOn3Card)){
         //try to mulligan for a better hand...
-        return this.runSetup(false);
+        return this.runSetup(false, bestSetup);
       }
       this.stats.poorSetups++;
     } else if (bestSetup.cards.length >= 5){
       this.stats.greatSetups++;
     } else if (mulligan && bestSetup.cards.length < 5 && this.settings.mulliganIfNotGreat){
-      return this.runSetup(false);
+      return this.runSetup(false, bestSetup);
     } else if (mulligan && bestSetup.cards.length <= 3 && this.settings.mulliganOn3Card){
-      return this.runSetup(false);
+      return this.runSetup(false, bestSetup);
     }
 
     var credited = [];
@@ -325,15 +344,22 @@ class SetupStoreStatic implements ISetupStore {
       card.setup_count++;
     });
 
-    this.stats.goldSetup += bestSetup.currentCost;
-    this.stats.cardsSetup += bestSetup.cards.length;
-    this.stats.simulations++;
+    this.updateStats(this.stats, bestSetup);
 
-    this.stats.cardCounts[bestSetup.cards.length] += 1;
-    this.stats.distinctCharCounts[bestSetup.distinctCharacters] += 1;
-    this.stats.goldCounts[bestSetup.currentCost] += 1;
-
+    if (mulligan && !previousSetup){
+      this.updateStats(this.noMulliganStats, bestSetup);
+    }
     return bestSetup;
+  }
+
+  private updateStats(stats:ISetupStats, setup){
+    stats.goldSetup += setup.currentCost;
+    stats.cardsSetup += setup.cards.length;
+    stats.simulations++;
+
+    stats.cardCounts[setup.cards.length] += 1;
+    stats.distinctCharCounts[setup.distinctCharacters] += 1;
+    stats.goldCounts[setup.currentCost] += 1;
   }
 
   public toggleMulliganOnPoor(){

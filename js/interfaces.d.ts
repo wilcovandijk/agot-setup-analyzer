@@ -74,6 +74,7 @@ interface ISetupStore {
   exampleSetup : any;
 
   getStats() : ISetupStats;
+  getNoMulliganStats() : ISetupStats;
   getSettings() : ISetupSettings;
   setups : Array<any>;
 

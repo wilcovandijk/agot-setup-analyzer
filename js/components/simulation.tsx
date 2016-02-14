@@ -16,7 +16,6 @@ import { SimulationStats } from "./simulationStats"
 import { SetupExample } from "./setupExample"
 
 
-import { BarChart } from 'react-d3';
 import AppDispatcher = require('../dispatcher/AppDispatcher');
 import SetupActionID = require('../actions/SetupActionID');
 
@@ -122,7 +121,7 @@ class Simulation extends React.Component<ISimulationProps, ISimulationState> {
 
            <div id="tab-one-panel" className="panel active">
              <section className="content">
-               <SimulationStats stats={this.props.setup.getStats()} displayDeck={this.props.deck.getDisplayDeck()} />
+               <SimulationStats setups={this.props.setup.setups} stats={this.props.setup.getStats()} noMulliganStats={this.props.setup.getNoMulliganStats()} displayDeck={this.props.deck.getDisplayDeck()} />
              </section>
            </div>
 
