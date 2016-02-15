@@ -7,3 +7,8 @@ declare module 'react-d3' {
 declare module 'react-chartjs' {
   export var Bar:any;
 }
+
+declare module 'react-highcharts' {
+  var ReactHighcharts:any;
+  export = ReactHighcharts;
+}

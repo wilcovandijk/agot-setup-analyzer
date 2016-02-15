@@ -5,6 +5,8 @@
 /*global React, Router*/
 
 /// <reference path="libs/jquery.d.ts" />
+/// <reference path="libs/highcharts.d.ts" />
+
 /// <reference path="../typings/tsd.d.ts" />
 /// <reference path="./interfaces.d.ts"/>
 
@@ -17,6 +19,8 @@ import { Simulation } from "./components/Simulation"
 
 import { Bar as BarChart } from 'react-chartjs';
 import { BarGraph } from './components/barGraph';
+
+import ReactHighcharts = require('react-highcharts');
 
 
 
@@ -92,7 +96,7 @@ class DeckAnalyzerApp extends React.Component<IAppProps, IAppState> {
             data: [28, 48, 40, 19, 86, 27, 90]
         }
     ]
-    };
+    }
 
 
     var simulation = "";

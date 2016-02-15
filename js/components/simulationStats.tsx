@@ -10,6 +10,8 @@
 
 import { CardItem } from "../cardItem";
 import { BarGraph } from "./barGraph"
+import ReactHighcharts = require('react-highcharts');
+
 
 
 
@@ -69,26 +71,59 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
 
 };
 
-    var cardUsageData = {
-      labels: ["0 card", "1 card", "2 cards", "3 cards", "4 cards", "5 cards", "6 cards", "7 cards"],
-      datasets: [
-          {
-              label: "With Mulligan",
-              fillColor: "rgba(68,121,186,0.8)",
-              strokeColor: "rgba(68,121,186,0.8)",
-              highlightFill: "rgba(68,121,186,1)",
-              highlightStroke: "rgba(68,121,186,1)",
-              data: []
+  var cardUsageData = {
+      title: {
+          text: 'Number of Cards Setup'
+      },
+      subtitle: {
+          text: 'Source: WorldClimate.com'
+      },
+      xAxis: [{
+          categories: ['0 Card', '1 Card', '2 Card', '3 Card', '4 Card', '5 Card',
+              '6 Card', '7 Card', '8 Card', 'Oct'],
+      }],
+      yAxis: [{ // Primary yAxis
+          labels: {
+              format: '{value}%',
+              style: {
+                  color: Highcharts.getOptions().colors[1]
+              }
           },
-          {
-              label: "Without Mulligan",
-              fillColor: "rgba(85,104,127,0.4)",
-              strokeColor: "rgba(85,104,127,0.4)",
-              highlightFill: "rgba(85,104,127,1)",
-              highlightStroke: "rgba(85,104,127,1)",
-              data: []
+          title: {
+              text: 'Percentage',
+              style: {
+                  color: Highcharts.getOptions().colors[1]
+              }
           }
-      ]
+      }],
+      tooltip: {
+          shared: true
+      },
+      legend: {
+          layout: 'vertical',
+          align: 'left',
+          x: 120,
+          verticalAlign: 'top',
+          y: 100,
+          floating: true,
+          backgroundColor: '#FFFFFF'
+      },
+      series: [{
+          name: 'With Mulligan',
+          type: 'column',
+          data: [],
+          tooltip: {
+              valueSuffix: ' %'
+          }
+
+      }, {
+          name: 'Without Mulligan',
+          type: 'spline',
+          data: [],
+          tooltip: {
+              valueSuffix: '%'
+          }
+      }]
   };
 
 
@@ -96,8 +131,8 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
       var withMulligan = Math.round(10000*this.props.stats.cardCounts[i] / this.props.stats.simulations)/100;
       var withoutMuligan = Math.round(10000*this.props.noMulliganStats.cardCounts[i] / this.props.stats.simulations)/100;
 
-      cardUsageData.datasets[0].data.push(withMulligan);
-      cardUsageData.datasets[1].data.push(withoutMuligan);
+      cardUsageData.series[0].data.push(withMulligan);
+      cardUsageData.series[1].data.push(withoutMuligan);
     }
 
     var goldUsageData = [{"name": "Gold Spent",
@@ -177,13 +212,11 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
             {goldUsed}
           </section>
           <section className="charts">
-            <BarGraph
-                data={cardUsageData}
-                options={options}
-                width="500"
-                height="200"
-                showLegend={true}
-                />
+            <ReactHighcharts config={cardUsageData} />
+
+            <div>
+
+            </div>
 
           </section>
         </section>
