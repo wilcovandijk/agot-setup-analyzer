@@ -122,7 +122,7 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
                 ["Six Card"],
                 ["Seven Card"]
               ],
-              center: [100, 80],
+              center: [100, 90],
               size: 100,
               showInLegend: false,
               dataLabels: {
