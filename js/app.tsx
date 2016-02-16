@@ -18,8 +18,6 @@ import { DeckImport } from "./components/DeckImport"
 import { Simulation } from "./components/Simulation"
 
 import { Bar as BarChart } from 'react-chartjs';
-import { BarGraph } from './components/barGraph';
-
 import ReactHighcharts = require('react-highcharts');
 
 

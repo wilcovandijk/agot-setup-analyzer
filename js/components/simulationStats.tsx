@@ -9,7 +9,6 @@
 /// <reference path="../libs/react-d3.d.ts" />
 
 import { CardItem } from "../cardItem";
-import { BarGraph } from "./barGraph"
 import ReactHighcharts = require('react-highcharts');
 
 
@@ -48,6 +47,191 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
   //   return false;
   // }
 
+
+  private getBaseCardCountConfig(){
+    var cardUsageData = {
+        title: {
+            text: 'Number of Cards Setup'
+        },
+        xAxis: [{
+            categories: ['0 Card', '1 Card', '2 Card', '3 Card', '4 Card', '5 Card',
+                '6 Card', '7 Card'],
+        }],
+        yAxis: [{ // Primary yAxis
+            labels: {
+                format: '{value}%',
+            },
+            title: {
+                text: 'Percentage',
+            }
+        }],
+        tooltip: {
+            shared: true
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'left',
+            x: 120,
+            verticalAlign: 'top',
+            y: 50,
+            floating: true,
+            backgroundColor: '#FFFFFF'
+        },
+        plotOptions: {
+              pie: {
+                  dataLabels: {
+                      enabled: true,
+                      distance: -50,
+                      style: {
+                          fontWeight: 'bold',
+                          color: 'white',
+                          textShadow: '0px 1px 2px black'
+                      }
+                  },
+                  startAngle: -90,
+                  endAngle: 90,
+                  center: ['50%', '75%']
+              }
+          },
+        series: [{
+            name: 'With Mulligan',
+            type: 'column',
+            data: [],
+            tooltip: {
+                valueSuffix: ' %'
+            }
+
+        }, {
+            name: 'Without Mulligan',
+            type: 'spline',
+            data: [],
+            tooltip: {
+                valueSuffix: '%'
+            }
+        }, {
+              type: 'pie',
+              name: 'Browser share',
+              innerSize: '50%',
+              data: [
+                ["Zero Card"],
+                ["One Card"],
+                ["Two Card"],
+                ["Three Card"],
+                ["Four Card"],
+                ["Five Card"],
+                ["Six Card"],
+                ["Seven Card"]
+              ],
+              center: [100, 80],
+              size: 100,
+              showInLegend: false,
+              dataLabels: {
+                  enabled: false
+              }
+          }]
+    };
+
+    return cardUsageData;
+  }
+
+  private getBaseGoldConfig(){
+    var goldUsageData = {
+        title: {
+            text: 'Gold Used'
+        },
+        xAxis: [{
+            categories: ['0', '1', '2', '3', '4', '5', '6', '7', '8'],
+        }],
+        yAxis: [{ // Primary yAxis
+            labels: {
+                format: '{value}%',
+            },
+            title: {
+                text: 'Percentage',
+            }
+        }],
+        tooltip: {
+            shared: true
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'left',
+            x: 120,
+            verticalAlign: 'top',
+            y: 50,
+            floating: true,
+            backgroundColor: '#FFFFFF'
+        },
+        series: [{
+            name: 'With Mulligan',
+            type: 'column',
+            data: [],
+            tooltip: {
+                valueSuffix: '%'
+            }
+
+        }, {
+            name: 'Without Mulligan',
+            type: 'spline',
+            data: [],
+            tooltip: {
+                valueSuffix: '%'
+            }
+        }]
+    };
+
+    return goldUsageData;
+  }
+
+  private getBaseDistinctCharacterConfig(){
+    var characterData = {
+        title: {
+            text: 'Distinct Characters'
+        },
+        xAxis: [{
+            categories: ['0', '1', '2', '3', '4', '5', '6', '7'],
+        }],
+        yAxis: [{ // Primary yAxis
+            labels: {
+                format: '{value}%',
+            },
+            title: {
+                text: 'Percentage',
+            }
+        }],
+        tooltip: {
+            shared: true
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'left',
+            x: 120,
+            verticalAlign: 'top',
+            y: 50,
+            floating: true,
+            backgroundColor: '#FFFFFF'
+        },
+        series: [{
+            name: 'With Mulligan',
+            type: 'column',
+            data: [],
+            tooltip: {
+                valueSuffix: '%'
+            }
+
+        }, {
+            name: 'Without Mulligan',
+            type: 'spline',
+            data: [],
+            tooltip: {
+                valueSuffix: '%'
+            }
+        }]
+    };
+
+    return characterData;
+  }
+
   public render() {
     var deck = this.props.displayDeck;
 
@@ -71,88 +255,33 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
 
 };
 
-  var cardUsageData = {
-      title: {
-          text: 'Number of Cards Setup'
-      },
-      subtitle: {
-          text: 'Source: WorldClimate.com'
-      },
-      xAxis: [{
-          categories: ['0 Card', '1 Card', '2 Card', '3 Card', '4 Card', '5 Card',
-              '6 Card', '7 Card', '8 Card', 'Oct'],
-      }],
-      yAxis: [{ // Primary yAxis
-          labels: {
-              format: '{value}%',
-              style: {
-                  color: Highcharts.getOptions().colors[1]
-              }
-          },
-          title: {
-              text: 'Percentage',
-              style: {
-                  color: Highcharts.getOptions().colors[1]
-              }
-          }
-      }],
-      tooltip: {
-          shared: true
-      },
-      legend: {
-          layout: 'vertical',
-          align: 'left',
-          x: 120,
-          verticalAlign: 'top',
-          y: 100,
-          floating: true,
-          backgroundColor: '#FFFFFF'
-      },
-      series: [{
-          name: 'With Mulligan',
-          type: 'column',
-          data: [],
-          tooltip: {
-              valueSuffix: ' %'
-          }
 
-      }, {
-          name: 'Without Mulligan',
-          type: 'spline',
-          data: [],
-          tooltip: {
-              valueSuffix: '%'
-          }
-      }]
-  };
-
-
+    var cardUsageData = this.getBaseCardCountConfig();
     for (var i = 0; i < 8; i++){
       var withMulligan = Math.round(10000*this.props.stats.cardCounts[i] / this.props.stats.simulations)/100;
       var withoutMuligan = Math.round(10000*this.props.noMulliganStats.cardCounts[i] / this.props.stats.simulations)/100;
 
       cardUsageData.series[0].data.push(withMulligan);
       cardUsageData.series[1].data.push(withoutMuligan);
+      cardUsageData.series[2].data[i].push(withMulligan);
     }
 
-    var goldUsageData = [{"name": "Gold Spent",
-    "values": [
-    ]}];
+    var goldUsageData = this.getBaseGoldConfig();
     for (var i = 0; i < 9; i++){
-      goldUsageData[0].values.push({
-        "x": i,
-        "y":  Math.round(10000*this.props.stats.goldCounts[i] / this.props.stats.simulations)/100
-      });
+      var withMulligan = Math.round(10000*this.props.stats.goldCounts[i] / this.props.stats.simulations)/100;
+      var withoutMuligan = Math.round(10000*this.props.noMulliganStats.goldCounts[i] / this.props.stats.simulations)/100;
+
+      goldUsageData.series[0].data.push(withMulligan);
+      goldUsageData.series[1].data.push(withoutMuligan);
     }
 
-    var distinctCharData = [{"name": "Distinct Characters",
-    "values": [
-    ]}];
+    var distinctCharData = this.getBaseDistinctCharacterConfig();
     for (var i = 0; i < 8; i++){
-      distinctCharData[0].values.push({
-        "x": i,
-        "y":  Math.round(10000*this.props.stats.distinctCharCounts[i] / this.props.stats.simulations)/100
-      });
+      var withMulligan = Math.round(10000*this.props.stats.distinctCharCounts[i] / this.props.stats.simulations)/100;
+      var withoutMuligan = Math.round(10000*this.props.noMulliganStats.distinctCharCounts[i] / this.props.stats.simulations)/100;
+
+      distinctCharData.series[0].data.push(withMulligan);
+      distinctCharData.series[1].data.push(withoutMuligan);
     }
 
     var cardsUsed = [];
@@ -181,16 +310,20 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
       }
     }
 
-    var scatterData = [{
-    name: "Setups",
-    values: [ ]
-  }];
-    this.props.setups.forEach(setup => {
-        scatterData[0].values.push({
-          x: setup.cards.length,
-          y: setup.currentCost
-        });
-    });
+    var charts = (
+      <section className="charts">
+        <p>Simulating...</p>
+      </section>
+    );
+    if (this.props.stats.simulations == 5000){
+      charts = (
+        <section className="charts">
+          <ReactHighcharts config={cardUsageData} />
+          <ReactHighcharts config={distinctCharData} />
+          <ReactHighcharts config={goldUsageData} />
+        </section>
+      );
+    }
 
     return (
       <div>
@@ -211,14 +344,7 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
             <p><strong>Gold Used:</strong></p>
             {goldUsed}
           </section>
-          <section className="charts">
-            <ReactHighcharts config={cardUsageData} />
-
-            <div>
-
-            </div>
-
-          </section>
+          {charts}
         </section>
         <section className="deck">
           <ul className="card-list">
