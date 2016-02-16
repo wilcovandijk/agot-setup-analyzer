@@ -186,13 +186,13 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
           <p>Hand Quality Settings</p>
           <div>
             <input id="require-one-character" type="checkbox" checked={this.props.settings.requireOneCharacter} onClick={this.toggleRequireOneCharacter} />
-            <label htmlFor="mulligan-if-poor">Require One Character. If this is not selected, one character setups will not be de-emphaized unless they contain less cards</label>
+            <label htmlFor="require-one-character">Require One Character. If this is not selected, one character setups will not be de-emphaized unless they contain less cards</label>
           </div>
 
           <p>Mulligan Settings</p>
           <div>
             <input id="mulligan-if-poor" type="checkbox" checked={this.props.settings.mulliganOnPoor} onClick={this.toggleMulliganOnPoor} />
-            <label htmlFor="mulligan-if-poor">Mulligan if 2 Card Setup or 1 Character</label>
+            <label htmlFor="mulligan-if-poor">Mulligan if 2 Card Setup</label>
           </div>
 
           <div>
