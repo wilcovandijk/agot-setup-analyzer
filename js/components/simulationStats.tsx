@@ -325,9 +325,6 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
     if (this.props.stats.simulations == 5000){
       charts = (
         <section className="charts">
-          <ReactHighcharts config={cardUsageData} />
-          <ReactHighcharts config={distinctCharData} />
-          <ReactHighcharts config={goldUsageData} />
           <div className="stat-overview">
             <div className="quick-stat">
               <h2>{Math.round(1000*fourGamePoorSetupRate)/10}%</h2>
@@ -346,6 +343,9 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
               <span>Chance of having a poor setup in 10 games</span>
             </div>
           </div>
+          <ReactHighcharts config={cardUsageData} />
+          <ReactHighcharts config={distinctCharData} />
+          <ReactHighcharts config={goldUsageData} />
         </section>
       );
     }

@@ -181,18 +181,18 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
           <h2>Poor Setup Settings</h2>
           <div>
             <p><strong>Require Two Characters:</strong></p>
-            <input id="require-one-character" type="checkbox" checked={this.props.settings.requireMoreThanOneCharacter} onClick={this.toggleRequireMoreThanOneCharacter} />
+            <input id="require-one-character" type="checkbox" checked={this.props.settings.requireMoreThanOneCharacter} onChange={this.toggleRequireMoreThanOneCharacter} />
             <label htmlFor="require-one-character">Require 2+ Characters. If this is selected, one character setups will be considered poor</label>
 
             <p><strong>Minimum Number of Cards for Acceptable Setup:</strong></p>
             <p>
-              <input type="radio" name="poorCards" value="0" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 0} />0 Cards&nbsp;
-              <input type="radio" name="poorCards" value="1" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 1} />1 Card&nbsp;
-              <input type="radio" name="poorCards" value="2" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 2} />2 Cards&nbsp;
-              <input type="radio" name="poorCards" value="3" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 3} />3 Cards&nbsp;
-              <input type="radio" name="poorCards" value="4" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 4} />4 Cards&nbsp;
-              <input type="radio" name="poorCards" value="5" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 5} />5 Cards&nbsp;
-              <input type="radio" name="poorCards" value="6" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 6} />6 Cards&nbsp;
+              <input type="radio" name="poorCards" value="0" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 0} id="zero-poor" /><label htmlFor="zero-poor">0 Cards </label>
+              <input type="radio" name="poorCards" value="1" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 1} id="one-poor" /><label htmlFor="one-poor">1 Card </label>
+              <input type="radio" name="poorCards" value="2" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 2} id="two-poor" /><label htmlFor="two-poor">2 Cards </label>
+              <input type="radio" name="poorCards" value="3" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 3} id="three-poor" /><label htmlFor="three-poor">3 Cards </label>
+              <input type="radio" name="poorCards" value="4" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 4} id="four-poor" /><label htmlFor="four-poor">4 Cards </label>
+              <input type="radio" name="poorCards" value="5" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 5} id="five-poor" /><label htmlFor="five-poor">5 Cards </label>
+              <input type="radio" name="poorCards" value="6" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 6} id="six-poor" /><label htmlFor="six-poor">6 Cards </label>
             </p>
             <p>{this.props.settings.poorCards} cards or under will be considered "poor"</p>
 
@@ -200,12 +200,12 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
 
           <h2>Mulligan Settings</h2>
           <div>
-            <input id="mulligan-if-poor" type="checkbox" checked={this.props.settings.mulliganOnPoor} onClick={this.toggleMulliganOnPoor} />
+            <input id="mulligan-if-poor" type="checkbox" checked={this.props.settings.mulliganOnPoor} onChange={this.toggleMulliganOnPoor} />
             <label htmlFor="mulligan-if-poor">Mulligan All Poor Setups</label>
           </div>
 
           <div>
-            <input id="mulligan-without-key" type="checkbox" checked={this.props.settings.mulliganWithoutKey} onClick={this.toggleMulliganWithoutKey} />
+            <input id="mulligan-without-key" type="checkbox" checked={this.props.settings.mulliganWithoutKey} onChange={this.toggleMulliganWithoutKey} />
             <label htmlFor="mulligan-without-key">Mulligan if No Key Character</label>
           </div>
 
