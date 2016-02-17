@@ -358,7 +358,7 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
             <p>Avg Gold: {Math.round(10000*this.props.stats.goldSetup/this.props.stats.simulations)/10000}</p>
             <p>Avg Cards: {Math.round(10000*this.props.stats.cardsSetup/this.props.stats.simulations)/10000}</p>
 
-            <p><span className="tooltip hint--top" data-hint="Percentage of Setups with 2 or less cards set up or only 1 character">
+            <p><span className="tooltip hint--top" data-hint="Poor setup definition can be configured in Configure tab">
                 Poor Setups:
               </span> {Math.round(poorSetupRate*1000)/10}%</p>
             <p><span className="tooltip hint--top" data-hint="Percentage of Setups with 5 or more cards set up and over 1 character">
