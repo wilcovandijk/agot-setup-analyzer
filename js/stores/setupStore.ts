@@ -325,6 +325,8 @@ class SetupStoreStatic implements ISetupStore {
         return this.runSetup(false, bestSetup);
       }
       this.stats.poorSetups++;
+    } else if (bestSetup.cards.length >= 5){
+      this.stats.greatSetups++;
     }
 
     var credited = [];
