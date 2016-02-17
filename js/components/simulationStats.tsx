@@ -355,6 +355,7 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
         <section className="stats">
           <section className="info">
             <p>Runs: {this.props.stats.simulations}</p>
+            <p>Mulligans: {this.props.stats.mulligans} ({Math.round(this.props.stats.mulligans*1000 / this.props.stats.simulations)/10}%)</p>
             <p>Avg Gold: {Math.round(10000*this.props.stats.goldSetup/this.props.stats.simulations)/10000}</p>
             <p>Avg Cards: {Math.round(10000*this.props.stats.cardsSetup/this.props.stats.simulations)/10000}</p>
 

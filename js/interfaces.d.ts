@@ -39,6 +39,7 @@ interface IDeckStore {
 
 interface ISetupStats{
   simulations : number;
+  mulligans : number;
   cardsSetup : number;
   goldSetup : number;
   poorSetups : number;

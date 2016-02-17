@@ -71,6 +71,7 @@ class SetupStoreStatic implements ISetupStore {
   public resetStats(){
     this.stats = {
       simulations : 0,
+      mulligans: 0,
       goldSetup : 0,
       cardsSetup : 0,
       greatSetups : 0,
@@ -82,6 +83,7 @@ class SetupStoreStatic implements ISetupStore {
     }
     this.noMulliganStats = {
       simulations : 0,
+      mulligans: 0,
       goldSetup : 0,
       cardsSetup : 0,
       greatSetups : 0,
@@ -268,6 +270,7 @@ class SetupStoreStatic implements ISetupStore {
 
   private runSetup(mulligan, previousSetup = null){
     if (previousSetup && !mulligan){
+      this.stats.mulligans++;
       this.updateStats(this.noMulliganStats, previousSetup);
     }
     var drawDeck = this.deck.getDrawDeck();
