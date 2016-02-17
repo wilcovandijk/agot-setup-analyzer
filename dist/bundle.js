@@ -19,9 +19,9 @@ var SetupActionID = (function () {
     SetupActionID.PREVIOUS_EXAMPLE = "SETUP.PREVIOUS_EXAMPLE";
     SetupActionID.TOGGLE_MULIGAN_ON_POOR = "SETUP.TOGGLE_MULIGAN_ON_POOR";
     SetupActionID.TOGGLE_MULIGAN_WITHOUT_KEY = "SETUP.TOGGLE_MULIGAN_WITHOUT_KEY";
-    SetupActionID.TOGGLE_MULIGAN_IF_NOT_GREAT = "SETUP.TOGGLE_MULIGAN_IF_NOT_GREAT";
-    SetupActionID.TOGGLE_MULLIGAN_ON_THREE_CARD = "SETUP.TOGGLE_MULLIGAN_ON_THREE_CARD";
     SetupActionID.TOGGLE_REQUIRE_ONE_CHARACTER = "SETUP.TOGGLE_REQUIRE_ONE_CHARACTER";
+    SetupActionID.SET_POOR_CARDS = "SETUP.SET_POOR_CARDS";
+    SetupActionID.SET_MINIMUM_CARDS = "SETUP.SET_MINIMUM_CARDS";
     SetupActionID.TEST = "TEST";
     return SetupActionID;
 })();
@@ -365,22 +365,22 @@ var Configure = (function (_super) {
             data: null
         });
     };
-    Configure.prototype.toggleMulliganIfNotGreat = function () {
-        AppDispatcher.dispatch({
-            actionType: SetupActionID.TOGGLE_MULIGAN_IF_NOT_GREAT,
-            data: null
-        });
-    };
-    Configure.prototype.toggleMulliganOnThreeCard = function () {
-        AppDispatcher.dispatch({
-            actionType: SetupActionID.TOGGLE_MULLIGAN_ON_THREE_CARD,
-            data: null
-        });
-    };
-    Configure.prototype.toggleRequireOneCharacter = function () {
+    Configure.prototype.toggleRequireMoreThanOneCharacter = function () {
         AppDispatcher.dispatch({
             actionType: SetupActionID.TOGGLE_REQUIRE_ONE_CHARACTER,
             data: null
+        });
+    };
+    Configure.prototype.poorCardsChanged = function (event) {
+        AppDispatcher.dispatch({
+            actionType: SetupActionID.SET_POOR_CARDS,
+            data: event.target.value
+        });
+    };
+    Configure.prototype.minimumCardsChanged = function (event) {
+        AppDispatcher.dispatch({
+            actionType: SetupActionID.SET_MINIMUM_CARDS,
+            data: event.target.value
         });
     };
     Configure.prototype.render = function () {
@@ -417,7 +417,7 @@ var Configure = (function (_super) {
         var allCards = cards.map(function (card) {
             return (React.createElement(cardSettings_1.CardSettings, {"key": card.code, "card": card}));
         });
-        return (React.createElement("section", {"className": "content"}, React.createElement("section", {"className": "configure"}, React.createElement("p", null, "This section is a work in progress. The Setup Analyzer will now attempt to mulligan your first draw if it doesn't meet certain criteria. This page provides all the current settings for configuring what setups to prefer and what hands to mulligan. You can configure cards as being ", React.createElement("i", {"className": "fa fa-key fa-fw"}), " Key cards, ", React.createElement("i", {"className": "fa fa-exclamation-triangle fa-fw"}), " Try to Avoid Cards, and ", React.createElement("i", {"className": "fa fa-ban fa-fw"}), "Restricted Cards"), React.createElement("p", null, "Key Cards will be set up as often as possible. As long as you can set up at least 2 total characters, a set up with a key card will be used if available"), React.createElement("p", null, "Try to Avoid Cards will be avoided unless there is nothing else that can be used. For example, if you have only 3 gold worth of cards to set up, and a 5 cost try to avoid card, it will set up the card. By default this includes characters with positive enter play abilities"), React.createElement("p", null, "Restricted cards will never be set up under any circumstances. By default this includes negative attachments"), React.createElement("p", null, "Hand Quality Settings"), React.createElement("div", null, React.createElement("input", {"id": "require-one-character", "type": "checkbox", "checked": this.props.settings.requireOneCharacter, "onClick": this.toggleRequireOneCharacter}), React.createElement("label", {"htmlFor": "require-one-character"}, "Require One Character. If this is not selected, one character setups will not be de-emphaized unless they contain less cards")), React.createElement("p", null, "Mulligan Settings"), React.createElement("div", null, React.createElement("input", {"id": "mulligan-if-poor", "type": "checkbox", "checked": this.props.settings.mulliganOnPoor, "onClick": this.toggleMulliganOnPoor}), React.createElement("label", {"htmlFor": "mulligan-if-poor"}, "Mulligan if 2 Card Setup")), React.createElement("div", null, React.createElement("input", {"id": "mulligan-on-three", "type": "checkbox", "checked": this.props.settings.mulliganOn3Card, "onClick": this.toggleMulliganOnThreeCard}), React.createElement("label", {"htmlFor": "mulligan-on-three"}, "Mulligan on 3 Card Setup")), React.createElement("div", null, React.createElement("input", {"id": "mulligan-if-not-great", "type": "checkbox", "checked": this.props.settings.mulliganIfNotGreat, "onClick": this.toggleMulliganIfNotGreat}), React.createElement("label", {"htmlFor": "mulligan-if-not-great"}, "Mulligan on 4 Card Setup")), React.createElement("div", null, React.createElement("input", {"id": "mulligan-without-key", "type": "checkbox", "checked": this.props.settings.mulliganWithoutKey, "onClick": this.toggleMulliganWithoutKey}), React.createElement("label", {"htmlFor": "mulligan-without-key"}, "Mulligan if No Key Character")), key, avoided, restricted, React.createElement("div", null, "All Cards:"), React.createElement("div", {"className": "card-list"}, allCards))));
+        return (React.createElement("section", {"className": "content"}, React.createElement("section", {"className": "configure"}, React.createElement("h2", null, "Poor Setup Settings"), React.createElement("div", null, React.createElement("p", null, React.createElement("strong", null, "Require Two Characters:")), React.createElement("input", {"id": "require-one-character", "type": "checkbox", "checked": this.props.settings.requireMoreThanOneCharacter, "onChange": this.toggleRequireMoreThanOneCharacter}), React.createElement("label", {"htmlFor": "require-one-character"}, "Require 2+ Characters. If this is selected, one character setups will be considered poor"), React.createElement("p", null, React.createElement("strong", null, "Minimum Number of Cards for Acceptable Setup:")), React.createElement("p", null, React.createElement("input", {"type": "radio", "name": "poorCards", "value": "0", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 0, "id": "zero-poor"}), React.createElement("label", {"htmlFor": "zero-poor"}, "0 Cards "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "1", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 1, "id": "one-poor"}), React.createElement("label", {"htmlFor": "one-poor"}, "1 Card "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "2", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 2, "id": "two-poor"}), React.createElement("label", {"htmlFor": "two-poor"}, "2 Cards "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "3", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 3, "id": "three-poor"}), React.createElement("label", {"htmlFor": "three-poor"}, "3 Cards "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "4", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 4, "id": "four-poor"}), React.createElement("label", {"htmlFor": "four-poor"}, "4 Cards "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "5", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 5, "id": "five-poor"}), React.createElement("label", {"htmlFor": "five-poor"}, "5 Cards "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "6", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 6, "id": "six-poor"}), React.createElement("label", {"htmlFor": "six-poor"}, "6 Cards ")), React.createElement("p", null, this.props.settings.poorCards, " cards or under will be considered \"poor\"")), React.createElement("h2", null, "Mulligan Settings"), React.createElement("div", null, React.createElement("input", {"id": "mulligan-if-poor", "type": "checkbox", "checked": this.props.settings.mulliganOnPoor, "onChange": this.toggleMulliganOnPoor}), React.createElement("label", {"htmlFor": "mulligan-if-poor"}, "Mulligan All Poor Setups")), React.createElement("div", null, React.createElement("input", {"id": "mulligan-without-key", "type": "checkbox", "checked": this.props.settings.mulliganWithoutKey, "onChange": this.toggleMulliganWithoutKey}), React.createElement("label", {"htmlFor": "mulligan-without-key"}, "Mulligan if No Key Character")), React.createElement("div", null, React.createElement("p", null, React.createElement("strong", null, "Minimum Number of Cards to Keep:")), React.createElement("p", null, React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "0", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 0, "id": "zero-minimum"}), React.createElement("label", {"htmlFor": "zero-minimum"}, "0 Cards "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "1", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 1, "id": "one-minimum"}), React.createElement("label", {"htmlFor": "one-minimum"}, "1 Card "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "2", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 2, "id": "two-minimum"}), React.createElement("label", {"htmlFor": "two-minimum"}, "2 Cards "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "3", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 3, "id": "three-minimum"}), React.createElement("label", {"htmlFor": "three-minimum"}, "3 Cards "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "4", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 4, "id": "four-minimum"}), React.createElement("label", {"htmlFor": "four-minimum"}, "4 Cards "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "5", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 5, "id": "five-minimum"}), React.createElement("label", {"htmlFor": "five-minimum"}, "5 Cards "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "6", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 6, "id": "six-minimum"}), React.createElement("label", {"htmlFor": "six-minimum"}, "6 Cards ")), React.createElement("p", null, this.props.settings.minimumCards, " cards or under will be mulliganed")), React.createElement("p", null, "The Setup Analyzer will now attempt to mulligan your first draw if it doesn't meet certain criteria. This page provides all the current settings for configuring what setups to prefer and what hands to mulligan. You can configure cards as being ", React.createElement("i", {"className": "fa fa-key fa-fw"}), " Key cards, ", React.createElement("i", {"className": "fa fa-exclamation-triangle fa-fw"}), " Try to Avoid Cards, and ", React.createElement("i", {"className": "fa fa-ban fa-fw"}), "Restricted Cards"), React.createElement("p", null, "Key Cards will be set up as often as possible. As long as you can set up at least 2 total characters, a set up with a key card will be used if available"), React.createElement("p", null, "Try to Avoid Cards will be avoided unless there is nothing else that can be used. For example, if you have only 3 gold worth of cards to set up, and a 5 cost try to avoid card, it will set up the card. By default this includes characters with positive enter play abilities"), React.createElement("p", null, "Restricted cards will never be set up under any circumstances. By default this includes negative attachments"), key, avoided, restricted, React.createElement("div", null, "All Cards:"), React.createElement("div", {"className": "card-list"}, allCards))));
     };
     return Configure;
 })(React.Component);
@@ -469,8 +469,23 @@ var SetupExample = (function (_super) {
                 }
                 return (React.createElement("div", {"key": pos, "className": className}, React.createElement("img", {"src": image})));
             });
+            var mulligan = null;
+            if (this.props.setups[this.state.shownSetup].mulliganed) {
+                var mulliganedItems = this.props.setups[this.state.shownSetup].mulliganed.draw.map(function (pos) {
+                    i++;
+                    var card = _this.props.drawDeck[pos];
+                    var code = card.code + i;
+                    var image = "http://thronesdb.com/" + card.imagesrc;
+                    var className = "card-container";
+                    if (_this.props.setups[_this.state.shownSetup].mulliganed.cards.filter(function (p) { return p == pos; }).length > 0) {
+                        className += " selected";
+                    }
+                    return (React.createElement("div", {"key": pos, "className": className}, React.createElement("img", {"src": image})));
+                });
+                mulligan = (React.createElement("div", null, React.createElement("div", null, "Mulliganed:"), React.createElement("div", {"className": "card-list example mulliganed"}, mulliganedItems)));
+            }
         }
-        return (React.createElement("section", {"className": "example"}, React.createElement("div", null, this.props.drawDeck.length, " Cards"), React.createElement("div", null, "Examples:", React.createElement("button", {"onClick": this.onPrevious.bind(this)}, "Previous"), " ", React.createElement("button", {"onClick": this.onNext.bind(this)}, "Next")), React.createElement("div", {"className": "card-list example"}, exampleItems), React.createElement("p", null, "Does something look wrong? ", React.createElement("a", {"href": "mailto:jason@red5dev.com"}, "Let me know!"))));
+        return (React.createElement("section", {"className": "example"}, React.createElement("div", null, this.props.drawDeck.length, " Cards"), React.createElement("div", null, "Examples:", React.createElement("button", {"onClick": this.onPrevious.bind(this)}, "Previous"), " ", React.createElement("button", {"onClick": this.onNext.bind(this)}, "Next")), React.createElement("div", {"className": "card-list example"}, exampleItems), mulligan, React.createElement("p", null, "Does something look wrong? ", React.createElement("a", {"href": "mailto:jason@red5dev.com"}, "Let me know!"))));
     };
     return SetupExample;
 })(React.Component);
@@ -492,6 +507,9 @@ var SimulationStats = (function (_super) {
             shownSetup: 0
         };
     }
+    SimulationStats.prototype.shouldComponentUpdate = function (nextProps, nextState) {
+        return nextProps.stats.simulations != this.props.stats.simulations;
+    };
     SimulationStats.prototype.getBaseCardCountConfig = function () {
         var cardUsageData = {
             title: {
@@ -720,11 +738,16 @@ var SimulationStats = (function (_super) {
                 goldUsed.push(React.createElement("p", {"key": i}, i, " Gold", plural, " : ", Math.round(10000 * this.props.stats.goldCounts[i] / this.props.stats.simulations) / 100, "%"));
             }
         }
+        var poorSetupRate = this.props.stats.poorSetups / this.props.stats.simulations;
+        var fourGamePoorSetupRate = 1 - Math.pow(1 - poorSetupRate, 4);
+        var sixGamePoorSetupRate = 1 - Math.pow(1 - poorSetupRate, 6);
+        var eightGamePoorSetupRate = 1 - Math.pow(1 - poorSetupRate, 8);
+        var tenGamePoorSetupRate = 1 - Math.pow(1 - poorSetupRate, 10);
         var charts = (React.createElement("section", {"className": "charts"}, React.createElement("p", null, "Simulating...")));
         if (this.props.stats.simulations == 5000) {
-            charts = (React.createElement("section", {"className": "charts"}, React.createElement(ReactHighcharts, {"config": cardUsageData}), React.createElement(ReactHighcharts, {"config": distinctCharData}), React.createElement(ReactHighcharts, {"config": goldUsageData})));
+            charts = (React.createElement("section", {"className": "charts"}, React.createElement("div", {"className": "stat-overview"}, React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * fourGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 4 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * sixGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 6 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * eightGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 8 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * tenGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 10 games"))), React.createElement(ReactHighcharts, {"config": cardUsageData}), React.createElement(ReactHighcharts, {"config": distinctCharData}), React.createElement(ReactHighcharts, {"config": goldUsageData})));
         }
-        return (React.createElement("div", null, React.createElement("section", {"className": "stats"}, React.createElement("section", {"className": "info"}, React.createElement("p", null, "Runs: ", this.props.stats.simulations), React.createElement("p", null, "Avg Gold: ", Math.round(10000 * this.props.stats.goldSetup / this.props.stats.simulations) / 10000), React.createElement("p", null, "Avg Cards: ", Math.round(10000 * this.props.stats.cardsSetup / this.props.stats.simulations) / 10000), React.createElement("p", null, React.createElement("span", {"className": "tooltip hint--top", "data-hint": "Percentage of Setups with 2 or less cards set up or only 1 character"}, "Poor Setups:"), " ", Math.round(100 * this.props.stats.poorSetups / this.props.stats.simulations), "%"), React.createElement("p", null, React.createElement("span", {"className": "tooltip hint--top", "data-hint": "Percentage of Setups with 5 or more cards set up and over 1 character"}, "Great Setups:"), " ", Math.round(100 * this.props.stats.greatSetups / this.props.stats.simulations), "%"), React.createElement("p", null, React.createElement("strong", null, "Cards Setup:")), cardsUsed, React.createElement("p", null, React.createElement("strong", null, "Gold Used:")), goldUsed), charts), React.createElement("section", {"className": "deck"}, React.createElement("ul", {"className": "card-list"}, cardItems))));
+        return (React.createElement("div", null, React.createElement("section", {"className": "stats"}, React.createElement("section", {"className": "info"}, React.createElement("p", null, "Runs: ", this.props.stats.simulations), React.createElement("p", null, "Avg Gold: ", Math.round(10000 * this.props.stats.goldSetup / this.props.stats.simulations) / 10000), React.createElement("p", null, "Avg Cards: ", Math.round(10000 * this.props.stats.cardsSetup / this.props.stats.simulations) / 10000), React.createElement("p", null, React.createElement("span", {"className": "tooltip hint--top", "data-hint": "Percentage of Setups with 2 or less cards set up or only 1 character"}, "Poor Setups:"), " ", Math.round(poorSetupRate * 1000) / 10, "%"), React.createElement("p", null, React.createElement("span", {"className": "tooltip hint--top", "data-hint": "Percentage of Setups with 5 or more cards set up and over 1 character"}, "Great Setups:"), " ", Math.round(100 * this.props.stats.greatSetups / this.props.stats.simulations), "%"), React.createElement("p", null, React.createElement("strong", null, "Cards Setup:")), cardsUsed, React.createElement("p", null, React.createElement("strong", null, "Gold Used:")), goldUsed), charts), React.createElement("section", {"className": "deck"}, React.createElement("ul", {"className": "card-list"}, cardItems))));
     };
     return SimulationStats;
 })(React.Component);
@@ -907,16 +930,14 @@ var SetupStoreStatic = (function () {
         this.onChanges = [];
         this.settings = {
             simulations: 5000,
-            minimumCards: 3,
+            poorCards: 2,
+            minimumCards: 0,
             minimumCharacters: 2,
             greatCardCounts: 5,
             greatCharacterCounts: 2,
-            requireOneCharacter: true,
-            mulliganOnPoor: false,
-            mulliganOn3Card: false,
-            mulliganWithoutKey: false,
-            mulliganIfNotGreat: false,
-            mulliganIfUnderXCards: 4
+            requireMoreThanOneCharacter: true,
+            mulliganOnPoor: true,
+            mulliganWithoutKey: false
         };
         this.resetStats();
     }
@@ -953,10 +974,10 @@ var SetupStoreStatic = (function () {
         this.deck.getDisplayDeck().forEach(function (c) { return c.setup_count = 0; });
     };
     SetupStoreStatic.prototype.getSettings = function () {
-        return this.settings;
+        return $.extend({}, this.settings);
     };
     SetupStoreStatic.prototype.getStats = function () {
-        return this.stats;
+        return $.extend({}, this.stats);
     };
     SetupStoreStatic.prototype.getNoMulliganStats = function () {
         return this.noMulliganStats;
@@ -1012,7 +1033,7 @@ var SetupStoreStatic = (function () {
     };
     SetupStoreStatic.prototype.scoreSetup = function (setup) {
         var factors = [
-            this.settings.requireOneCharacter ? setup.distinctCharacters > 1 : 0,
+            this.settings.requireMoreThanOneCharacter ? setup.distinctCharacters > 1 : 0,
             setup.keyCards,
             (setup.cards.length - setup.avoidedCards),
             setup.cards.length,
@@ -1121,23 +1142,14 @@ var SetupStoreStatic = (function () {
         if (mulligan && bestSetup.keyCards == 0 && this.settings.mulliganWithoutKey) {
             return this.runSetup(false, bestSetup);
         }
-        if (bestSetup.cards.length < 3 || (bestSetup.distinctCharacters <= 1 && this.settings.requireOneCharacter)) {
-            if (mulligan &&
-                (this.settings.mulliganOnPoor
-                    || this.settings.mulliganIfNotGreat
-                    || this.settings.mulliganOn3Card)) {
+        if (mulligan && bestSetup.cards.length <= this.settings.minimumCards) {
+            return this.runSetup(false, bestSetup);
+        }
+        else if (bestSetup.cards.length <= this.settings.poorCards || (bestSetup.distinctCharacters <= 1 && this.settings.requireMoreThanOneCharacter)) {
+            if (mulligan && this.settings.mulliganOnPoor) {
                 return this.runSetup(false, bestSetup);
             }
             this.stats.poorSetups++;
-        }
-        else if (bestSetup.cards.length >= 5) {
-            this.stats.greatSetups++;
-        }
-        else if (mulligan && bestSetup.cards.length < 5 && this.settings.mulliganIfNotGreat) {
-            return this.runSetup(false, bestSetup);
-        }
-        else if (mulligan && bestSetup.cards.length <= 3 && this.settings.mulliganOn3Card) {
-            return this.runSetup(false, bestSetup);
         }
         var credited = [];
         bestSetup.cards.forEach(function (pos) {
@@ -1151,6 +1163,12 @@ var SetupStoreStatic = (function () {
         this.updateStats(this.stats, bestSetup);
         if (mulligan && !previousSetup) {
             this.updateStats(this.noMulliganStats, bestSetup);
+        }
+        if (previousSetup) {
+            bestSetup.mulliganed = previousSetup;
+        }
+        else {
+            bestSetup.mulliganed = null;
         }
         return bestSetup;
     };
@@ -1170,20 +1188,20 @@ var SetupStoreStatic = (function () {
         this.settings.mulliganWithoutKey = !this.settings.mulliganWithoutKey;
         this.inform();
     };
-    SetupStoreStatic.prototype.toggleMulliganIfNotGreat = function () {
-        this.settings.mulliganIfNotGreat = !this.settings.mulliganIfNotGreat;
-        this.inform();
-    };
-    SetupStoreStatic.prototype.toggleThreeCardMulligan = function () {
-        this.settings.mulliganOn3Card = !this.settings.mulliganOn3Card;
-        this.inform();
-    };
-    SetupStoreStatic.prototype.toggleRequireOneCharacter = function () {
-        this.settings.requireOneCharacter = !this.settings.requireOneCharacter;
+    SetupStoreStatic.prototype.toggleRequireMoreThanOneCharacter = function () {
+        this.settings.requireMoreThanOneCharacter = !this.settings.requireMoreThanOneCharacter;
         this.inform();
     };
     SetupStoreStatic.prototype.setNumberOfSimulations = function (simulations) {
         this.settings.simulations = simulations;
+        this.inform();
+    };
+    SetupStoreStatic.prototype.setPoorCards = function (cards) {
+        this.settings.poorCards = Math.min(7, Math.max(0, cards));
+        this.inform();
+    };
+    SetupStoreStatic.prototype.setMinimumCards = function (cards) {
+        this.settings.minimumCards = Math.min(7, Math.max(0, cards));
         this.inform();
     };
     return SetupStoreStatic;
@@ -1199,14 +1217,14 @@ AppDispatcher.register(function (payload) {
     else if (payload.actionType == SetupActionID.TOGGLE_MULIGAN_WITHOUT_KEY) {
         SetupStore.toggleMulliganWithoutKey();
     }
-    else if (payload.actionType == SetupActionID.TOGGLE_MULIGAN_IF_NOT_GREAT) {
-        SetupStore.toggleMulliganIfNotGreat();
-    }
-    else if (payload.actionType == SetupActionID.TOGGLE_MULLIGAN_ON_THREE_CARD) {
-        SetupStore.toggleThreeCardMulligan();
-    }
     else if (payload.actionType == SetupActionID.TOGGLE_REQUIRE_ONE_CHARACTER) {
-        SetupStore.toggleRequireOneCharacter();
+        SetupStore.toggleRequireMoreThanOneCharacter();
+    }
+    else if (payload.actionType == SetupActionID.SET_POOR_CARDS) {
+        SetupStore.setPoorCards(payload.data);
+    }
+    else if (payload.actionType == SetupActionID.SET_MINIMUM_CARDS) {
+        SetupStore.setMinimumCards(payload.data);
     }
 });
 module.exports = SetupStore;
