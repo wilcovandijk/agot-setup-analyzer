@@ -53,19 +53,18 @@ interface ISetupStats{
 interface ISetupSettings{
   simulations : number;
 
+  requireMoreThanOneCharacter: boolean;
+  poorCards : number;
+
   minimumCards : number;
   minimumCharacters : number;
 
   greatCardCounts : number;
   greatCharacterCounts : number;
 
-  requireOneCharacter: boolean;
 
   mulliganOnPoor : boolean;
-  mulliganOn3Card : boolean;
   mulliganWithoutKey : boolean;
-  mulliganIfNotGreat : boolean;
-  mulliganIfUnderXCards : number;
 }
 
 interface ISetupStore {

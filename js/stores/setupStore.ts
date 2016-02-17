@@ -42,19 +42,19 @@ class SetupStoreStatic implements ISetupStore {
 
     this.settings = {
       simulations: 5000,
-      minimumCards: 3,
+
+      poorCards: 2,
+
+      minimumCards: 0,
       minimumCharacters: 2,
 
       greatCardCounts: 5,
       greatCharacterCounts : 2,
 
-      requireOneCharacter: true,
+      requireMoreThanOneCharacter: true,
 
-      mulliganOnPoor : false,
-      mulliganOn3Card : false,
-      mulliganWithoutKey : false,
-      mulliganIfNotGreat : false,
-      mulliganIfUnderXCards : 4
+      mulliganOnPoor : true,
+      mulliganWithoutKey : false
     };
 
     this.resetStats();
@@ -97,11 +97,11 @@ class SetupStoreStatic implements ISetupStore {
   }
 
   public getSettings() : ISetupSettings{
-    return this.settings;
+    return $.extend({}, this.settings) as ISetupSettings;
   }
 
   public getStats() : ISetupStats{
-    return this.stats;
+    return $.extend({}, this.stats) as ISetupStats;
   }
 
   public getNoMulliganStats() : ISetupStats{
@@ -183,7 +183,7 @@ class SetupStoreStatic implements ISetupStore {
   protected scoreSetup(setup){
 
     var factors = [
-      this.settings.requireOneCharacter ? setup.distinctCharacters > 1 : 0, // must have at least > 1 char
+      this.settings.requireMoreThanOneCharacter ? setup.distinctCharacters > 1 : 0, // must have at least > 1 char
       setup.keyCards,
       (setup.cards.length - setup.avoidedCards), // cards used that we like to setup
       setup.cards.length, // cards used overall
@@ -317,21 +317,14 @@ class SetupStoreStatic implements ISetupStore {
        return this.runSetup(false, bestSetup);
     }
 
-    if (bestSetup.cards.length < 3 || (bestSetup.distinctCharacters <= 1 && this.settings.requireOneCharacter)){
-      if (mulligan &&
-        (this.settings.mulliganOnPoor
-          || this.settings.mulliganIfNotGreat
-          || this.settings.mulliganOn3Card)){
+    if (mulligan && bestSetup.cards.length <= this.settings.minimumCards){
+        return this.runSetup(false, bestSetup);
+    } else if (bestSetup.cards.length <= this.settings.poorCards || (bestSetup.distinctCharacters <= 1 && this.settings.requireMoreThanOneCharacter)){
+      if (mulligan && this.settings.mulliganOnPoor){
         //try to mulligan for a better hand...
         return this.runSetup(false, bestSetup);
       }
       this.stats.poorSetups++;
-    } else if (bestSetup.cards.length >= 5){
-      this.stats.greatSetups++;
-    } else if (mulligan && bestSetup.cards.length < 5 && this.settings.mulliganIfNotGreat){
-      return this.runSetup(false, bestSetup);
-    } else if (mulligan && bestSetup.cards.length <= 3 && this.settings.mulliganOn3Card){
-      return this.runSetup(false, bestSetup);
     }
 
     var credited = [];
@@ -348,6 +341,12 @@ class SetupStoreStatic implements ISetupStore {
 
     if (mulligan && !previousSetup){
       this.updateStats(this.noMulliganStats, bestSetup);
+    }
+
+    if (previousSetup){
+      bestSetup.mulliganed = previousSetup;
+    } else{
+      bestSetup.mulliganed = null;
     }
     return bestSetup;
   }
@@ -372,23 +371,23 @@ class SetupStoreStatic implements ISetupStore {
     this.inform();
   }
 
-  public toggleMulliganIfNotGreat(){
-    this.settings.mulliganIfNotGreat = !this.settings.mulliganIfNotGreat;
-    this.inform();
-  }
-
-  public toggleThreeCardMulligan(){
-    this.settings.mulliganOn3Card = !this.settings.mulliganOn3Card;
-    this.inform();
-  }
-
-  public toggleRequireOneCharacter(){
-    this.settings.requireOneCharacter = !this.settings.requireOneCharacter;
+  public toggleRequireMoreThanOneCharacter(){
+    this.settings.requireMoreThanOneCharacter = !this.settings.requireMoreThanOneCharacter;
     this.inform();
   }
 
   public setNumberOfSimulations(simulations){
     this.settings.simulations = simulations;
+    this.inform();
+  }
+
+  public setPoorCards(cards){
+    this.settings.poorCards = Math.min(7, Math.max(0, cards));
+    this.inform();
+  }
+
+  public setMinimumCards(cards){
+    this.settings.minimumCards = Math.min(7, Math.max(0, cards));
     this.inform();
   }
 }
@@ -402,12 +401,12 @@ AppDispatcher.register(function(payload:IActionPayload){
     SetupStore.toggleMulliganOnPoor();
   } else if (payload.actionType == SetupActionID.TOGGLE_MULIGAN_WITHOUT_KEY){
     SetupStore.toggleMulliganWithoutKey();
-  } else if (payload.actionType == SetupActionID.TOGGLE_MULIGAN_IF_NOT_GREAT){
-    SetupStore.toggleMulliganIfNotGreat();
-  } else if (payload.actionType == SetupActionID.TOGGLE_MULLIGAN_ON_THREE_CARD){
-    SetupStore.toggleThreeCardMulligan();
   } else if (payload.actionType == SetupActionID.TOGGLE_REQUIRE_ONE_CHARACTER){
-    SetupStore.toggleRequireOneCharacter();
+    SetupStore.toggleRequireMoreThanOneCharacter();
+  } else if (payload.actionType == SetupActionID.SET_POOR_CARDS){
+    SetupStore.setPoorCards(payload.data);
+  } else if (payload.actionType == SetupActionID.SET_MINIMUM_CARDS){
+    SetupStore.setMinimumCards(payload.data);
   }
 });
 

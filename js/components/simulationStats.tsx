@@ -43,9 +43,9 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
    * just use it as an example of how little code it takes to get an order
    * of magnitude performance improvement.
    */
-  // public shouldComponentUpdate(nextProps : ICardItemProps, nextState : ICardItemState) {
-  //   return false;
-  // }
+  public shouldComponentUpdate(nextProps : ISimulationStatsProps, nextState : ISimulationStatsState) {
+    return nextProps.stats.simulations != this.props.stats.simulations;
+  }
 
 
   private getBaseCardCountConfig(){
@@ -310,6 +310,13 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
       }
     }
 
+    var poorSetupRate = this.props.stats.poorSetups/this.props.stats.simulations;
+
+    var fourGamePoorSetupRate = 1-Math.pow(1-poorSetupRate, 4);
+    var sixGamePoorSetupRate = 1-Math.pow(1-poorSetupRate, 6);
+    var eightGamePoorSetupRate = 1-Math.pow(1-poorSetupRate, 8);
+    var tenGamePoorSetupRate = 1-Math.pow(1-poorSetupRate, 10);
+
     var charts = (
       <section className="charts">
         <p>Simulating...</p>
@@ -321,6 +328,24 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
           <ReactHighcharts config={cardUsageData} />
           <ReactHighcharts config={distinctCharData} />
           <ReactHighcharts config={goldUsageData} />
+          <div className="stat-overview">
+            <div className="quick-stat">
+              <h2>{Math.round(1000*fourGamePoorSetupRate)/10}%</h2>
+              <span>Chance of having a poor setup in 4 games</span>
+            </div>
+            <div className="quick-stat">
+              <h2>{Math.round(1000*sixGamePoorSetupRate)/10}%</h2>
+              <span>Chance of having a poor setup in 6 games</span>
+            </div>
+            <div className="quick-stat">
+              <h2>{Math.round(1000*eightGamePoorSetupRate)/10}%</h2>
+              <span>Chance of having a poor setup in 8 games</span>
+            </div>
+            <div className="quick-stat">
+              <h2>{Math.round(1000*tenGamePoorSetupRate)/10}%</h2>
+              <span>Chance of having a poor setup in 10 games</span>
+            </div>
+          </div>
         </section>
       );
     }
@@ -335,7 +360,7 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
 
             <p><span className="tooltip hint--top" data-hint="Percentage of Setups with 2 or less cards set up or only 1 character">
                 Poor Setups:
-              </span> {Math.round(100*this.props.stats.poorSetups/this.props.stats.simulations)}%</p>
+              </span> {Math.round(poorSetupRate*1000)/10}%</p>
             <p><span className="tooltip hint--top" data-hint="Percentage of Setups with 5 or more cards set up and over 1 character">
               Great Setups:
               </span> {Math.round(100*this.props.stats.greatSetups/this.props.stats.simulations)}%</p>

@@ -65,21 +65,49 @@ public onNext(){
     var exampleItems =  null;
     if (this.props.setups[this.state.shownSetup]){
         exampleItems = this.props.setups[this.state.shownSetup].draw.map((pos) => {
-        i++;
+          i++;
 
-        var card = this.props.drawDeck[pos];
-        var code = card.code + i;
-        var image = "http://thronesdb.com/" + card.imagesrc;
-        var className = "card-container";
+          var card = this.props.drawDeck[pos];
+          var code = card.code + i;
+          var image = "http://thronesdb.com/" + card.imagesrc;
+          var className = "card-container";
 
-        if (this.props.setups[this.state.shownSetup].cards.filter((p) => p == pos).length > 0){
-          className += " selected";
+          if (this.props.setups[this.state.shownSetup].cards.filter((p) => p == pos).length > 0){
+            className += " selected";
+          }
+
+          return (
+            <div key={pos} className={className}><img src={image}/></div>
+          );
+        });
+        var mulligan = null;
+        if (this.props.setups[this.state.shownSetup].mulliganed){
+          var mulliganedItems = this.props.setups[this.state.shownSetup].mulliganed.draw.map((pos) => {
+            i++;
+
+            var card = this.props.drawDeck[pos];
+            var code = card.code + i;
+            var image = "http://thronesdb.com/" + card.imagesrc;
+            var className = "card-container";
+
+            if (this.props.setups[this.state.shownSetup].mulliganed.cards.filter((p) => p == pos).length > 0){
+              className += " selected";
+            }
+
+            return (
+              <div key={pos} className={className}><img src={image}/></div>
+            );
+          });
+
+          mulligan = (
+            <div>
+            <div>Mulliganed:</div>
+            <div className="card-list example mulliganed">
+              {mulliganedItems}
+            </div>
+            </div>
+          );
         }
-
-        return (
-          <div key={pos} className={className}><img src={image}/></div>
-        );
-      });
     }
 
     return (
@@ -89,6 +117,7 @@ public onNext(){
           <div className="card-list example">
             {exampleItems}
           </div>
+          {mulligan}
           <p>Does something look wrong? <a href="mailto:jason@red5dev.com">Let me know!</a></p>
         </section>
     );

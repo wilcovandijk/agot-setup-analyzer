@@ -82,24 +82,24 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     })
   }
 
-  private toggleMulliganIfNotGreat(){
-    AppDispatcher.dispatch({
-      actionType: SetupActionID.TOGGLE_MULIGAN_IF_NOT_GREAT,
-      data: null
-    })
-  }
-
-  private toggleMulliganOnThreeCard(){
-    AppDispatcher.dispatch({
-      actionType: SetupActionID.TOGGLE_MULLIGAN_ON_THREE_CARD,
-      data: null
-    })
-  }
-
-  private toggleRequireOneCharacter(){
+  private toggleRequireMoreThanOneCharacter(){
     AppDispatcher.dispatch({
       actionType: SetupActionID.TOGGLE_REQUIRE_ONE_CHARACTER,
       data: null
+    })
+  }
+
+  private poorCardsChanged(event:any){
+    AppDispatcher.dispatch({
+      actionType: SetupActionID.SET_POOR_CARDS,
+      data: event.target.value
+    })
+  }
+
+  private minimumCardsChanged(event:any){
+    AppDispatcher.dispatch({
+      actionType: SetupActionID.SET_MINIMUM_CARDS,
+      data: event.target.value
     })
   }
 
@@ -178,37 +178,56 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     return (
       <section className="content">
         <section className="configure">
-          <p>This section is a work in progress. The Setup Analyzer will now attempt to mulligan your first draw if it doesn't meet certain criteria. This page provides all the current settings for configuring what setups to prefer and what hands to mulligan. You can configure cards as being <i className="fa fa-key fa-fw"></i> Key cards, <i className="fa fa-exclamation-triangle fa-fw"></i> Try to Avoid Cards, and <i className="fa fa-ban fa-fw"></i>Restricted Cards</p>
-          <p>Key Cards will be set up as often as possible. As long as you can set up at least 2 total characters, a set up with a key card will be used if available</p>
-          <p>Try to Avoid Cards will be avoided unless there is nothing else that can be used. For example, if you have only 3 gold worth of cards to set up, and a 5 cost try to avoid card, it will set up the card. By default this includes characters with positive enter play abilities</p>
-          <p>Restricted cards will never be set up under any circumstances. By default this includes negative attachments</p>
-
-          <p>Hand Quality Settings</p>
+          <h2>Poor Setup Settings</h2>
           <div>
-            <input id="require-one-character" type="checkbox" checked={this.props.settings.requireOneCharacter} onClick={this.toggleRequireOneCharacter} />
-            <label htmlFor="require-one-character">Require One Character. If this is not selected, one character setups will not be de-emphaized unless they contain less cards</label>
+            <p><strong>Require Two Characters:</strong></p>
+            <input id="require-one-character" type="checkbox" checked={this.props.settings.requireMoreThanOneCharacter} onClick={this.toggleRequireMoreThanOneCharacter} />
+            <label htmlFor="require-one-character">Require 2+ Characters. If this is selected, one character setups will be considered poor</label>
+
+            <p><strong>Minimum Number of Cards for Acceptable Setup:</strong></p>
+            <p>
+              <input type="radio" name="poorCards" value="0" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 0} />0 Cards&nbsp;
+              <input type="radio" name="poorCards" value="1" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 1} />1 Card&nbsp;
+              <input type="radio" name="poorCards" value="2" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 2} />2 Cards&nbsp;
+              <input type="radio" name="poorCards" value="3" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 3} />3 Cards&nbsp;
+              <input type="radio" name="poorCards" value="4" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 4} />4 Cards&nbsp;
+              <input type="radio" name="poorCards" value="5" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 5} />5 Cards&nbsp;
+              <input type="radio" name="poorCards" value="6" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 6} />6 Cards&nbsp;
+            </p>
+            <p>{this.props.settings.poorCards} cards or under will be considered "poor"</p>
+
           </div>
 
-          <p>Mulligan Settings</p>
+          <h2>Mulligan Settings</h2>
           <div>
             <input id="mulligan-if-poor" type="checkbox" checked={this.props.settings.mulliganOnPoor} onClick={this.toggleMulliganOnPoor} />
-            <label htmlFor="mulligan-if-poor">Mulligan if 2 Card Setup</label>
-          </div>
-
-          <div>
-            <input id="mulligan-on-three" type="checkbox" checked={this.props.settings.mulliganOn3Card} onClick={this.toggleMulliganOnThreeCard} />
-            <label htmlFor="mulligan-on-three">Mulligan on 3 Card Setup</label>
-          </div>
-
-          <div>
-            <input id="mulligan-if-not-great" type="checkbox" checked={this.props.settings.mulliganIfNotGreat} onClick={this.toggleMulliganIfNotGreat} />
-            <label htmlFor="mulligan-if-not-great">Mulligan on 4 Card Setup</label>
+            <label htmlFor="mulligan-if-poor">Mulligan All Poor Setups</label>
           </div>
 
           <div>
             <input id="mulligan-without-key" type="checkbox" checked={this.props.settings.mulliganWithoutKey} onClick={this.toggleMulliganWithoutKey} />
             <label htmlFor="mulligan-without-key">Mulligan if No Key Character</label>
           </div>
+
+          <div>
+            <p><strong>Minimum Number of Cards to Keep:</strong></p>
+            <p>
+              <input type="radio" name="mullianCards" value="0" onChange={this.minimumCardsChanged} checked={this.props.settings.minimumCards == 0} id="zero-minimum" /><label htmlFor="zero-minimum">0 Cards </label>
+              <input type="radio" name="mullianCards" value="1" onChange={this.minimumCardsChanged} checked={this.props.settings.minimumCards == 1} id="one-minimum" /><label htmlFor="one-minimum">1 Card </label>
+              <input type="radio" name="mullianCards" value="2" onChange={this.minimumCardsChanged} checked={this.props.settings.minimumCards == 2} id="two-minimum" /><label htmlFor="two-minimum">2 Cards </label>
+              <input type="radio" name="mullianCards" value="3" onChange={this.minimumCardsChanged} checked={this.props.settings.minimumCards == 3} id="three-minimum" /><label htmlFor="three-minimum">3 Cards </label>
+              <input type="radio" name="mullianCards" value="4" onChange={this.minimumCardsChanged} checked={this.props.settings.minimumCards == 4} id="four-minimum" /><label htmlFor="four-minimum">4 Cards </label>
+              <input type="radio" name="mullianCards" value="5" onChange={this.minimumCardsChanged} checked={this.props.settings.minimumCards == 5} id="five-minimum" /><label htmlFor="five-minimum">5 Cards </label>
+              <input type="radio" name="mullianCards" value="6" onChange={this.minimumCardsChanged} checked={this.props.settings.minimumCards == 6} id="six-minimum" /><label htmlFor="six-minimum">6 Cards </label>
+            </p>
+            <p>{this.props.settings.minimumCards} cards or under will be mulliganed</p>
+          </div>
+
+          <p>The Setup Analyzer will now attempt to mulligan your first draw if it doesn't meet certain criteria. This page provides all the current settings for configuring what setups to prefer and what hands to mulligan. You can configure cards as being <i className="fa fa-key fa-fw"></i> Key cards, <i className="fa fa-exclamation-triangle fa-fw"></i> Try to Avoid Cards, and <i className="fa fa-ban fa-fw"></i>Restricted Cards</p>
+          <p>Key Cards will be set up as often as possible. As long as you can set up at least 2 total characters, a set up with a key card will be used if available</p>
+          <p>Try to Avoid Cards will be avoided unless there is nothing else that can be used. For example, if you have only 3 gold worth of cards to set up, and a 5 cost try to avoid card, it will set up the card. By default this includes characters with positive enter play abilities</p>
+          <p>Restricted cards will never be set up under any circumstances. By default this includes negative attachments</p>
+
 
           {key}
 
