@@ -747,7 +747,7 @@ var SimulationStats = (function (_super) {
         if (this.props.stats.simulations == 5000) {
             charts = (React.createElement("section", {"className": "charts"}, React.createElement(ReactHighcharts, {"config": cardUsageData}), React.createElement("div", {"className": "stat-overview"}, React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * fourGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 4 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * sixGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 6 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * eightGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 8 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * tenGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 10 games"))), React.createElement(ReactHighcharts, {"config": distinctCharData}), React.createElement(ReactHighcharts, {"config": goldUsageData})));
         }
-        return (React.createElement("div", null, React.createElement("section", {"className": "stats"}, React.createElement("section", {"className": "info"}, React.createElement("p", null, "Runs: ", this.props.stats.simulations), React.createElement("p", null, "Avg Gold: ", Math.round(10000 * this.props.stats.goldSetup / this.props.stats.simulations) / 10000), React.createElement("p", null, "Avg Cards: ", Math.round(10000 * this.props.stats.cardsSetup / this.props.stats.simulations) / 10000), React.createElement("p", null, React.createElement("span", {"className": "tooltip hint--top", "data-hint": "Poor setup definition can be configured in Configure tab"}, "Poor Setups:"), " ", Math.round(poorSetupRate * 1000) / 10, "%"), React.createElement("p", null, React.createElement("span", {"className": "tooltip hint--top", "data-hint": "Percentage of Setups with 5 or more cards set up and over 1 character"}, "Great Setups:"), " ", Math.round(100 * this.props.stats.greatSetups / this.props.stats.simulations), "%"), React.createElement("p", null, React.createElement("strong", null, "Cards Setup:")), cardsUsed, React.createElement("p", null, React.createElement("strong", null, "Gold Used:")), goldUsed), charts), React.createElement("section", {"className": "deck"}, React.createElement("ul", {"className": "card-list"}, cardItems))));
+        return (React.createElement("div", null, React.createElement("section", {"className": "stats"}, React.createElement("section", {"className": "info"}, React.createElement("p", null, "Runs: ", this.props.stats.simulations), React.createElement("p", null, "Mulligans: ", this.props.stats.mulligans, " (", Math.round(this.props.stats.mulligans * 1000 / this.props.stats.simulations) / 10, "%)"), React.createElement("p", null, "Avg Gold: ", Math.round(10000 * this.props.stats.goldSetup / this.props.stats.simulations) / 10000), React.createElement("p", null, "Avg Cards: ", Math.round(10000 * this.props.stats.cardsSetup / this.props.stats.simulations) / 10000), React.createElement("p", null, React.createElement("span", {"className": "tooltip hint--top", "data-hint": "Poor setup definition can be configured in Configure tab"}, "Poor Setups:"), " ", Math.round(poorSetupRate * 1000) / 10, "%"), React.createElement("p", null, React.createElement("span", {"className": "tooltip hint--top", "data-hint": "Percentage of Setups with 5 or more cards set up and over 1 character"}, "Great Setups:"), " ", Math.round(100 * this.props.stats.greatSetups / this.props.stats.simulations), "%"), React.createElement("p", null, React.createElement("strong", null, "Cards Setup:")), cardsUsed, React.createElement("p", null, React.createElement("strong", null, "Gold Used:")), goldUsed), charts), React.createElement("section", {"className": "deck"}, React.createElement("ul", {"className": "card-list"}, cardItems))));
     };
     return SimulationStats;
 })(React.Component);
@@ -950,6 +950,7 @@ var SetupStoreStatic = (function () {
     SetupStoreStatic.prototype.resetStats = function () {
         this.stats = {
             simulations: 0,
+            mulligans: 0,
             goldSetup: 0,
             cardsSetup: 0,
             greatSetups: 0,
@@ -961,6 +962,7 @@ var SetupStoreStatic = (function () {
         };
         this.noMulliganStats = {
             simulations: 0,
+            mulligans: 0,
             goldSetup: 0,
             cardsSetup: 0,
             greatSetups: 0,
@@ -1099,6 +1101,7 @@ var SetupStoreStatic = (function () {
     SetupStoreStatic.prototype.runSetup = function (mulligan, previousSetup) {
         if (previousSetup === void 0) { previousSetup = null; }
         if (previousSetup && !mulligan) {
+            this.stats.mulligans++;
             this.updateStats(this.noMulliganStats, previousSetup);
         }
         var drawDeck = this.deck.getDrawDeck();
