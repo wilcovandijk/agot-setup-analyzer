@@ -41,6 +41,11 @@ class About extends React.Component<IAboutProps, IAboutState> {
           <li>If it's still tied, then it'll choose one of the tied possible set ups randomly</li>
           <li>This will also perform mulligans if cards do not meet minimum card requirements. You can configure when to mulligan in the "Configure" tab</li>
         </ol>
+        <p>Here's my current todo list of things to add:</p>
+        <ol>
+          <li>Configure how many runs to perform (currently 5000)</li>
+          <li>Stats are Coming! Add stats on icons setup, traits, factions, dupes, uniques, etc.</li>
+        </ol>
         <p>Finally, some credit/shout outs to resources I used to make this, or resources I find valuable:</p>
         <ol>
           <li><a href="http://thronesdb.com/">ThronesDB</a>, where I shameless pulled all card data from and serve images from directly</li>
