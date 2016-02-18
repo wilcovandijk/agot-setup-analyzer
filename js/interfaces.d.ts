@@ -48,7 +48,8 @@ interface ISetupStats{
   goldCounts : Array<number>;
   distinctCharCounts : Array<number>;
   traitStats : { [id: string] : string };
-
+  iconStats : { [id: string] : any };
+  iconStrengthStats : { [id: string] : any };
 }
 
 interface ISetupSettings{

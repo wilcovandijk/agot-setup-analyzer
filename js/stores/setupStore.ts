@@ -79,7 +79,9 @@ class SetupStoreStatic implements ISetupStore {
       cardCounts : [0, 0, 0, 0, 0, 0, 0, 0],
       distinctCharCounts : [0, 0, 0, 0, 0, 0, 0, 0],
       goldCounts : [0, 0, 0, 0, 0, 0, 0, 0, 0],
-      traitStats : {}
+      traitStats : {},
+      iconStats : {"military" : 0, "intrigue" : 0, "power" : 0},
+      iconStrengthStats : {"military" : 0, "intrigue" : 0, "power" : 0}
     }
     this.noMulliganStats = {
       simulations : 0,
@@ -91,7 +93,9 @@ class SetupStoreStatic implements ISetupStore {
       cardCounts : [0, 0, 0, 0, 0, 0, 0, 0],
       distinctCharCounts : [0, 0, 0, 0, 0, 0, 0, 0],
       goldCounts : [0, 0, 0, 0, 0, 0, 0, 0, 0],
-      traitStats : {}
+      traitStats : {},
+      iconStats : {"military" : 0, "intrigue" : 0, "power" : 0},
+      iconStrengthStats : {"military" : 0, "intrigue" : 0, "power" : 0}
     };
     this.setups = [];
 
@@ -304,7 +308,13 @@ class SetupStoreStatic implements ISetupStore {
       enterPlayEffects: 0,
       keyCards: 0,
       avoidedCards: 0,
-      cards: []
+      cards: [],
+      military: 0,
+      intrigue: 0,
+      power: 0,
+      militaryStrength: 0,
+      intrigueStrength: 0,
+      powerStrength: 0
     }, filteredDraw);
 
     var bestSetup = possibleSetup[0];
@@ -338,8 +348,20 @@ class SetupStoreStatic implements ISetupStore {
       if (card.is_unique && credited.filter((c) => c == card).length > 0){
         return;
       }
+      if (card.is_military){
+        bestSetup.military++;
+        bestSetup.militaryStrength += card.strength;
+      }
+      if (card.is_intrigue){
+        bestSetup.intrigue++;
+        bestSetup.intrigueStrength += card.strength;
+      }
+      if (card.is_power){
+        bestSetup.power++;
+        bestSetup.powerStrength += card.strength;
+      }
       credited.push(card);
-      card.setup_count++;
+      bestSetup.setup_count++;
     });
 
     this.updateStats(this.stats, bestSetup);
@@ -364,6 +386,14 @@ class SetupStoreStatic implements ISetupStore {
     stats.cardCounts[setup.cards.length] += 1;
     stats.distinctCharCounts[setup.distinctCharacters] += 1;
     stats.goldCounts[setup.currentCost] += 1;
+
+    stats.iconStats['military'] += setup.military;
+    stats.iconStats['power'] += setup.power;
+    stats.iconStats['intrigue'] += setup.intrigue;
+
+    stats.iconStrengthStats['military'] += setup.militaryStrength;
+    stats.iconStrengthStats['power'] += setup.powerStrength;
+    stats.iconStrengthStats['intrigue'] += setup.intrigueStrength;
   }
 
   public toggleMulliganOnPoor(){

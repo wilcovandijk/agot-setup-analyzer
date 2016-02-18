@@ -183,6 +183,126 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
     return goldUsageData;
   }
 
+  private iconStatsGraph(){
+    var iconStatsUsage = {
+        title: {
+            text: 'Challenge Icons'
+        },
+        xAxis: [{
+            categories: ['Military', 'Intrigue', 'Power'],
+            labels: {
+                        useHTML: true,
+                        formatter: function () {
+                            console.log(this);
+                            return {
+                                'Military': '<span class="icon-military"></span> Military',
+                                'Intrigue': '<span class="icon-intrigue"></span> Intrigue',
+                                'Power': '<span class="icon-power"></span> Power'
+                            }[this.value];
+                        }
+                    },
+        }],
+        yAxis: [{ // Primary yAxis
+            labels: {
+                format: '{value} Characters',
+            },
+            title: {
+                text: 'Characters Per Setup',
+            }
+        }],
+        tooltip: {
+            shared: true
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'left',
+            x: 120,
+            verticalAlign: 'top',
+            y: 50,
+            floating: true,
+            backgroundColor: '#FFFFFF'
+        },
+        series: [{
+            name: 'With Mulligan',
+            type: 'column',
+            data: [],
+            tooltip: {
+                valueSuffix: ' characters per setup'
+            }
+
+        }, {
+            name: 'Without Mulligan',
+            type: 'spline',
+            data: [],
+            tooltip: {
+                valueSuffix: ' characters per setup'
+            }
+        }]
+    };
+
+    return iconStatsUsage;
+  }
+
+  private iconStrengthGraph(){
+    var iconStrengthUsage = {
+        title: {
+            text: 'Challenge Icon Strength'
+        },
+        xAxis: [{
+            categories: ['Military', 'Intrigue', 'Power'],
+            labels: {
+                        useHTML: true,
+                        formatter: function () {
+                            console.log(this);
+                            return {
+                                'Military': '<span class="icon-military"></span> Military',
+                                'Intrigue': '<span class="icon-intrigue"></span> Intrigue',
+                                'Power': '<span class="icon-power"></span> Power'
+                            }[this.value];
+                        }
+                    },
+        }],
+        yAxis: [{ // Primary yAxis
+            labels: {
+                format: '{value} Strength',
+            },
+            title: {
+                text: 'Strength Per Setup',
+            }
+        }],
+        tooltip: {
+            shared: true
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'left',
+            x: 120,
+            verticalAlign: 'top',
+            y: 50,
+            floating: true,
+            backgroundColor: '#FFFFFF'
+        },
+        series: [{
+            name: 'With Mulligan',
+            type: 'column',
+            data: [],
+            tooltip: {
+                valueSuffix: ' strength per setup'
+            }
+
+        }, {
+            name: 'Without Mulligan',
+            type: 'spline',
+            data: [],
+            tooltip: {
+                valueSuffix: ' strength per setup'
+            }
+        }]
+    };
+
+    return iconStrengthUsage;
+  }
+
   private getBaseDistinctCharacterConfig(){
     var characterData = {
         title: {
@@ -310,6 +430,26 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
       }
     }
 
+    var iconGraph = this.iconStatsGraph();
+    iconGraph.series[0].data = [this.props.stats.iconStats['military'] / this.props.stats.simulations,
+                                this.props.stats.iconStats['intrigue'] / this.props.stats.simulations,
+                                this.props.stats.iconStats['power'] / this.props.stats.simulations
+                              ] ;
+    iconGraph.series[1].data = [this.props.noMulliganStats.iconStats['military'] / this.props.noMulliganStats.simulations,
+                                this.props.noMulliganStats.iconStats['intrigue'] / this.props.noMulliganStats.simulations,
+                                this.props.noMulliganStats.iconStats['power'] / this.props.noMulliganStats.simulations
+                              ];
+
+    var iconStrGraph = this.iconStrengthGraph();
+    iconStrGraph.series[0].data = [this.props.stats.iconStrengthStats['military'] / this.props.stats.simulations,
+                                this.props.stats.iconStrengthStats['intrigue'] / this.props.stats.simulations,
+                                this.props.stats.iconStrengthStats['power'] / this.props.stats.simulations
+                              ] ;
+    iconStrGraph.series[1].data = [this.props.noMulliganStats.iconStrengthStats['military'] / this.props.noMulliganStats.simulations,
+                                this.props.noMulliganStats.iconStrengthStats['intrigue'] / this.props.noMulliganStats.simulations,
+                                this.props.noMulliganStats.iconStrengthStats['power'] / this.props.noMulliganStats.simulations
+                              ];
+
     var poorSetupRate = this.props.stats.poorSetups/this.props.stats.simulations;
 
     var fourGamePoorSetupRate = 1-Math.pow(1-poorSetupRate, 4);
@@ -346,7 +486,17 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
           </div>
           <ReactHighcharts config={distinctCharData} />
           <ReactHighcharts config={goldUsageData} />
+          <ReactHighcharts config={iconGraph} />
+          <ReactHighcharts config={iconStrGraph} />
         </section>
+      );
+    }
+
+    var mulligans = null;
+
+    if (this.props.stats.mulligans > 0){
+      mulligans = (
+        <p><strong>*** Mulligans In Use ***</strong></p>
       );
     }
 
@@ -354,6 +504,7 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
       <div>
         <section className="stats">
           <section className="info">
+            {mulligans}
             <p>Runs: {this.props.stats.simulations}</p>
             <p>Mulligans: {this.props.stats.mulligans} ({Math.round(this.props.stats.mulligans*1000 / this.props.stats.simulations)/10}%)</p>
             <p>Avg Gold: {Math.round(10000*this.props.stats.goldSetup/this.props.stats.simulations)/10000}</p>
