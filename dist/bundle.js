@@ -571,7 +571,7 @@ var SimulationStats = (function (_super) {
                     }
                 }, {
                     type: 'pie',
-                    name: 'Browser share',
+                    name: '%',
                     innerSize: '50%',
                     data: [
                         ["Zero Card"],
