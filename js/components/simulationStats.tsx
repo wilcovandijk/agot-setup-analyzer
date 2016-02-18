@@ -484,9 +484,13 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
               <span>Chance of having a poor setup in 10 games</span>
             </div>
           </div>
+          <hr />
           <ReactHighcharts config={distinctCharData} />
+          <hr />
           <ReactHighcharts config={goldUsageData} />
+          <hr />
           <ReactHighcharts config={iconGraph} />
+          <hr />
           <ReactHighcharts config={iconStrGraph} />
         </section>
       );
