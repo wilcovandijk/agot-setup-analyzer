@@ -639,6 +639,120 @@ var SimulationStats = (function (_super) {
         };
         return goldUsageData;
     };
+    SimulationStats.prototype.iconStatsGraph = function () {
+        var iconStatsUsage = {
+            title: {
+                text: 'Challenge Icons'
+            },
+            xAxis: [{
+                    categories: ['Military', 'Intrigue', 'Power'],
+                    labels: {
+                        useHTML: true,
+                        formatter: function () {
+                            console.log(this);
+                            return {
+                                'Military': '<span class="icon-military"></span> Military',
+                                'Intrigue': '<span class="icon-intrigue"></span> Intrigue',
+                                'Power': '<span class="icon-power"></span> Power'
+                            }[this.value];
+                        }
+                    },
+                }],
+            yAxis: [{
+                    labels: {
+                        format: '{value} Characters',
+                    },
+                    title: {
+                        text: 'Characters Per Setup',
+                    }
+                }],
+            tooltip: {
+                shared: true
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'left',
+                x: 120,
+                verticalAlign: 'top',
+                y: 50,
+                floating: true,
+                backgroundColor: '#FFFFFF'
+            },
+            series: [{
+                    name: 'With Mulligan',
+                    type: 'column',
+                    data: [],
+                    tooltip: {
+                        valueSuffix: ' characters per setup'
+                    }
+                }, {
+                    name: 'Without Mulligan',
+                    type: 'spline',
+                    data: [],
+                    tooltip: {
+                        valueSuffix: ' characters per setup'
+                    }
+                }]
+        };
+        return iconStatsUsage;
+    };
+    SimulationStats.prototype.iconStrengthGraph = function () {
+        var iconStrengthUsage = {
+            title: {
+                text: 'Challenge Icon Strength'
+            },
+            xAxis: [{
+                    categories: ['Military', 'Intrigue', 'Power'],
+                    labels: {
+                        useHTML: true,
+                        formatter: function () {
+                            console.log(this);
+                            return {
+                                'Military': '<span class="icon-military"></span> Military',
+                                'Intrigue': '<span class="icon-intrigue"></span> Intrigue',
+                                'Power': '<span class="icon-power"></span> Power'
+                            }[this.value];
+                        }
+                    },
+                }],
+            yAxis: [{
+                    labels: {
+                        format: '{value} Strength',
+                    },
+                    title: {
+                        text: 'Strength Per Setup',
+                    }
+                }],
+            tooltip: {
+                shared: true
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'left',
+                x: 120,
+                verticalAlign: 'top',
+                y: 50,
+                floating: true,
+                backgroundColor: '#FFFFFF'
+            },
+            series: [{
+                    name: 'With Mulligan',
+                    type: 'column',
+                    data: [],
+                    tooltip: {
+                        valueSuffix: ' strength per setup'
+                    }
+                }, {
+                    name: 'Without Mulligan',
+                    type: 'spline',
+                    data: [],
+                    tooltip: {
+                        valueSuffix: ' strength per setup'
+                    }
+                }]
+        };
+        return iconStrengthUsage;
+    };
     SimulationStats.prototype.getBaseDistinctCharacterConfig = function () {
         var characterData = {
             title: {
@@ -738,6 +852,24 @@ var SimulationStats = (function (_super) {
                 goldUsed.push(React.createElement("p", {"key": i}, i, " Gold", plural, " : ", Math.round(10000 * this.props.stats.goldCounts[i] / this.props.stats.simulations) / 100, "%"));
             }
         }
+        var iconGraph = this.iconStatsGraph();
+        iconGraph.series[0].data = [this.props.stats.iconStats['military'] / this.props.stats.simulations,
+            this.props.stats.iconStats['intrigue'] / this.props.stats.simulations,
+            this.props.stats.iconStats['power'] / this.props.stats.simulations
+        ];
+        iconGraph.series[1].data = [this.props.noMulliganStats.iconStats['military'] / this.props.noMulliganStats.simulations,
+            this.props.noMulliganStats.iconStats['intrigue'] / this.props.noMulliganStats.simulations,
+            this.props.noMulliganStats.iconStats['power'] / this.props.noMulliganStats.simulations
+        ];
+        var iconStrGraph = this.iconStrengthGraph();
+        iconStrGraph.series[0].data = [this.props.stats.iconStrengthStats['military'] / this.props.stats.simulations,
+            this.props.stats.iconStrengthStats['intrigue'] / this.props.stats.simulations,
+            this.props.stats.iconStrengthStats['power'] / this.props.stats.simulations
+        ];
+        iconStrGraph.series[1].data = [this.props.noMulliganStats.iconStrengthStats['military'] / this.props.noMulliganStats.simulations,
+            this.props.noMulliganStats.iconStrengthStats['intrigue'] / this.props.noMulliganStats.simulations,
+            this.props.noMulliganStats.iconStrengthStats['power'] / this.props.noMulliganStats.simulations
+        ];
         var poorSetupRate = this.props.stats.poorSetups / this.props.stats.simulations;
         var fourGamePoorSetupRate = 1 - Math.pow(1 - poorSetupRate, 4);
         var sixGamePoorSetupRate = 1 - Math.pow(1 - poorSetupRate, 6);
@@ -745,9 +877,13 @@ var SimulationStats = (function (_super) {
         var tenGamePoorSetupRate = 1 - Math.pow(1 - poorSetupRate, 10);
         var charts = (React.createElement("section", {"className": "charts"}, React.createElement("p", null, "Simulating...")));
         if (this.props.stats.simulations == 5000) {
-            charts = (React.createElement("section", {"className": "charts"}, React.createElement(ReactHighcharts, {"config": cardUsageData}), React.createElement("div", {"className": "stat-overview"}, React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * fourGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 4 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * sixGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 6 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * eightGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 8 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * tenGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 10 games"))), React.createElement(ReactHighcharts, {"config": distinctCharData}), React.createElement(ReactHighcharts, {"config": goldUsageData})));
+            charts = (React.createElement("section", {"className": "charts"}, React.createElement(ReactHighcharts, {"config": cardUsageData}), React.createElement("div", {"className": "stat-overview"}, React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * fourGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 4 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * sixGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 6 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * eightGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 8 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * tenGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 10 games"))), React.createElement(ReactHighcharts, {"config": distinctCharData}), React.createElement(ReactHighcharts, {"config": goldUsageData}), React.createElement(ReactHighcharts, {"config": iconGraph}), React.createElement(ReactHighcharts, {"config": iconStrGraph})));
         }
-        return (React.createElement("div", null, React.createElement("section", {"className": "stats"}, React.createElement("section", {"className": "info"}, React.createElement("p", null, "Runs: ", this.props.stats.simulations), React.createElement("p", null, "Mulligans: ", this.props.stats.mulligans, " (", Math.round(this.props.stats.mulligans * 1000 / this.props.stats.simulations) / 10, "%)"), React.createElement("p", null, "Avg Gold: ", Math.round(10000 * this.props.stats.goldSetup / this.props.stats.simulations) / 10000), React.createElement("p", null, "Avg Cards: ", Math.round(10000 * this.props.stats.cardsSetup / this.props.stats.simulations) / 10000), React.createElement("p", null, React.createElement("span", {"className": "tooltip hint--top", "data-hint": "Poor setup definition can be configured in Configure tab"}, "Poor Setups:"), " ", Math.round(poorSetupRate * 1000) / 10, "%"), React.createElement("p", null, React.createElement("span", {"className": "tooltip hint--top", "data-hint": "Percentage of Setups with 5 or more cards set up and over 1 character"}, "Great Setups:"), " ", Math.round(100 * this.props.stats.greatSetups / this.props.stats.simulations), "%"), React.createElement("p", null, React.createElement("strong", null, "Cards Setup:")), cardsUsed, React.createElement("p", null, React.createElement("strong", null, "Gold Used:")), goldUsed), charts), React.createElement("section", {"className": "deck"}, React.createElement("ul", {"className": "card-list"}, cardItems))));
+        var mulligans = null;
+        if (this.props.stats.mulligans > 0) {
+            mulligans = (React.createElement("p", null, React.createElement("strong", null, "*** Mulligans In Use ***")));
+        }
+        return (React.createElement("div", null, React.createElement("section", {"className": "stats"}, React.createElement("section", {"className": "info"}, mulligans, React.createElement("p", null, "Runs: ", this.props.stats.simulations), React.createElement("p", null, "Mulligans: ", this.props.stats.mulligans, " (", Math.round(this.props.stats.mulligans * 1000 / this.props.stats.simulations) / 10, "%)"), React.createElement("p", null, "Avg Gold: ", Math.round(10000 * this.props.stats.goldSetup / this.props.stats.simulations) / 10000), React.createElement("p", null, "Avg Cards: ", Math.round(10000 * this.props.stats.cardsSetup / this.props.stats.simulations) / 10000), React.createElement("p", null, React.createElement("span", {"className": "tooltip hint--top", "data-hint": "Poor setup definition can be configured in Configure tab"}, "Poor Setups:"), " ", Math.round(poorSetupRate * 1000) / 10, "%"), React.createElement("p", null, React.createElement("span", {"className": "tooltip hint--top", "data-hint": "Percentage of Setups with 5 or more cards set up and over 1 character"}, "Great Setups:"), " ", Math.round(100 * this.props.stats.greatSetups / this.props.stats.simulations), "%"), React.createElement("p", null, React.createElement("strong", null, "Cards Setup:")), cardsUsed, React.createElement("p", null, React.createElement("strong", null, "Gold Used:")), goldUsed), charts), React.createElement("section", {"className": "deck"}, React.createElement("ul", {"className": "card-list"}, cardItems))));
     };
     return SimulationStats;
 })(React.Component);
@@ -958,7 +1094,9 @@ var SetupStoreStatic = (function () {
             cardCounts: [0, 0, 0, 0, 0, 0, 0, 0],
             distinctCharCounts: [0, 0, 0, 0, 0, 0, 0, 0],
             goldCounts: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            traitStats: {}
+            traitStats: {},
+            iconStats: { "military": 0, "intrigue": 0, "power": 0 },
+            iconStrengthStats: { "military": 0, "intrigue": 0, "power": 0 }
         };
         this.noMulliganStats = {
             simulations: 0,
@@ -970,7 +1108,9 @@ var SetupStoreStatic = (function () {
             cardCounts: [0, 0, 0, 0, 0, 0, 0, 0],
             distinctCharCounts: [0, 0, 0, 0, 0, 0, 0, 0],
             goldCounts: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            traitStats: {}
+            traitStats: {},
+            iconStats: { "military": 0, "intrigue": 0, "power": 0 },
+            iconStrengthStats: { "military": 0, "intrigue": 0, "power": 0 }
         };
         this.setups = [];
         this.deck.getDisplayDeck().forEach(function (c) { return c.setup_count = 0; });
@@ -1133,7 +1273,13 @@ var SetupStoreStatic = (function () {
             enterPlayEffects: 0,
             keyCards: 0,
             avoidedCards: 0,
-            cards: []
+            cards: [],
+            military: 0,
+            intrigue: 0,
+            power: 0,
+            militaryStrength: 0,
+            intrigueStrength: 0,
+            powerStrength: 0
         }, filteredDraw);
         var bestSetup = possibleSetup[0];
         possibleSetup.forEach(function (setup) {
@@ -1163,8 +1309,20 @@ var SetupStoreStatic = (function () {
             if (card.is_unique && credited.filter(function (c) { return c == card; }).length > 0) {
                 return;
             }
+            if (card.is_military) {
+                bestSetup.military++;
+                bestSetup.militaryStrength += card.strength;
+            }
+            if (card.is_intrigue) {
+                bestSetup.intrigue++;
+                bestSetup.intrigueStrength += card.strength;
+            }
+            if (card.is_power) {
+                bestSetup.power++;
+                bestSetup.powerStrength += card.strength;
+            }
             credited.push(card);
-            card.setup_count++;
+            bestSetup.setup_count++;
         });
         this.updateStats(this.stats, bestSetup);
         if (mulligan && !previousSetup) {
@@ -1185,6 +1343,12 @@ var SetupStoreStatic = (function () {
         stats.cardCounts[setup.cards.length] += 1;
         stats.distinctCharCounts[setup.distinctCharacters] += 1;
         stats.goldCounts[setup.currentCost] += 1;
+        stats.iconStats['military'] += setup.military;
+        stats.iconStats['power'] += setup.power;
+        stats.iconStats['intrigue'] += setup.intrigue;
+        stats.iconStrengthStats['military'] += setup.militaryStrength;
+        stats.iconStrengthStats['power'] += setup.powerStrength;
+        stats.iconStrengthStats['intrigue'] += setup.intrigueStrength;
     };
     SetupStoreStatic.prototype.toggleMulliganOnPoor = function () {
         this.settings.mulliganOnPoor = !this.settings.mulliganOnPoor;
