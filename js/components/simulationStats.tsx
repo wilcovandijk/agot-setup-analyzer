@@ -110,7 +110,7 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
             }
         }, {
               type: 'pie',
-              name: 'Browser share',
+              name: '%',
               innerSize: '50%',
               data: [
                 ["Zero Card"],
