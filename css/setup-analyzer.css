@@ -240,8 +240,13 @@ button{
 	color: orange;
 }
 
+.card-list .controls .fa-dollar{
+	color: green;
+}
+
 .card-list .avoided-card .controls button.avoid-button,
 .card-list .key-card .controls button.key-button,
+.card-list .econ-card .controls button.income-button,
 .card-list .restricted-card .controls button.restricted-button{
 	opacity:1;
 }

@@ -6,6 +6,7 @@ var DeckActionID = (function () {
     DeckActionID.MARK_KEY_CARD = "DECK.MARK_KEY_CARD";
     DeckActionID.MARK_AVOID_CARD = "DECK.MARK_AVOID_CARD";
     DeckActionID.MARK_NEVER_CARD = "DECK.MARK_NEVER_CARD";
+    DeckActionID.MARK_ECON = "DECK.MARK_ECON";
     return DeckActionID;
 })();
 module.exports = DeckActionID;
@@ -20,6 +21,8 @@ var SetupActionID = (function () {
     SetupActionID.TOGGLE_MULIGAN_ON_POOR = "SETUP.TOGGLE_MULIGAN_ON_POOR";
     SetupActionID.TOGGLE_MULIGAN_WITHOUT_KEY = "SETUP.TOGGLE_MULIGAN_WITHOUT_KEY";
     SetupActionID.TOGGLE_REQUIRE_ONE_CHARACTER = "SETUP.TOGGLE_REQUIRE_ONE_CHARACTER";
+    SetupActionID.TOGGLE_MULLIGAN_WITHOUT_ECON = "SETUP.TOGGLE_MULLIGAN_WITHOUT_ECON";
+    SetupActionID.TOGGLE_FAVOR_ECON = "SETUP.TOGGLE_FAVOR_ECON";
     SetupActionID.SET_POOR_CARDS = "SETUP.SET_POOR_CARDS";
     SetupActionID.SET_MINIMUM_CARDS = "SETUP.SET_MINIMUM_CARDS";
     SetupActionID.TEST = "TEST";
@@ -302,6 +305,12 @@ var CardSettings = (function (_super) {
             data: this.props.card.code
         });
     };
+    CardSettings.prototype.onMarkEcon = function () {
+        AppDispatcher.dispatch({
+            actionType: DeckActionID.MARK_ECON,
+            data: this.props.card.code
+        });
+    };
     CardSettings.prototype.render = function () {
         var card = this.props.card;
         var image = "http://thronesdb.com/" + card.imagesrc;
@@ -316,10 +325,13 @@ var CardSettings = (function (_super) {
         else if (card.is_restricted) {
             className += " restricted-card";
         }
+        else if (card.is_econ) {
+            className += " econ-card";
+        }
         if (card.type_code == 'character'
             || card.type_code == 'attachment'
             || card.type_code == 'location') {
-            controls = (React.createElement("div", {"className": "controls"}, React.createElement("button", {"className": "key-button", "onClick": this.onMarkKey.bind(this)}, React.createElement("i", {"className": "fa fa-key fa-fw"})), React.createElement("button", {"className": "avoid-button", "onClick": this.onMarkAvoided.bind(this)}, React.createElement("i", {"className": "fa fa-exclamation-triangle fa-fw"})), React.createElement("button", {"className": "restricted-button", "onClick": this.onMarkRestricted.bind(this)}, React.createElement("i", {"className": "fa fa-ban fa-fw"}))));
+            controls = (React.createElement("div", {"className": "controls"}, React.createElement("button", {"className": "key-button", "onClick": this.onMarkKey.bind(this)}, React.createElement("i", {"className": "fa fa-key fa-fw"})), React.createElement("button", {"className": "income-button", "onClick": this.onMarkEcon.bind(this)}, React.createElement("i", {"className": "fa fa-dollar fa-fw"})), React.createElement("button", {"className": "avoid-button", "onClick": this.onMarkAvoided.bind(this)}, React.createElement("i", {"className": "fa fa-exclamation-triangle fa-fw"})), React.createElement("button", {"className": "restricted-button", "onClick": this.onMarkRestricted.bind(this)}, React.createElement("i", {"className": "fa fa-ban fa-fw"}))));
         }
         else {
             controls = (React.createElement("div", {"className": "controls"}, React.createElement("button", {"className": "active"}, React.createElement("i", {"className": "fa fa-ban fa-fw"}))));
@@ -365,9 +377,21 @@ var Configure = (function (_super) {
             data: null
         });
     };
+    Configure.prototype.toggleMulliganWithoutEcon = function () {
+        AppDispatcher.dispatch({
+            actionType: SetupActionID.TOGGLE_MULLIGAN_WITHOUT_ECON,
+            data: null
+        });
+    };
     Configure.prototype.toggleRequireMoreThanOneCharacter = function () {
         AppDispatcher.dispatch({
             actionType: SetupActionID.TOGGLE_REQUIRE_ONE_CHARACTER,
+            data: null
+        });
+    };
+    Configure.prototype.toggleFavorEcon = function () {
+        AppDispatcher.dispatch({
+            actionType: SetupActionID.TOGGLE_FAVOR_ECON,
             data: null
         });
     };
@@ -405,7 +429,7 @@ var Configure = (function (_super) {
             key = (React.createElement("div", null, React.createElement("div", null, "Key cards:"), React.createElement("div", {"className": "card-list"}, keyItems)));
         }
         var restrictedCards = displayDeck.filter(function (card) { return card.is_restricted; }).sort(this.cardSort);
-        var restrictedItems = restrictedCards.sort(this.cardSort).map(function (card) {
+        var restrictedItems = restrictedCards.map(function (card) {
             i++;
             return (React.createElement(cardSettings_1.CardSettings, {"key": card.code, "card": card}));
         });
@@ -413,11 +437,20 @@ var Configure = (function (_super) {
         if (restrictedCards.length > 0) {
             restricted = (React.createElement("div", null, React.createElement("div", null, "Restricted Cards:"), React.createElement("div", {"className": "card-list"}, restrictedItems)));
         }
+        var econCards = displayDeck.filter(function (card) { return card.is_econ && !card.is_avoided && !card.is_key_card; }).sort(this.cardSort);
+        var econItems = econCards.map(function (card) {
+            i++;
+            return (React.createElement(cardSettings_1.CardSettings, {"key": card.code, "card": card}));
+        });
+        var econ = null;
+        if (econCards.length > 0) {
+            econ = (React.createElement("div", null, React.createElement("div", null, "Econ Cards:"), React.createElement("div", {"className": "card-list"}, econItems)));
+        }
         var cards = displayDeck.sort(this.cardSort);
         var allCards = cards.map(function (card) {
             return (React.createElement(cardSettings_1.CardSettings, {"key": card.code, "card": card}));
         });
-        return (React.createElement("section", {"className": "content"}, React.createElement("section", {"className": "configure"}, React.createElement("h2", null, "Poor Setup Settings"), React.createElement("div", null, React.createElement("p", null, React.createElement("strong", null, "Require Two Characters:")), React.createElement("input", {"id": "require-one-character", "type": "checkbox", "checked": this.props.settings.requireMoreThanOneCharacter, "onChange": this.toggleRequireMoreThanOneCharacter}), React.createElement("label", {"htmlFor": "require-one-character"}, "Require 2+ Characters. If this is selected, one character setups will be considered poor"), React.createElement("p", null, React.createElement("strong", null, "Minimum Number of Cards for Acceptable Setup:")), React.createElement("p", null, React.createElement("input", {"type": "radio", "name": "poorCards", "value": "0", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 0, "id": "zero-poor"}), React.createElement("label", {"htmlFor": "zero-poor"}, "0 Cards "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "1", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 1, "id": "one-poor"}), React.createElement("label", {"htmlFor": "one-poor"}, "1 Card "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "2", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 2, "id": "two-poor"}), React.createElement("label", {"htmlFor": "two-poor"}, "2 Cards "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "3", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 3, "id": "three-poor"}), React.createElement("label", {"htmlFor": "three-poor"}, "3 Cards "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "4", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 4, "id": "four-poor"}), React.createElement("label", {"htmlFor": "four-poor"}, "4 Cards "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "5", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 5, "id": "five-poor"}), React.createElement("label", {"htmlFor": "five-poor"}, "5 Cards "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "6", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 6, "id": "six-poor"}), React.createElement("label", {"htmlFor": "six-poor"}, "6 Cards ")), React.createElement("p", null, this.props.settings.poorCards, " cards or under will be considered \"poor\"")), React.createElement("h2", null, "Mulligan Settings"), React.createElement("div", null, React.createElement("input", {"id": "mulligan-if-poor", "type": "checkbox", "checked": this.props.settings.mulliganOnPoor, "onChange": this.toggleMulliganOnPoor}), React.createElement("label", {"htmlFor": "mulligan-if-poor"}, "Mulligan All Poor Setups")), React.createElement("div", null, React.createElement("input", {"id": "mulligan-without-key", "type": "checkbox", "checked": this.props.settings.mulliganWithoutKey, "onChange": this.toggleMulliganWithoutKey}), React.createElement("label", {"htmlFor": "mulligan-without-key"}, "Mulligan if No Key Character")), React.createElement("div", null, React.createElement("p", null, React.createElement("strong", null, "Minimum Number of Cards to Keep:")), React.createElement("p", null, React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "0", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 0, "id": "zero-minimum"}), React.createElement("label", {"htmlFor": "zero-minimum"}, "0 Cards "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "1", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 1, "id": "one-minimum"}), React.createElement("label", {"htmlFor": "one-minimum"}, "1 Card "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "2", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 2, "id": "two-minimum"}), React.createElement("label", {"htmlFor": "two-minimum"}, "2 Cards "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "3", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 3, "id": "three-minimum"}), React.createElement("label", {"htmlFor": "three-minimum"}, "3 Cards "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "4", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 4, "id": "four-minimum"}), React.createElement("label", {"htmlFor": "four-minimum"}, "4 Cards "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "5", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 5, "id": "five-minimum"}), React.createElement("label", {"htmlFor": "five-minimum"}, "5 Cards "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "6", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 6, "id": "six-minimum"}), React.createElement("label", {"htmlFor": "six-minimum"}, "6 Cards ")), React.createElement("p", null, this.props.settings.minimumCards, " cards or under will be mulliganed")), React.createElement("p", null, "The Setup Analyzer will now attempt to mulligan your first draw if it doesn't meet certain criteria. This page provides all the current settings for configuring what setups to prefer and what hands to mulligan. You can configure cards as being ", React.createElement("i", {"className": "fa fa-key fa-fw"}), " Key cards, ", React.createElement("i", {"className": "fa fa-exclamation-triangle fa-fw"}), " Try to Avoid Cards, and ", React.createElement("i", {"className": "fa fa-ban fa-fw"}), "Restricted Cards"), React.createElement("p", null, "Key Cards will be set up as often as possible. As long as you can set up at least 2 total characters, a set up with a key card will be used if available"), React.createElement("p", null, "Try to Avoid Cards will be avoided unless there is nothing else that can be used. For example, if you have only 3 gold worth of cards to set up, and a 5 cost try to avoid card, it will set up the card. By default this includes characters with positive enter play abilities"), React.createElement("p", null, "Restricted cards will never be set up under any circumstances. By default this includes negative attachments"), key, avoided, restricted, React.createElement("div", null, "All Cards:"), React.createElement("div", {"className": "card-list"}, allCards))));
+        return (React.createElement("section", {"className": "content"}, React.createElement("section", {"className": "configure"}, React.createElement("h2", null, "Preferred Setup Settings"), React.createElement("div", null, React.createElement("p", null, React.createElement("strong", null, "Require Two Characters:")), React.createElement("input", {"id": "require-one-character", "type": "checkbox", "checked": this.props.settings.requireMoreThanOneCharacter, "onChange": this.toggleRequireMoreThanOneCharacter}), React.createElement("label", {"htmlFor": "require-one-character"}, "Require 2+ Characters. If this is selected, one character setups will be considered poor"), React.createElement("p", null, React.createElement("strong", null, "Minimum Number of Cards for Acceptable Setup:")), React.createElement("p", null, React.createElement("input", {"type": "radio", "name": "poorCards", "value": "0", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 0, "id": "zero-poor"}), React.createElement("label", {"htmlFor": "zero-poor"}, "0 Cards "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "1", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 1, "id": "one-poor"}), React.createElement("label", {"htmlFor": "one-poor"}, "1 Card "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "2", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 2, "id": "two-poor"}), React.createElement("label", {"htmlFor": "two-poor"}, "2 Cards "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "3", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 3, "id": "three-poor"}), React.createElement("label", {"htmlFor": "three-poor"}, "3 Cards "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "4", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 4, "id": "four-poor"}), React.createElement("label", {"htmlFor": "four-poor"}, "4 Cards "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "5", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 5, "id": "five-poor"}), React.createElement("label", {"htmlFor": "five-poor"}, "5 Cards "), React.createElement("input", {"type": "radio", "name": "poorCards", "value": "6", "onChange": this.poorCardsChanged, "checked": this.props.settings.poorCards == 6, "id": "six-poor"}), React.createElement("label", {"htmlFor": "six-poor"}, "6 Cards ")), React.createElement("p", null, this.props.settings.poorCards, " cards or under will be considered \"poor\""), React.createElement("p", null, React.createElement("strong", null, "Prefer Econ:")), React.createElement("input", {"id": "favor-econ", "type": "checkbox", "checked": this.props.settings.favorEcon, "onChange": this.toggleFavorEcon}), React.createElement("label", {"htmlFor": "favor-econ"}, "This will prefer setups that contain econ cards over cards that don't")), React.createElement("h2", null, "Mulligan Settings"), React.createElement("div", null, React.createElement("input", {"id": "mulligan-if-poor", "type": "checkbox", "checked": this.props.settings.mulliganOnPoor, "onChange": this.toggleMulliganOnPoor}), React.createElement("label", {"htmlFor": "mulligan-if-poor"}, "Mulligan All Poor Setups")), React.createElement("div", null, React.createElement("input", {"id": "mulligan-without-key", "type": "checkbox", "checked": this.props.settings.mulliganWithoutKey, "onChange": this.toggleMulliganWithoutKey}), React.createElement("label", {"htmlFor": "mulligan-without-key"}, "Mulligan if No Key Character")), React.createElement("div", null, React.createElement("input", {"id": "mulligan-without-econ", "type": "checkbox", "checked": this.props.settings.mulliganWithoutEcon, "onChange": this.toggleMulliganWithoutEcon}), React.createElement("label", {"htmlFor": "mulligan-without-econ"}, "Mulligan if No Econ")), React.createElement("div", null, React.createElement("p", null, React.createElement("strong", null, "Minimum Number of Cards to Keep:")), React.createElement("p", null, React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "0", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 0, "id": "zero-minimum"}), React.createElement("label", {"htmlFor": "zero-minimum"}, "0 Cards "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "1", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 1, "id": "one-minimum"}), React.createElement("label", {"htmlFor": "one-minimum"}, "1 Card "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "2", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 2, "id": "two-minimum"}), React.createElement("label", {"htmlFor": "two-minimum"}, "2 Cards "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "3", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 3, "id": "three-minimum"}), React.createElement("label", {"htmlFor": "three-minimum"}, "3 Cards "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "4", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 4, "id": "four-minimum"}), React.createElement("label", {"htmlFor": "four-minimum"}, "4 Cards "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "5", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 5, "id": "five-minimum"}), React.createElement("label", {"htmlFor": "five-minimum"}, "5 Cards "), React.createElement("input", {"type": "radio", "name": "mullianCards", "value": "6", "onChange": this.minimumCardsChanged, "checked": this.props.settings.minimumCards == 6, "id": "six-minimum"}), React.createElement("label", {"htmlFor": "six-minimum"}, "6 Cards ")), React.createElement("p", null, this.props.settings.minimumCards, " cards or under will be mulliganed")), React.createElement("p", null, "The Setup Analyzer will now attempt to mulligan your first draw if it doesn't meet certain criteria. This page provides all the current settings for configuring what setups to prefer and what hands to mulligan. You can configure cards as being ", React.createElement("i", {"className": "fa fa-key fa-fw"}), " Key cards, ", React.createElement("i", {"className": "fa fa-exclamation-triangle fa-fw"}), " Try to Avoid Cards, and ", React.createElement("i", {"className": "fa fa-ban fa-fw"}), "Restricted Cards"), React.createElement("p", null, "Key Cards will be set up as often as possible. As long as you can set up at least 2 total characters, a set up with a key card will be used if available"), React.createElement("p", null, "Try to Avoid Cards will be avoided unless there is nothing else that can be used. For example, if you have only 3 gold worth of cards to set up, and a 5 cost try to avoid card, it will set up the card. By default this includes characters with positive enter play abilities"), React.createElement("p", null, "Restricted cards will never be set up under any circumstances. By default this includes negative attachments"), key, econ, avoided, restricted, React.createElement("div", null, "All Cards:"), React.createElement("div", {"className": "card-list"}, allCards))));
     };
     return Configure;
 })(React.Component);
@@ -799,6 +832,52 @@ var SimulationStats = (function (_super) {
         };
         return characterData;
     };
+    SimulationStats.prototype.getBaseEconCountConfig = function () {
+        var econData = {
+            title: {
+                text: 'Econ Cards'
+            },
+            xAxis: [{
+                    categories: ['0', '1', '2', '3', '4', '5', '6', '7'],
+                }],
+            yAxis: [{
+                    labels: {
+                        format: '{value}%',
+                    },
+                    title: {
+                        text: 'Percentage',
+                    }
+                }],
+            tooltip: {
+                shared: true
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'left',
+                x: 120,
+                verticalAlign: 'top',
+                y: 50,
+                floating: true,
+                backgroundColor: '#FFFFFF'
+            },
+            series: [{
+                    name: 'With Mulligan',
+                    type: 'column',
+                    data: [],
+                    tooltip: {
+                        valueSuffix: '%'
+                    }
+                }, {
+                    name: 'Without Mulligan',
+                    type: 'spline',
+                    data: [],
+                    tooltip: {
+                        valueSuffix: '%'
+                    }
+                }]
+        };
+        return econData;
+    };
     SimulationStats.prototype.render = function () {
         var _this = this;
         var deck = this.props.displayDeck;
@@ -817,6 +896,13 @@ var SimulationStats = (function (_super) {
             cardUsageData.series[0].data.push(withMulligan);
             cardUsageData.series[1].data.push(withoutMuligan);
             cardUsageData.series[2].data[i].push(withMulligan);
+        }
+        var econCardsData = this.getBaseEconCountConfig();
+        for (var i = 0; i < 8; i++) {
+            var withMulligan = Math.round(10000 * this.props.stats.econCounts[i] / this.props.stats.simulations) / 100;
+            var withoutMuligan = Math.round(10000 * this.props.noMulliganStats.econCounts[i] / this.props.stats.simulations) / 100;
+            econCardsData.series[0].data.push(withMulligan);
+            econCardsData.series[1].data.push(withoutMuligan);
         }
         var goldUsageData = this.getBaseGoldConfig();
         for (var i = 0; i < 9; i++) {
@@ -877,7 +963,7 @@ var SimulationStats = (function (_super) {
         var tenGamePoorSetupRate = 1 - Math.pow(1 - poorSetupRate, 10);
         var charts = (React.createElement("section", {"className": "charts"}, React.createElement("p", null, "Simulating...")));
         if (this.props.stats.simulations == 5000) {
-            charts = (React.createElement("section", {"className": "charts"}, React.createElement(ReactHighcharts, {"config": cardUsageData}), React.createElement("div", {"className": "stat-overview"}, React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * fourGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 4 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * sixGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 6 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * eightGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 8 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * tenGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 10 games"))), React.createElement("hr", null), React.createElement(ReactHighcharts, {"config": distinctCharData}), React.createElement("hr", null), React.createElement(ReactHighcharts, {"config": goldUsageData}), React.createElement("hr", null), React.createElement(ReactHighcharts, {"config": iconGraph}), React.createElement("hr", null), React.createElement(ReactHighcharts, {"config": iconStrGraph})));
+            charts = (React.createElement("section", {"className": "charts"}, React.createElement(ReactHighcharts, {"config": cardUsageData}), React.createElement("div", {"className": "stat-overview"}, React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * fourGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 4 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * sixGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 6 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * eightGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 8 games")), React.createElement("div", {"className": "quick-stat"}, React.createElement("h2", null, Math.round(1000 * tenGamePoorSetupRate) / 10, "%"), React.createElement("span", null, "Chance of having a poor setup in 10 games"))), React.createElement("hr", null), React.createElement(ReactHighcharts, {"config": distinctCharData}), React.createElement("hr", null), React.createElement(ReactHighcharts, {"config": goldUsageData}), React.createElement("hr", null), React.createElement(ReactHighcharts, {"config": econCardsData}), React.createElement("hr", null), React.createElement(ReactHighcharts, {"config": iconGraph}), React.createElement("hr", null), React.createElement(ReactHighcharts, {"config": iconStrGraph})));
         }
         var mulligans = null;
         if (this.props.stats.mulligans > 0) {
@@ -952,6 +1038,11 @@ var DeckStoreStatic = (function () {
         card.is_restricted = !card.is_restricted;
         this.inform();
     };
+    DeckStoreStatic.prototype.markEcon = function (code) {
+        var card = this.getCard(code);
+        card.is_econ = !card.is_econ;
+        this.inform();
+    };
     DeckStoreStatic.prototype.loadDeck = function (text) {
         var regexp = new RegExp('([0-9])x ([^(]+) \\(([^)]+)\\)', 'g');
         this.drawDeck = [];
@@ -993,8 +1084,16 @@ var DeckStoreStatic = (function () {
         var incomeRegex = new RegExp('\\+([0-9]) Income', 'g');
         var incomeMatches = incomeRegex.exec(card.text);
         card.income = 0;
+        card.is_econ = false;
         if (incomeMatches) {
             card.income = +incomeMatches[1];
+            card.is_econ = true;
+            return;
+        }
+        var reduceRegex = new RegExp('reduce the cost', 'g');
+        var reduceMatches = reduceRegex.exec(card.text);
+        if (reduceMatches) {
+            card.is_econ = true;
         }
     };
     DeckStoreStatic.prototype.addAttachmentRestrictions = function (card) {
@@ -1015,7 +1114,7 @@ var DeckStoreStatic = (function () {
             }
         }
         else if (card.type_code == 'character') {
-            var restrictionRegex = new RegExp('No attachments( except <i>Weapon<\\/i>)');
+            var restrictionRegex = new RegExp('No attachments( except <i>Weapon<\\/i>)?');
             var restrictionMatches = restrictionRegex.exec(card.text);
             if (restrictionMatches) {
                 if (restrictionMatches[1]) {
@@ -1050,6 +1149,9 @@ AppDispatcher.register(function (payload) {
     else if (payload.actionType == DeckActionID.MARK_NEVER_CARD) {
         DeckStore.markRestrictedCard(payload.data);
     }
+    else if (payload.actionType == DeckActionID.MARK_ECON) {
+        DeckStore.markEcon(payload.data);
+    }
 });
 module.exports = DeckStore;
 
@@ -1067,13 +1169,15 @@ var SetupStoreStatic = (function () {
         this.settings = {
             simulations: 5000,
             poorCards: 2,
+            favorEcon: false,
             minimumCards: 0,
             minimumCharacters: 2,
             greatCardCounts: 5,
             greatCharacterCounts: 2,
             requireMoreThanOneCharacter: true,
             mulliganOnPoor: true,
-            mulliganWithoutKey: false
+            mulliganWithoutKey: false,
+            mulliganWithoutEcon: false
         };
         this.resetStats();
     }
@@ -1094,6 +1198,7 @@ var SetupStoreStatic = (function () {
             cardCounts: [0, 0, 0, 0, 0, 0, 0, 0],
             distinctCharCounts: [0, 0, 0, 0, 0, 0, 0, 0],
             goldCounts: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            econCounts: [0, 0, 0, 0, 0, 0, 0, 0],
             traitStats: {},
             iconStats: { "military": 0, "intrigue": 0, "power": 0 },
             iconStrengthStats: { "military": 0, "intrigue": 0, "power": 0 }
@@ -1108,6 +1213,7 @@ var SetupStoreStatic = (function () {
             cardCounts: [0, 0, 0, 0, 0, 0, 0, 0],
             distinctCharCounts: [0, 0, 0, 0, 0, 0, 0, 0],
             goldCounts: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            econCounts: [0, 0, 0, 0, 0, 0, 0, 0],
             traitStats: {},
             iconStats: { "military": 0, "intrigue": 0, "power": 0 },
             iconStrengthStats: { "military": 0, "intrigue": 0, "power": 0 }
@@ -1122,7 +1228,7 @@ var SetupStoreStatic = (function () {
         return $.extend({}, this.stats);
     };
     SetupStoreStatic.prototype.getNoMulliganStats = function () {
-        return this.noMulliganStats;
+        return $.extend({}, this.noMulliganStats);
     };
     SetupStoreStatic.prototype.performSimulation = function (runs) {
         if (DeckStore.getDrawDeck().length < 7) {
@@ -1177,6 +1283,7 @@ var SetupStoreStatic = (function () {
         var factors = [
             this.settings.requireMoreThanOneCharacter ? setup.distinctCharacters > 1 : 0,
             setup.keyCards,
+            this.settings.favorEcon ? setup.econCards : 0,
             (setup.cards.length - setup.avoidedCards),
             setup.cards.length,
             setup.currentCost + setup.income,
@@ -1220,6 +1327,9 @@ var SetupStoreStatic = (function () {
             }
             else if (card.is_avoided) {
                 setup.avoidedCards++;
+            }
+            if (card.is_econ && !card.is_avoided) {
+                setup.econCards++;
             }
             if (card.type_code == 'character') {
                 setup.strength += card.strength;
@@ -1279,7 +1389,8 @@ var SetupStoreStatic = (function () {
             power: 0,
             militaryStrength: 0,
             intrigueStrength: 0,
-            powerStrength: 0
+            powerStrength: 0,
+            econCards: 0
         }, filteredDraw);
         var bestSetup = possibleSetup[0];
         possibleSetup.forEach(function (setup) {
@@ -1289,6 +1400,9 @@ var SetupStoreStatic = (function () {
         });
         bestSetup.draw = draw;
         if (mulligan && bestSetup.keyCards == 0 && this.settings.mulliganWithoutKey) {
+            return this.runSetup(false, bestSetup);
+        }
+        if (mulligan && this.settings.mulliganWithoutEcon && bestSetup.econCards == 0) {
             return this.runSetup(false, bestSetup);
         }
         if (mulligan && bestSetup.cards.length <= this.settings.minimumCards) {
@@ -1322,7 +1436,7 @@ var SetupStoreStatic = (function () {
                 bestSetup.powerStrength += card.strength;
             }
             credited.push(card);
-            bestSetup.setup_count++;
+            card.setup_count++;
         });
         this.updateStats(this.stats, bestSetup);
         if (mulligan && !previousSetup) {
@@ -1343,6 +1457,7 @@ var SetupStoreStatic = (function () {
         stats.cardCounts[setup.cards.length] += 1;
         stats.distinctCharCounts[setup.distinctCharacters] += 1;
         stats.goldCounts[setup.currentCost] += 1;
+        stats.econCounts[setup.econCards] += 1;
         stats.iconStats['military'] += setup.military;
         stats.iconStats['power'] += setup.power;
         stats.iconStats['intrigue'] += setup.intrigue;
@@ -1360,6 +1475,14 @@ var SetupStoreStatic = (function () {
     };
     SetupStoreStatic.prototype.toggleRequireMoreThanOneCharacter = function () {
         this.settings.requireMoreThanOneCharacter = !this.settings.requireMoreThanOneCharacter;
+        this.inform();
+    };
+    SetupStoreStatic.prototype.toggleFavorEcon = function () {
+        this.settings.favorEcon = !this.settings.favorEcon;
+        this.inform();
+    };
+    SetupStoreStatic.prototype.toggleMulliganWithoutEcon = function () {
+        this.settings.mulliganWithoutEcon = !this.settings.mulliganWithoutEcon;
         this.inform();
     };
     SetupStoreStatic.prototype.setNumberOfSimulations = function (simulations) {
@@ -1395,6 +1518,12 @@ AppDispatcher.register(function (payload) {
     }
     else if (payload.actionType == SetupActionID.SET_MINIMUM_CARDS) {
         SetupStore.setMinimumCards(payload.data);
+    }
+    else if (payload.actionType == SetupActionID.TOGGLE_FAVOR_ECON) {
+        SetupStore.toggleFavorEcon();
+    }
+    else if (payload.actionType == SetupActionID.TOGGLE_MULLIGAN_WITHOUT_ECON) {
+        SetupStore.toggleMulliganWithoutEcon();
     }
 });
 module.exports = SetupStore;
