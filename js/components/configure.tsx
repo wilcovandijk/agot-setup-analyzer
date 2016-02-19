@@ -82,9 +82,23 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     })
   }
 
+  private toggleMulliganWithoutEcon(){
+    AppDispatcher.dispatch({
+      actionType: SetupActionID.TOGGLE_MULLIGAN_WITHOUT_ECON,
+      data: null
+    })
+  }
+
   private toggleRequireMoreThanOneCharacter(){
     AppDispatcher.dispatch({
       actionType: SetupActionID.TOGGLE_REQUIRE_ONE_CHARACTER,
+      data: null
+    })
+  }
+
+  private toggleFavorEcon(){
+    AppDispatcher.dispatch({
+      actionType: SetupActionID.TOGGLE_FAVOR_ECON,
       data: null
     })
   }
@@ -149,7 +163,7 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     }
 
     var restrictedCards = displayDeck.filter((card) => card.is_restricted).sort(this.cardSort);
-    var restrictedItems = restrictedCards.sort(this.cardSort).map((card) => {
+    var restrictedItems = restrictedCards.map((card) => {
       i++;
       return (
         <CardSettings key={card.code} card={card} />
@@ -168,6 +182,26 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
       );
     }
 
+    var econCards = displayDeck.filter((card) => card.is_econ && !card.is_avoided && !card.is_key_card).sort(this.cardSort);
+    var econItems = econCards.map((card) => {
+      i++;
+      return (
+        <CardSettings key={card.code} card={card} />
+      );
+    });
+
+    var econ = null;
+    if (econCards.length > 0){
+      econ = (
+        <div>
+          <div>Econ Cards:</div>
+          <div className="card-list">
+            {econItems}
+          </div>
+        </div>
+      );
+    }
+
     var cards = displayDeck.sort(this.cardSort);
     var allCards = cards.map((card) => {
       return (
@@ -178,7 +212,7 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     return (
       <section className="content">
         <section className="configure">
-          <h2>Poor Setup Settings</h2>
+          <h2>Preferred Setup Settings</h2>
           <div>
             <p><strong>Require Two Characters:</strong></p>
             <input id="require-one-character" type="checkbox" checked={this.props.settings.requireMoreThanOneCharacter} onChange={this.toggleRequireMoreThanOneCharacter} />
@@ -196,6 +230,10 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
             </p>
             <p>{this.props.settings.poorCards} cards or under will be considered "poor"</p>
 
+            <p><strong>Prefer Econ:</strong></p>
+            <input id="favor-econ" type="checkbox" checked={this.props.settings.favorEcon} onChange={this.toggleFavorEcon} />
+            <label htmlFor="favor-econ">This will prefer setups that contain econ cards over cards that don't</label>
+
           </div>
 
           <h2>Mulligan Settings</h2>
@@ -207,6 +245,11 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
           <div>
             <input id="mulligan-without-key" type="checkbox" checked={this.props.settings.mulliganWithoutKey} onChange={this.toggleMulliganWithoutKey} />
             <label htmlFor="mulligan-without-key">Mulligan if No Key Character</label>
+          </div>
+
+          <div>
+            <input id="mulligan-without-econ" type="checkbox" checked={this.props.settings.mulliganWithoutEcon} onChange={this.toggleMulliganWithoutEcon} />
+            <label htmlFor="mulligan-without-econ">Mulligan if No Econ</label>
           </div>
 
           <div>
@@ -230,6 +273,8 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
 
 
           {key}
+
+          {econ}
 
           {avoided}
 

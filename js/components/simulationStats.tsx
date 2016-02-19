@@ -352,6 +352,56 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
     return characterData;
   }
 
+
+    private getBaseEconCountConfig(){
+      var econData = {
+          title: {
+              text: 'Econ Cards'
+          },
+          xAxis: [{
+              categories: ['0', '1', '2', '3', '4', '5', '6', '7'],
+          }],
+          yAxis: [{ // Primary yAxis
+              labels: {
+                  format: '{value}%',
+              },
+              title: {
+                  text: 'Percentage',
+              }
+          }],
+          tooltip: {
+              shared: true
+          },
+          legend: {
+              layout: 'vertical',
+              align: 'left',
+              x: 120,
+              verticalAlign: 'top',
+              y: 50,
+              floating: true,
+              backgroundColor: '#FFFFFF'
+          },
+          series: [{
+              name: 'With Mulligan',
+              type: 'column',
+              data: [],
+              tooltip: {
+                  valueSuffix: '%'
+              }
+
+          }, {
+              name: 'Without Mulligan',
+              type: 'spline',
+              data: [],
+              tooltip: {
+                  valueSuffix: '%'
+              }
+          }]
+      };
+
+      return econData;
+    }
+
   public render() {
     var deck = this.props.displayDeck;
 
@@ -384,6 +434,15 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
       cardUsageData.series[0].data.push(withMulligan);
       cardUsageData.series[1].data.push(withoutMuligan);
       cardUsageData.series[2].data[i].push(withMulligan);
+    }
+
+    var econCardsData = this.getBaseEconCountConfig();
+    for (var i = 0; i < 8; i++){
+      var withMulligan = Math.round(10000*this.props.stats.econCounts[i] / this.props.stats.simulations)/100;
+      var withoutMuligan = Math.round(10000*this.props.noMulliganStats.econCounts[i] / this.props.stats.simulations)/100;
+
+      econCardsData.series[0].data.push(withMulligan);
+      econCardsData.series[1].data.push(withoutMuligan);
     }
 
     var goldUsageData = this.getBaseGoldConfig();
@@ -488,6 +547,8 @@ class SimulationStats extends React.Component<ISimulationStatsProps, ISimulation
           <ReactHighcharts config={distinctCharData} />
           <hr />
           <ReactHighcharts config={goldUsageData} />
+          <hr />
+          <ReactHighcharts config={econCardsData} />
           <hr />
           <ReactHighcharts config={iconGraph} />
           <hr />

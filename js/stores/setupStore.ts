@@ -44,6 +44,7 @@ class SetupStoreStatic implements ISetupStore {
       simulations: 5000,
 
       poorCards: 2,
+      favorEcon: false,
 
       minimumCards: 0,
       minimumCharacters: 2,
@@ -54,7 +55,8 @@ class SetupStoreStatic implements ISetupStore {
       requireMoreThanOneCharacter: true,
 
       mulliganOnPoor : true,
-      mulliganWithoutKey : false
+      mulliganWithoutKey : false,
+      mulliganWithoutEcon : false
     };
 
     this.resetStats();
@@ -79,6 +81,7 @@ class SetupStoreStatic implements ISetupStore {
       cardCounts : [0, 0, 0, 0, 0, 0, 0, 0],
       distinctCharCounts : [0, 0, 0, 0, 0, 0, 0, 0],
       goldCounts : [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      econCounts : [0, 0, 0, 0, 0, 0, 0, 0],
       traitStats : {},
       iconStats : {"military" : 0, "intrigue" : 0, "power" : 0},
       iconStrengthStats : {"military" : 0, "intrigue" : 0, "power" : 0}
@@ -93,6 +96,7 @@ class SetupStoreStatic implements ISetupStore {
       cardCounts : [0, 0, 0, 0, 0, 0, 0, 0],
       distinctCharCounts : [0, 0, 0, 0, 0, 0, 0, 0],
       goldCounts : [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      econCounts : [0, 0, 0, 0, 0, 0, 0, 0],
       traitStats : {},
       iconStats : {"military" : 0, "intrigue" : 0, "power" : 0},
       iconStrengthStats : {"military" : 0, "intrigue" : 0, "power" : 0}
@@ -111,7 +115,7 @@ class SetupStoreStatic implements ISetupStore {
   }
 
   public getNoMulliganStats() : ISetupStats{
-    return this.noMulliganStats;
+    return $.extend({}, this.noMulliganStats) as ISetupStats;
   }
 
   public performSimulation(runs : number){
@@ -191,6 +195,7 @@ class SetupStoreStatic implements ISetupStore {
     var factors = [
       this.settings.requireMoreThanOneCharacter ? setup.distinctCharacters > 1 : 0, // must have at least > 1 char
       setup.keyCards,
+      this.settings.favorEcon ? setup.econCards : 0,
       (setup.cards.length - setup.avoidedCards), // cards used that we like to setup
       setup.cards.length, // cards used overall
       setup.currentCost + setup.income, // effective gold used at setup
@@ -247,6 +252,10 @@ class SetupStoreStatic implements ISetupStore {
         setup.keyCards++;
       } else if (card.is_avoided){
         setup.avoidedCards++;
+      }
+
+      if (card.is_econ && !card.is_avoided){
+        setup.econCards++;
       }
 
       if (card.type_code == 'character'){
@@ -314,7 +323,8 @@ class SetupStoreStatic implements ISetupStore {
       power: 0,
       militaryStrength: 0,
       intrigueStrength: 0,
-      powerStrength: 0
+      powerStrength: 0,
+      econCards: 0
     }, filteredDraw);
 
     var bestSetup = possibleSetup[0];
@@ -328,6 +338,10 @@ class SetupStoreStatic implements ISetupStore {
 
     if (mulligan && bestSetup.keyCards == 0 && this.settings.mulliganWithoutKey){
        return this.runSetup(false, bestSetup);
+    }
+
+    if (mulligan && this.settings.mulliganWithoutEcon && bestSetup.econCards == 0){
+      return this.runSetup(false, bestSetup);
     }
 
     if (mulligan && bestSetup.cards.length <= this.settings.minimumCards){
@@ -361,7 +375,7 @@ class SetupStoreStatic implements ISetupStore {
         bestSetup.powerStrength += card.strength;
       }
       credited.push(card);
-      bestSetup.setup_count++;
+      card.setup_count++;
     });
 
     this.updateStats(this.stats, bestSetup);
@@ -387,6 +401,8 @@ class SetupStoreStatic implements ISetupStore {
     stats.distinctCharCounts[setup.distinctCharacters] += 1;
     stats.goldCounts[setup.currentCost] += 1;
 
+    stats.econCounts[setup.econCards] += 1;
+
     stats.iconStats['military'] += setup.military;
     stats.iconStats['power'] += setup.power;
     stats.iconStats['intrigue'] += setup.intrigue;
@@ -408,6 +424,16 @@ class SetupStoreStatic implements ISetupStore {
 
   public toggleRequireMoreThanOneCharacter(){
     this.settings.requireMoreThanOneCharacter = !this.settings.requireMoreThanOneCharacter;
+    this.inform();
+  }
+
+  public toggleFavorEcon(){
+    this.settings.favorEcon = !this.settings.favorEcon;
+    this.inform();
+  }
+
+  public toggleMulliganWithoutEcon(){
+    this.settings.mulliganWithoutEcon = !this.settings.mulliganWithoutEcon;
     this.inform();
   }
 
@@ -442,6 +468,10 @@ AppDispatcher.register(function(payload:IActionPayload){
     SetupStore.setPoorCards(payload.data);
   } else if (payload.actionType == SetupActionID.SET_MINIMUM_CARDS){
     SetupStore.setMinimumCards(payload.data);
+  } else if (payload.actionType == SetupActionID.TOGGLE_FAVOR_ECON){
+    SetupStore.toggleFavorEcon();
+  } else if (payload.actionType == SetupActionID.TOGGLE_MULLIGAN_WITHOUT_ECON){
+    SetupStore.toggleMulliganWithoutEcon();
   }
 });
 

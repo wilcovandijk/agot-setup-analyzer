@@ -78,6 +78,13 @@ class CardSettings extends React.Component<ICardSettingsProps, ICardSettingsStat
     });
   }
 
+  public onMarkEcon(){
+    AppDispatcher.dispatch({
+      actionType: DeckActionID.MARK_ECON,
+      data: this.props.card.code
+    });
+  }
+
 
   public render() {
     var card = this.props.card;
@@ -93,6 +100,8 @@ class CardSettings extends React.Component<ICardSettingsProps, ICardSettingsStat
       className += " avoided-card";
     } else if (card.is_restricted){
       className += " restricted-card";
+    } else if (card.is_econ){
+      className += " econ-card";
     }
 
     if (card.type_code == 'character'
@@ -102,6 +111,7 @@ class CardSettings extends React.Component<ICardSettingsProps, ICardSettingsStat
           controls = (
             <div className="controls">
               <button className="key-button" onClick={this.onMarkKey.bind(this)}><i className="fa fa-key fa-fw"></i></button>
+              <button className="income-button" onClick={this.onMarkEcon.bind(this)}><i className="fa fa-dollar fa-fw"></i></button>
               <button className="avoid-button" onClick={this.onMarkAvoided.bind(this)}><i className="fa fa-exclamation-triangle fa-fw"></i></button>
               <button className="restricted-button" onClick={this.onMarkRestricted.bind(this)}><i className="fa fa-ban fa-fw"></i></button>
             </div>

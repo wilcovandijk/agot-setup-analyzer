@@ -86,6 +86,13 @@ class DeckStoreStatic implements IDeckStore {
     this.inform();
   }
 
+  public markEcon(code){
+    var card = this.getCard(code);
+    card.is_econ = !card.is_econ;
+
+    this.inform();
+  }
+
   public loadDeck(text : string) {
     var regexp = new RegExp('([0-9])x ([^(]+) \\(([^)]+)\\)', 'g');
 
@@ -141,8 +148,18 @@ class DeckStoreStatic implements IDeckStore {
     var incomeMatches = incomeRegex.exec(card.text);
 
     card.income = 0;
+    card.is_econ = false;
     if (incomeMatches){
       card.income = +incomeMatches[1];
+      card.is_econ = true;
+      return;
+    }
+
+    var reduceRegex = new RegExp('reduce the cost', 'g');
+    var reduceMatches = reduceRegex.exec(card.text);
+
+    if (reduceMatches){
+      card.is_econ = true;
     }
   }
 
@@ -163,7 +180,7 @@ class DeckStoreStatic implements IDeckStore {
         }
       }
     } else if (card.type_code == 'character'){
-      var restrictionRegex = new RegExp('No attachments( except <i>Weapon<\\/i>)');
+      var restrictionRegex = new RegExp('No attachments( except <i>Weapon<\\/i>)?');
       var restrictionMatches = restrictionRegex.exec(card.text);
 
       if (restrictionMatches){
@@ -198,6 +215,8 @@ AppDispatcher.register(function(payload:IActionPayload){
     DeckStore.markAvoidedCard(payload.data);
   } else if (payload.actionType == DeckActionID.MARK_NEVER_CARD){
     DeckStore.markRestrictedCard(payload.data);
+  } else if (payload.actionType == DeckActionID.MARK_ECON){
+    DeckStore.markEcon(payload.data);
   }
 });
 

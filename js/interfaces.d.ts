@@ -26,6 +26,7 @@ interface ICard {
   is_key_card : boolean;
   is_avoided : boolean;
   is_restricted : boolean;
+  is_econ : boolean;
 }
 
 interface IDeckStore {
@@ -46,6 +47,7 @@ interface ISetupStats{
   greatSetups : number;
   cardCounts : Array<number>;
   goldCounts : Array<number>;
+  econCounts : Array<number>;
   distinctCharCounts : Array<number>;
   traitStats : { [id: string] : string };
   iconStats : { [id: string] : any };
@@ -56,6 +58,7 @@ interface ISetupSettings{
   simulations : number;
 
   requireMoreThanOneCharacter: boolean;
+  favorEcon : boolean;
   poorCards : number;
 
   minimumCards : number;
@@ -67,6 +70,7 @@ interface ISetupSettings{
 
   mulliganOnPoor : boolean;
   mulliganWithoutKey : boolean;
+  mulliganWithoutEcon : boolean;
 }
 
 interface ISetupStore {
