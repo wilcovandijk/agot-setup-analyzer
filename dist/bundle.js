@@ -1047,7 +1047,7 @@ var DeckStoreStatic = (function () {
         var regexp = new RegExp('([0-9])x ([^(]+) \\(([^)]+)\\)', 'g');
         this.drawDeck = [];
         this.displayDeck = [];
-        var neverSetup = ['02006', '02034', '01035'];
+        var neverSetup = ['02006', '02034', '01035', '02052', '02055'];
         var cardToAdd = regexp.exec(text);
         while (cardToAdd) {
             var card = this.allCards[cardToAdd[3] + " - " + cardToAdd[2]];
