@@ -99,7 +99,7 @@ class DeckStoreStatic implements IDeckStore {
     this.drawDeck = [];
     this.displayDeck = [];
 
-    var neverSetup = ['02006', '02034', '01035'];
+    var neverSetup = ['02006', '02034', '01035', '02052', '02055'];
 
       var cardToAdd = regexp.exec(text);
 
