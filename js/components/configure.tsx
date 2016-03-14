@@ -218,7 +218,7 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
             <input id="require-one-character" type="checkbox" checked={this.props.settings.requireMoreThanOneCharacter} onChange={this.toggleRequireMoreThanOneCharacter} />
             <label htmlFor="require-one-character">Require 2+ Characters. If this is selected, one character setups will be considered poor</label>
 
-            <p><strong>Minimum Number of Cards for Acceptable Setup:</strong></p>
+            <p><strong>Number of Cards to consider a Poor Setup:</strong></p>
             <p>
               <input type="radio" name="poorCards" value="0" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 0} id="zero-poor" /><label htmlFor="zero-poor">0 Cards </label>
               <input type="radio" name="poorCards" value="1" onChange={this.poorCardsChanged} checked={this.props.settings.poorCards == 1} id="one-poor" /><label htmlFor="one-poor">1 Card </label>
@@ -253,7 +253,7 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
           </div>
 
           <div>
-            <p><strong>Minimum Number of Cards to Keep:</strong></p>
+            <p><strong>Number of Cards to Mulligan:</strong></p>
             <p>
               <input type="radio" name="mullianCards" value="0" onChange={this.minimumCardsChanged} checked={this.props.settings.minimumCards == 0} id="zero-minimum" /><label htmlFor="zero-minimum">0 Cards </label>
               <input type="radio" name="mullianCards" value="1" onChange={this.minimumCardsChanged} checked={this.props.settings.minimumCards == 1} id="one-minimum" /><label htmlFor="one-minimum">1 Card </label>

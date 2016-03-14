@@ -176,6 +176,8 @@ class DeckStoreStatic implements IDeckStore {
         } else{
           var restriction = restrictionMatches[1];
           restriction = restriction.replace(/\[|\]/g, "");
+          restriction = restriction.replace(/<i>/g, "");
+          restriction = restriction.replace(/<\/i>/g, "");
           card.attachmentRestriction = [restriction];
         }
       }
