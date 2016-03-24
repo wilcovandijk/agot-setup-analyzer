@@ -117,6 +117,13 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     })
   }
 
+  private toggleRequireFourCostCharacter(){
+    AppDispatcher.dispatch({
+      actionType: SetupActionID.TOGGLE_REQUIRE_FOUR_COST_CHARACTER,
+      data: null
+    })
+  }
+
   public render() {
     var displayDeck = this.props.displayDeck;
 
@@ -217,6 +224,10 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
             <p><strong>Require Two Characters:</strong></p>
             <input id="require-one-character" type="checkbox" checked={this.props.settings.requireMoreThanOneCharacter} onChange={this.toggleRequireMoreThanOneCharacter} />
             <label htmlFor="require-one-character">Require 2+ Characters. If this is selected, one character setups will be considered poor</label>
+
+            <p><strong>Require Four Cost Character:</strong></p>
+            <input id="require-four-cost-character" type="checkbox" checked={this.props.settings.requireFourCostCharacter} onChange={this.toggleRequireFourCostCharacter} />
+            <label htmlFor="require-four-cost-character">Require 4 cost character. If this is selected, setups with only characters that cost 3 or less will be considered poor</label>
 
             <p><strong>Number of Cards to consider a Poor Setup:</strong></p>
             <p>

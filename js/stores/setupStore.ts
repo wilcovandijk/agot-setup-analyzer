@@ -53,6 +53,7 @@ class SetupStoreStatic implements ISetupStore {
       greatCharacterCounts : 2,
 
       requireMoreThanOneCharacter: true,
+      requireFourCostCharacter: false,
 
       mulliganOnPoor : true,
       mulliganWithoutKey : false,
@@ -194,6 +195,7 @@ class SetupStoreStatic implements ISetupStore {
 
     var factors = [
       this.settings.requireMoreThanOneCharacter ? setup.distinctCharacters > 1 : 0, // must have at least > 1 char
+      this.settings.requireFourCostCharacter ? setup.hasFourCostCharacter : 0,
       setup.keyCards,
       this.settings.favorEcon ? setup.econCards : 0,
       (setup.cards.length - setup.avoidedCards), // cards used that we like to setup
@@ -261,6 +263,10 @@ class SetupStoreStatic implements ISetupStore {
       if (card.type_code == 'character'){
         setup.strength += card.strength;
         setup.distinctCharacters++;
+
+        if (card.cost >= 4){
+          setup.hasFourCostCharacter = 1;
+        }
       }
 
       if (card.type_code == 'attachment'){
@@ -311,6 +317,7 @@ class SetupStoreStatic implements ISetupStore {
       currentCost: 0,
       limitedUsed: false,
       distinctCharacters: 0,
+      hasFourCostCharacter: 0,
       hasAttachment: false,
       strength: 0,
       income: 0,
@@ -451,6 +458,11 @@ class SetupStoreStatic implements ISetupStore {
     this.settings.minimumCards = Math.min(7, Math.max(0, cards));
     this.inform();
   }
+
+  public toggleRequireFourCostCharacter(){
+    this.settings.requireFourCostCharacter = !this.settings.requireFourCostCharacter;
+    this.inform();
+  }
 }
 
 var SetupStore:SetupStoreStatic = new SetupStoreStatic();
@@ -472,6 +484,8 @@ AppDispatcher.register(function(payload:IActionPayload){
     SetupStore.toggleFavorEcon();
   } else if (payload.actionType == SetupActionID.TOGGLE_MULLIGAN_WITHOUT_ECON){
     SetupStore.toggleMulliganWithoutEcon();
+  } else if (payload.actionType == SetupActionID.TOGGLE_REQUIRE_FOUR_COST_CHARACTER){
+    SetupStore.toggleRequireFourCostCharacter();
   }
 });
 

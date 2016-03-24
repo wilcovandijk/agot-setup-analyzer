@@ -58,6 +58,7 @@ interface ISetupSettings{
   simulations : number;
 
   requireMoreThanOneCharacter: boolean;
+  requireFourCostCharacter : boolean;
   favorEcon : boolean;
   poorCards : number;
 
@@ -66,7 +67,6 @@ interface ISetupSettings{
 
   greatCardCounts : number;
   greatCharacterCounts : number;
-
 
   mulliganOnPoor : boolean;
   mulliganWithoutKey : boolean;
