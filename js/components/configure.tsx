@@ -82,6 +82,13 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
     })
   }
 
+  private toggleRequireEcon(){
+    AppDispatcher.dispatch({
+      actionType: SetupActionID.TOGGLE_REQUIRE_ECON,
+      data: null
+    })
+  }
+
   private toggleMulliganWithoutEcon(){
     AppDispatcher.dispatch({
       actionType: SetupActionID.TOGGLE_MULLIGAN_WITHOUT_ECON,
@@ -241,10 +248,16 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
             </p>
             <p>{this.props.settings.poorCards} cards or under will be considered "poor"</p>
 
-            <p><strong>Prefer Econ:</strong></p>
-            <input id="favor-econ" type="checkbox" checked={this.props.settings.favorEcon} onChange={this.toggleFavorEcon} />
-            <label htmlFor="favor-econ">This will prefer setups that contain econ cards over cards that don't</label>
 
+            <p><strong>Econ:</strong></p>
+            <div>
+              <input id="require-econ" type="checkbox" checked={this.props.settings.requireEcon} onChange={this.toggleRequireEcon} />
+              <label htmlFor="require-econ">Poor if No Econ</label>
+            </div>
+            <div>
+              <input id="favor-econ" type="checkbox" checked={this.props.settings.favorEcon} onChange={this.toggleFavorEcon} />
+              <label htmlFor="favor-econ">This will prefer setups that contain econ cards over cards that don't, but will not mark econless hands as poor</label>
+            </div>
           </div>
 
           <h2>Mulligan Settings</h2>

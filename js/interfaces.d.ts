@@ -59,6 +59,8 @@ interface ISetupSettings{
 
   requireMoreThanOneCharacter: boolean;
   requireFourCostCharacter : boolean;
+  requireEcon : boolean;
+
   favorEcon : boolean;
   poorCards : number;
 

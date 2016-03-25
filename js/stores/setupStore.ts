@@ -57,7 +57,8 @@ class SetupStoreStatic implements ISetupStore {
 
       mulliganOnPoor : true,
       mulliganWithoutKey : false,
-      mulliganWithoutEcon : false
+      mulliganWithoutEcon : false,
+      requireEcon : false
     };
 
     this.resetStats();
@@ -198,6 +199,7 @@ class SetupStoreStatic implements ISetupStore {
       this.settings.requireFourCostCharacter ? setup.hasFourCostCharacter : 0,
       setup.keyCards,
       this.settings.favorEcon ? setup.econCards : 0,
+      this.settings.favorEcon || this.settings.requireEcon ? setup.econCards : 0,
       (setup.cards.length - setup.avoidedCards), // cards used that we like to setup
       setup.cards.length, // cards used overall
       setup.currentCost + setup.income, // effective gold used at setup
@@ -353,7 +355,10 @@ class SetupStoreStatic implements ISetupStore {
 
     if (mulligan && bestSetup.cards.length <= this.settings.minimumCards){
         return this.runSetup(false, bestSetup);
-    } else if (bestSetup.cards.length <= this.settings.poorCards || (bestSetup.distinctCharacters <= 1 && this.settings.requireMoreThanOneCharacter)){
+    } else if (bestSetup.cards.length <= this.settings.poorCards
+               || (bestSetup.distinctCharacters <= 1 && this.settings.requireMoreThanOneCharacter)
+               || (bestSetup.hasFourCostCharacter < 1 && this.settings.requireFourCostCharacter)
+               || (bestSetup.econCards < 1 && this.settings.requireEcon)){
       if (mulligan && this.settings.mulliganOnPoor){
         //try to mulligan for a better hand...
         return this.runSetup(false, bestSetup);
@@ -439,6 +444,11 @@ class SetupStoreStatic implements ISetupStore {
     this.inform();
   }
 
+  public toggleRequireEcon(){
+    this.settings.requireEcon = !this.settings.requireEcon;
+    this.inform();
+  }
+
   public toggleMulliganWithoutEcon(){
     this.settings.mulliganWithoutEcon = !this.settings.mulliganWithoutEcon;
     this.inform();
@@ -484,6 +494,8 @@ AppDispatcher.register(function(payload:IActionPayload){
     SetupStore.toggleFavorEcon();
   } else if (payload.actionType == SetupActionID.TOGGLE_MULLIGAN_WITHOUT_ECON){
     SetupStore.toggleMulliganWithoutEcon();
+  } else if (payload.actionType == SetupActionID.TOGGLE_REQUIRE_ECON){
+    SetupStore.toggleRequireEcon();
   } else if (payload.actionType == SetupActionID.TOGGLE_REQUIRE_FOUR_COST_CHARACTER){
     SetupStore.toggleRequireFourCostCharacter();
   }
