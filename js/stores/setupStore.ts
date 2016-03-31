@@ -237,7 +237,9 @@ class SetupStoreStatic implements ISetupStore {
     var remainingCards = remainingCards.slice(1);
 
     if (card.is_unique && setup.cards.filter(function(c) { return drawDeck[c].code == card.code }).length > 0){
-      setup.cards.push(pos);
+      if (!card.is_limited){
+        setup.cards.push(pos);
+      }
       return this.setUp(setup, remainingCards);
     }
 
