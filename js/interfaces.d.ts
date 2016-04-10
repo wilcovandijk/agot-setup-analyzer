@@ -2,6 +2,7 @@ interface ICard {
   code : string;
   count : number;
   pack_name : string;
+  pack_code : string;
   faction : string;
   image: string;
   url : string;

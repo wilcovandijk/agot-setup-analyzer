@@ -94,7 +94,8 @@ class DeckStoreStatic implements IDeckStore {
   }
 
   public loadDeck(text : string) {
-    var regexp = new RegExp('([0-9])x ([^(]+) \\(([^)]+)\\)', 'g');
+    //var regexp = new RegExp('([0-9])x ([^(]+) \\(([^)]+)?\\)', 'g');
+    var regexp = new RegExp('([0-9])x[ ]+([^(\\n]+)(\\([^)\\n]+\\))?', 'g')
 
     this.drawDeck = [];
     this.displayDeck = [];
@@ -104,8 +105,27 @@ class DeckStoreStatic implements IDeckStore {
       var cardToAdd = regexp.exec(text);
 
       while (cardToAdd){
-        var card = this.allCards[cardToAdd[3] + " - " + cardToAdd[2]];
-        if (card.type_code != "plot"){
+        var cardCount = cardToAdd[1];
+        var cardName = cardToAdd[2].trim();
+        var cardPack = cardToAdd[3] ? cardToAdd[3].trim().substr(1, cardToAdd[3].length - 2) : "";
+
+
+        var card = this.allCards[cardPack + " - " + cardName];
+
+        if (!card){
+          //simple find didn't work
+
+          for (var key in this.allCards) {
+              var searchCard = this.allCards[key];
+
+              if (searchCard.name == cardName && (!cardPack || cardPack.toLowerCase() == searchCard.pack_code.toLowerCase())){
+                card = searchCard;
+                break;
+              }
+          }
+        }
+
+        if (card && card.type_code != "plot"){
           card.count = +cardToAdd[1];
           card.setup_count = 0;
 
