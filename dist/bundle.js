@@ -1191,7 +1191,7 @@ var SetupStoreStatic = (function () {
     function SetupStoreStatic() {
         var self = this;
         this.deck = DeckStore;
-        this.neverSetupCards = ['02006', '02034', '01035', '03025'];
+        this.neverSetupCards = ['02006', '02034', '01035', '03025', '02088'];
         this.exampleSetup = { draw: [] };
         this.onChanges = [];
         this.settings = {
