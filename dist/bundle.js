@@ -514,7 +514,7 @@ var SetupExample = (function (_super) {
                 if (_this.props.setups[_this.state.shownSetup].cards.filter(function (p) { return p == pos; }).length > 0) {
                     className += " selected";
                 }
-                return (React.createElement("div", {"key": pos, "className": className}, React.createElement("img", {"src": image})));
+                return (React.createElement("div", {"key": pos, "className": className}, React.createElement("img", {"alt": card.name, "src": image})));
             });
             var mulligan = null;
             if (this.props.setups[this.state.shownSetup].mulliganed) {
@@ -527,7 +527,7 @@ var SetupExample = (function (_super) {
                     if (_this.props.setups[_this.state.shownSetup].mulliganed.cards.filter(function (p) { return p == pos; }).length > 0) {
                         className += " selected";
                     }
-                    return (React.createElement("div", {"key": pos, "className": className}, React.createElement("img", {"src": image})));
+                    return (React.createElement("div", {"key": pos, "className": className}, React.createElement("img", {"alt": card.name, "src": image})));
                 });
                 mulligan = (React.createElement("div", null, React.createElement("div", null, "Mulliganed:"), React.createElement("div", {"className": "card-list example mulliganed"}, mulliganedItems)));
             }
