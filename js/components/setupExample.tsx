@@ -77,7 +77,7 @@ public onNext(){
           }
 
           return (
-            <div key={pos} className={className}><img src={image}/></div>
+            <div key={pos} className={className}><img alt={card.name} src={image}/></div>
           );
         });
         var mulligan = null;
@@ -95,7 +95,7 @@ public onNext(){
             }
 
             return (
-              <div key={pos} className={className}><img src={image}/></div>
+              <div key={pos} className={className}><img alt={card.name} src={image}/></div>
             );
           });
 
