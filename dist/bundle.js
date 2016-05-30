@@ -1191,7 +1191,7 @@ var SetupStoreStatic = (function () {
     function SetupStoreStatic() {
         var self = this;
         this.deck = DeckStore;
-        this.neverSetupCards = ['02006', '02034', '01035', '03025', '02088', '02102', '02116'];
+        this.neverSetupCards = ['02006', '02034', '01035', '03025', '02088', '02102', '02116', '03021', '02102'];
         this.exampleSetup = { draw: [] };
         this.onChanges = [];
         this.settings = {
@@ -1386,6 +1386,7 @@ var SetupStoreStatic = (function () {
         return this.setUp(setup, remainingCards);
     };
     SetupStoreStatic.prototype.runSetup = function (mulligan, previousSetup) {
+        var _this = this;
         if (previousSetup === void 0) { previousSetup = null; }
         if (previousSetup && !mulligan) {
             this.stats.mulligans++;
@@ -1404,11 +1405,8 @@ var SetupStoreStatic = (function () {
         var filteredDraw = draw.filter(function (d) {
             var card = drawDeck[d];
             return (card.type_code == 'character'
-                || (card.type_code == 'location'
-                    && card.code != '02006')
-                || (card.type_code == 'attachment'
-                    && card.code != '02034'
-                    && card.code != '01035')) && !card.is_restricted;
+                || card.type_code == 'location'
+                || card.type_code == 'attachment') && !card.is_restricted && _this.neverSetupCards.indexOf(card.code) == -1;
         });
         var possibleSetup = this.setUp({
             currentCost: 0,
