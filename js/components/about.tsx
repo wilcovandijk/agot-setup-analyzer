@@ -44,9 +44,8 @@ class About extends React.Component<IAboutProps, IAboutState> {
         </ol>
 
         <h2>Wardens of the Golden Gate</h2>
-        <p>I recently started a YouTube channel from our local meta. <a href="https://www.youtube.com/channel/UCuiQd1d6TXY-Az59-1tqY_w">Check it out!</a> Here is a recent video!</p>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/DJoS0LB1Zfw" frameBorder="0" allowFullScreen></iframe>
-        <p>Finally, some credit/shout outs to resources I used to make this, or resources I find valuable:</p>
+        <p>I recently started a YouTube channel from our local meta. <a href="https://www.youtube.com/channel/UCuiQd1d6TXY-Az59-1tqY_w/featured">Check it out!</a> Here is a recent video!</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLVL91rSgTFRLhdzOrrF_a-aIe5w9zUCDt" frameBorder="0" allowFullScreen></iframe>        <p>Finally, some credit/shout outs to resources I used to make this, or resources I find valuable:</p>
         <ol>
           <li><a href="http://thronesdb.com/">ThronesDB</a>, where I shameless pulled all card data from and serve images from directly</li>
           <li><a href="http://agotannals.com/">The Annals</a> where I go to find recent tournament results to find which deck to build or build against</li>
