@@ -268,7 +268,7 @@ class Configure extends React.Component<IConfigureProps, IConfigureState> {
 
           <div>
             <input id="mulligan-without-key" type="checkbox" checked={this.props.settings.mulliganWithoutKey} onChange={this.toggleMulliganWithoutKey} />
-            <label htmlFor="mulligan-without-key">Mulligan if No Key Character</label>
+            <label htmlFor="mulligan-without-key">Mulligan if No Key Card</label>
           </div>
 
           <div>
